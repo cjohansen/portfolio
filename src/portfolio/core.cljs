@@ -100,5 +100,5 @@
                      :current-namespace current-namespace
                      :current-collection (get-collection state (:collection current-namespace)))]
     {:sidebar (prepare-sidebar state location)
-     :toolbar (map #(prepare-view-option current-view %) (:views state))
+     :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
      :view (portfolio/prepare-data current-view state location)}))

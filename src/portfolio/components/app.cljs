@@ -1,6 +1,7 @@
 (ns portfolio.components.app
   (:require [dumdom.core :as d]
             [portfolio.components.sidebar :refer [Sidebar]]
+            [portfolio.components.tab-bar :refer [TabBar]]
             [portfolio.protocols :as portfolio]))
 
 (d/defcomponent App [data]
@@ -18,15 +19,5 @@
                   :display "flex"
                   :flex-direction "column"
                   :margin "10px 10px 10px 0"}}
-    [:nav {:style {:background "#fff"
-                   :border-bottom "1px solid #e5e5e5"}}
-     [:ul
-      (for [{:keys [title selected?]} (:toolbar data)]
-        (if selected?
-          [:span {:style {:padding "10px 20px"
-                          :display "inline-block"
-                          :border-bottom "2px solid #1ea7fd"
-                          :color "#1ea7fd"}}
-           title]
-          [:a {:href "#"} title]))]]
+    (TabBar (:tab-bar data))
     (portfolio/render-view (:view data))]])
