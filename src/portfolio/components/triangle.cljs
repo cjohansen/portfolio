@@ -1,7 +1,7 @@
 (ns portfolio.components.triangle
   (:require [dumdom.core :as d]))
 
-(d/defcomponent Triangle [{:keys [color direction actions]}]
+(d/defcomponent Triangle [{:keys [color direction actions text]}]
   [:span
    {:on-click actions
     :style
@@ -9,7 +9,8 @@
      :display "inline-block"
      :padding "0 6px"}}
    [:span
-    {:style
+    {:title text
+     :style
      {:display "inline-block"
       :width 0
       :height 0
