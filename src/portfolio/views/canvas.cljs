@@ -20,21 +20,24 @@
                     [:assoc-in [(:id tool) vid :value] value])]}))})
 
 (defn get-current-layout [state view]
-  (or (when-let [layout (-> state :current-scene :canvas/layout)]
-        {:layout layout
-         :source (-> state :current-scene :id)})
-      (when-let [layout (-> state :current-namespace :canvas/layout)]
-        {:layout layout
-         :source (-> state :current-namespace :namespace)})
-      (when-let [layout (-> state :current-collection :canvas/layout)]
-        {:layout layout
-         :source (-> state :current-collection :id)})
-      (when-let [layout (:canvas/layout state)]
-        {:layout layout
-         :source :state-layout})
-      (when-let [layout (:canvas/layout view)]
-        {:layout layout
-         :source (:id view)})))
+  (if (= 1 (count (:current-scenes state)))
+    (or (when-let [layout (-> state :current-scenes first :canvas/layout)]
+          {:layout layout
+           :source (-> state :current-scenes first :id)})
+        (when-let [layout (-> state :current-namespace :canvas/layout)]
+          {:layout layout
+           :source (-> state :current-namespace :namespace)})
+        (when-let [layout (-> state :current-collection :canvas/layout)]
+          {:layout layout
+           :source (-> state :current-collection :id)})
+        (when-let [layout (:canvas/layout state)]
+          {:layout layout
+           :source :state-layout})
+        (when-let [layout (:canvas/layout view)]
+          {:layout layout
+           :source (:id view)}))
+    {:layout [[{}]]
+     :source ::multi-scene-default}))
 
 (defn prepare-canvas-view [view state _]
   (let [layout (get-current-layout state view)]
@@ -59,7 +62,7 @@
                                        (prepare-tool-menu vid tool value)))))
                     (:tools view)
                     overrides)}
-              :canvas {:current-scene (:current-scene state)
+              :canvas {:current-scene (first (:current-scenes state))
                        :tools (:tools view)
                        :opt (apply merge opt overrides)}})))}
       view-impl)))

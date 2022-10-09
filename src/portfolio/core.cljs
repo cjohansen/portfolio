@@ -14,7 +14,7 @@
         (->> (:scenes state)
              (filter (comp #{scene} :id))
              (take 1)))
-      (when-let [ns (some-> location :query-params :namespace keyword)]
+      (when-let [ns (some-> location :query-params :namespace)]
         (->> (:scenes state)
              (filter (comp keyword? :id))
              (filter (comp #{ns} namespace :id))))
@@ -38,14 +38,16 @@
   ;; TODO: Eventually support more views
   (first (:views state)))
 
-(defn prepare-scene-link [current location {:keys [id title]}]
-  (let [selected? (= id (:id current))]
+(defn prepare-scene-link [currents location {:keys [id title]}]
+  (let [selected? (currents id)]
     (cond-> {:title title}
-      (not selected?) (assoc :url (router/get-url (assoc-in location [:query-params :scene] id)))
+      (not selected?) (assoc :url (router/get-url (assoc location :query-params {:scene id})))
       selected? (assoc :selected? true))))
 
 (defn namespace-selected? [state ns scenes]
-  (contains? (set (map :id scenes)) (:id (:current-scene state))))
+  (->> (:current-scenes state)
+       (filter #(contains? (set (map :id scenes)) (:id %)))
+       seq))
 
 (defn namespace-expanded? [state ns scenes]
   (or (get-in state [ns :expanded?])
@@ -56,19 +58,21 @@
        (group-by (comp namespace :id))
        (map (fn [[ns scenes]]
               (let [expanded? (namespace-expanded? state ns scenes)
-                    selected? (namespace-selected? state ns scenes)]
+                    selected? (namespace-selected? state ns scenes)
+                    browsing? (= ns (get-in location [:query-params :namespace]))]
                 (cond->
-                    {:title (->> (:namespaces state)
-                                 (filter (comp #{ns} :namespace))
-                                 first
-                                 :title)}
+                    {:title (:title (get-scene-namespace state (first scenes)))}
                   (not selected?)
                   (assoc :actions [[:assoc-in [ns :expanded?] (not expanded?)]])
+
+                  (not browsing?)
+                  (update :actions into [[:go-to-location (assoc location :query-params {:namespace ns})]])
 
                   expanded?
                   (into {:expanded? true
                          :selected? selected?
-                         :items (map #(prepare-scene-link (:current-scene state) location %) scenes)})))))))
+                         :items (let [cids (set (map :id (:current-scenes state)))]
+                                  (map #(prepare-scene-link cids location %) scenes))})))))))
 
 (defn prepare-sidebar [state location]
   {:width 230
@@ -86,16 +90,19 @@
     (= (:id current-view) (:id view))
     (assoc :selected? true)))
 
-(defn realize-scene [scene]
-  (cond-> scene
-    (:component-fn scene) (assoc :component ((:component-fn scene) (:args scene)))))
+(defn realize-scenes [scenes]
+  (for [scene scenes]
+    (cond-> scene
+      (:component-fn scene) (assoc :component ((:component-fn scene) (:args scene))))))
 
 (defn prepare-data [state location]
-  (let [current-scene (realize-scene (get-current-scene state location))
-        current-namespace (get-scene-namespace state current-scene)
+  (let [current-scenes (realize-scenes (get-current-scenes state location))
+        ;; There might be multiple scenes, but multiple scenes across different
+        ;; namespaces is not (yet) supported.
+        current-namespace (get-scene-namespace state (first current-scenes))
         current-view (get-current-view state location)
         state (assoc state
-                     :current-scene current-scene
+                     :current-scenes current-scenes
                      :current-namespace current-namespace
                      :current-collection (get-collection state (:collection current-namespace)))]
     {:sidebar (prepare-sidebar state location)
