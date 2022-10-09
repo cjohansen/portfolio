@@ -11,17 +11,20 @@
         [:h2.h4 {:style {:margin "0 10px 10px"}}
          (:title list)])
       [:ul
-       (for [{:keys [title selected? expanded? items actions]} (:items list)]
+       (for [{:keys [title selected? expanded? items expand-actions actions]} (:items list)]
          [:li
           (when title
             [:div {:style {:background (when selected? "#1ea7fd26")
-                           :padding "5px 10px"
-                           :cursor (when actions "pointer")}
-                   :on-click actions}
+                           :padding-left 4}}
              (Triangle
               {:color "rgba(153, 153, 153, 0.6)"
-               :direction (if expanded? :down :right)})
-             title])
+               :direction (if expanded? :down :right)
+               :actions expand-actions})
+             [:span {:on-click actions
+                     :style {:cursor (when actions "pointer")
+                             :display "inline-block"
+                             :padding "5px 0"}}
+              title]])
           [:ul
            (for [{:keys [title selected? url]} items]
              [:li.text-s {:style {:background (when selected? "#1ea7fd")

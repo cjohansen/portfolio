@@ -30,8 +30,8 @@
   ;; TODO: Eventually support more views
   (first (:views state)))
 
-(defn prepare-scene-link [currents location {:keys [id title]}]
-  (let [selected? (currents id)]
+(defn prepare-scene-link [location {:keys [id title]}]
+  (let [selected? (= id (some-> (get-in location [:query-params :scene]) keyword))]
     (cond-> {:title title}
       (not selected?) (assoc :url (router/get-url (assoc location :query-params {:scene id})))
       selected? (assoc :selected? true))))
@@ -42,8 +42,7 @@
        seq))
 
 (defn namespace-expanded? [state ns scenes]
-  (or (get-in state [ns :expanded?])
-      (namespace-selected? state ns scenes)))
+  (get-in state [ns :expanded?]))
 
 (defn prepare-scenes [state location scenes]
   (->> scenes
@@ -51,20 +50,23 @@
        (map (fn [[ns scenes]]
               (let [expanded? (namespace-expanded? state ns scenes)
                     selected? (namespace-selected? state ns scenes)
-                    browsing? (= ns (get-in location [:query-params :namespace]))]
+                    current-ns (get-in location [:query-params :namespace])
+                    browsing? (= ns current-ns)]
                 (cond->
-                    {:title (:title (get-scene-namespace state (first scenes)))}
-                  (not selected?)
-                  (assoc :actions [[:assoc-in [ns :expanded?] (not expanded?)]])
+                    {:title (:title (get-scene-namespace state (first scenes)))
+                     :expand-actions [[:assoc-in [ns :expanded?] (not expanded?)]]
+                     :selected? selected?}
 
                   (not browsing?)
-                  (update :actions into [[:go-to-location (assoc location :query-params {:namespace ns})]])
+                  (assoc :actions
+                         (cond-> [[:go-to-location (assoc location :query-params {:namespace ns})]
+                                  [:assoc-in [ns :expanded?] true]]
+                           current-ns
+                           (into [[:assoc-in [current-ns :expanded?] false]])))
 
-                  expanded?
+                  (or expanded? (and selected? (not browsing?)))
                   (into {:expanded? true
-                         :selected? selected?
-                         :items (let [cids (set (map :id (:current-scenes state)))]
-                                  (map #(prepare-scene-link cids location %) scenes))})))))))
+                         :items (map #(prepare-scene-link location %) scenes)})))))))
 
 (defn prepare-sidebar [state location]
   {:width 230
