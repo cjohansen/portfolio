@@ -49,11 +49,8 @@
 
 (defn go-to-location [state location]
   (let [current-scenes (portfolio/get-current-scenes state (:location state))
-        next-scenes (portfolio/get-current-scenes state location)
-        ns (:namespace (portfolio/get-scene-namespace state (first current-scenes)))]
-    {:assoc-in (cond-> [[:location] location]
-                 (not (get-in state [ns :expanded?]))
-                 (into [[ns :expanded?] true]))
+        next-scenes (portfolio/get-current-scenes state location)]
+    {:assoc-in [[:location] location]
      :fns (into (->> (filter :on-unmount current-scenes)
                      (map (fn [{:keys [on-unmount args id title]}]
                             [:on-unmount (or id title) on-unmount args])))
