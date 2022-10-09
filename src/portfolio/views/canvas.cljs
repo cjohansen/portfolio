@@ -61,20 +61,22 @@
 
 (defn prepare-panel [state location scene addons]
   (let [current-addon (get-current-addon location addons)
-        minimize-path [(:id scene) :minimize-panel?]]
+        minimize-path [(:id scene) :minimize-panel?]
+        content (portfolio/prepare-addon-content current-addon state location scene)
+        minimized? (get-in state minimize-path (not content))]
     {:tabs (for [addon addons]
              (cond-> addon
                (= current-addon addon)
                (assoc :selected? true)))
-     :minimized? (get-in state minimize-path)
-     :button (if (get-in state minimize-path)
+     :minimized? minimized?
+     :button (if minimized?
                {:text "Maximize"
                 :actions [[:dissoc-in minimize-path]]
                 :direction :up}
                {:text "Minimize"
                 :direction :down
                 :actions [[:assoc-in minimize-path true]]})
-     :content (portfolio/prepare-addon-content current-addon state location scene)}))
+     :content content}))
 
 (defn prepare-canvas-view [view state location]
   (let [layout (get-current-layout state view)

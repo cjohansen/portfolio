@@ -108,7 +108,7 @@
                     :top 10}}
       (TriangleButton button)])
    (TabBar data)
-   (portfolio/render-view (:content data))])
+   (some-> data :content portfolio/render-view)])
 
 (d/defcomponent CanvasView [data]
   [:div {:style {:background "#eee"

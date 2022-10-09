@@ -8,8 +8,8 @@
   {`portfolio/render-view #'ArgumentsPanel})
 
 (defn prepare-addon-content [panel state location scene]
-  (with-meta
-    (if (:args scene)
+  (when (:args scene)
+    (with-meta
       {:args (let [args (p/get-scene-args state scene)
                    overrides (p/get-scene-args-overrides state scene)]
                (when (map? args)
@@ -20,8 +20,7 @@
                         :actions [[:set-scene-argument (:id scene) k :event.target/value]]}
                      (k overrides)
                      (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))}
-      {})
-    render-impl))
+      render-impl)))
 
 (def data-impl
   {`portfolio/prepare-addon-content #'prepare-addon-content})
