@@ -24,3 +24,11 @@
                    :up "rotateZ(270deg)"
                    "none")
       :transition "transform 0.1s ease-out 0s"}}]])
+
+(d/defcomponent TriangleButton [data]
+  [:div {:style {:background (or (:bg-color data) "#f0f0f0")
+                 :width 24
+                 :height 24
+                 :text-align "center"
+                 :border-radius "50%"}}
+   (Triangle (update data :color #(or % "#999")))])
