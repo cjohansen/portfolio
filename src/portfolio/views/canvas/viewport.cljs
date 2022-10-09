@@ -45,7 +45,10 @@
                                   ["0" "none"])]
             (set! (.. el -style -height) h)
             (set! (.. el -style -margin) margin)
-            (set! (.. el -style -boxShadow) shadow))))))})
+            (set! (.. el -style -boxShadow) shadow)
+
+            (when (and (= "100%" w) (= "20px" margin))
+              (set! (.. el -style -width) "calc(100% - 40px)")))))))})
 
 (defn create-viewport-tool [config]
   (with-meta

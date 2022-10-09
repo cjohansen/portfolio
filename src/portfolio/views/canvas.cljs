@@ -36,7 +36,7 @@
         (when-let [layout (:canvas/layout view)]
           {:layout layout
            :source (:id view)}))
-    {:layout [[{}]]
+    {:layout [[{:viewport/height :auto}]]
      :source ::multi-scene-default}))
 
 (defn prepare-canvas-view [view state _]
@@ -49,7 +49,7 @@
                  overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))
                  expand-path (get-expand-path vid)
                  expanded (get-in state expand-path)]
-             (when-let [canvas (first (:current-scenes state))]
+             (when-let [canvases (seq (:current-scenes state))]
                {:toolbar
                 {:tools
                  (map (fn [tool value]
@@ -63,9 +63,11 @@
                                          (prepare-tool-menu vid tool value)))))
                       (:tools view)
                       overrides)}
-                :canvas {:current-scene canvas
-                         :tools (:tools view)
-                         :opt (apply merge opt overrides)}}))))}
+
+                :canvases (for [canvas canvases]
+                            {:scene canvas
+                             :tools (:tools view)
+                             :opt (apply merge opt overrides)})}))))}
       view-impl)))
 
 (def data-impl

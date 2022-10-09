@@ -8,11 +8,11 @@
 (defn get-iframe-body [canvas-el]
   (some-> canvas-el get-iframe .-contentWindow .-document .-body))
 
-(defn render-scene [el {:keys [current-scene tools opt]}]
+(defn render-scene [el {:keys [scene tools opt]}]
   (doseq [tool tools]
     (portfolio/prepare-layer tool el opt))
   (let [canvas (some-> el .-firstChild .-contentDocument (.getElementById "canvas"))]
-    (portfolio/render-component (:component current-scene) canvas))
+    (portfolio/render-component (:component scene) canvas))
   (js/requestAnimationFrame
    (fn [_]
      (doseq [tool tools]
@@ -98,15 +98,22 @@
   [:div {:style {:background "#eee"
                  :flex-grow 1
                  :display "flex"
-                 :flex-direction "column"}}
+                 :flex-direction "column"
+                 :overflow "hidden"}}
    (->> (for [row (:rows data)]
           [:div {:style {:display "flex"
                          :flex-direction "row"
                          :flex-grow 1
-                         :justify-content "space-evenly"}}
-           (->> (for [{:keys [toolbar canvas]} row]
-                  [:div {:style {:flex-grow 1}}
+                         :justify-content "space-evenly"
+                         :overflow "hidden"}}
+           (->> (for [{:keys [toolbar canvases]} row]
+                  [:div {:style {:flex-grow 1
+                                 :display "flex"
+                                 :flex-direction "column"
+                                 :overflow "hidden"}}
                    (some-> toolbar Toolbar)
-                   (some-> canvas Canvas)])
+                   [:div {:style {:overflow "scroll"
+                                  :flex-grow "1"}}
+                    (map Canvas canvases)]])
                 (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
         (interpose [:div {:style {:border-top "5px solid #ddd"}}]))])
