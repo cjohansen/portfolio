@@ -89,6 +89,11 @@
     title]
    (some-> menu PopupMenu)])
 
+(d/defcomponent Toolbar [{:keys [tools]}]
+  [:nav {:style {:background "#fff"
+                 :border-bottom "1px solid #e5e5e5"}}
+   (map ToolbarButton tools)])
+
 (d/defcomponent CanvasView [data]
   [:div {:style {:background "#eee"
                  :flex-grow 1
@@ -101,9 +106,7 @@
                          :justify-content "space-evenly"}}
            (->> (for [{:keys [toolbar canvas]} row]
                   [:div {:style {:flex-grow 1}}
-                   [:nav {:style {:background "#fff"
-                                  :border-bottom "1px solid #e5e5e5"}}
-                    (map ToolbarButton (:tools toolbar))]
-                   (Canvas canvas)])
+                   (some-> toolbar Toolbar)
+                   (some-> canvas Canvas)])
                 (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
         (interpose [:div {:style {:border-top "5px solid #ddd"}}]))])

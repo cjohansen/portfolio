@@ -49,22 +49,23 @@
                  overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))
                  expand-path (get-expand-path vid)
                  expanded (get-in state expand-path)]
-             {:toolbar
-              {:tools
-               (map (fn [tool value]
-                      (let [expanded? (= (:id tool) expanded)]
-                        (assoc tool
-                               :actions (if expanded?
-                                          [[:dissoc-in expand-path]]
-                                          [[:assoc-in expand-path (:id tool)]])
-                               :active? (boolean value)
-                               :menu (when expanded?
-                                       (prepare-tool-menu vid tool value)))))
-                    (:tools view)
-                    overrides)}
-              :canvas {:current-scene (first (:current-scenes state))
-                       :tools (:tools view)
-                       :opt (apply merge opt overrides)}})))}
+             (when-let [canvas (first (:current-scenes state))]
+               {:toolbar
+                {:tools
+                 (map (fn [tool value]
+                        (let [expanded? (= (:id tool) expanded)]
+                          (assoc tool
+                                 :actions (if expanded?
+                                            [[:dissoc-in expand-path]]
+                                            [[:assoc-in expand-path (:id tool)]])
+                                 :active? (boolean value)
+                                 :menu (when expanded?
+                                         (prepare-tool-menu vid tool value)))))
+                      (:tools view)
+                      overrides)}
+                :canvas {:current-scene canvas
+                         :tools (:tools view)
+                         :opt (apply merge opt overrides)}}))))}
       view-impl)))
 
 (def data-impl
