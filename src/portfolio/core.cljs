@@ -10,8 +10,7 @@
       (when-let [ns (some-> location :query-params :namespace)]
         (->> (:scenes state)
              (filter (comp keyword? :id))
-             (filter (comp #{ns} namespace :id))))
-      (take 1 (:scenes state))))
+             (filter (comp #{ns} namespace :id))))))
 
 (defn get-scene-namespace [{:keys [namespaces]} {:keys [id]}]
   (->> namespaces

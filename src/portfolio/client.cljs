@@ -3,7 +3,8 @@
   (:require [dumdom.core :as d]
             [portfolio.actions :as actions]
             [portfolio.components.app :refer [App]]
-            [portfolio.core :as portfolio]))
+            [portfolio.core :as portfolio]
+            [portfolio.router :as router]))
 
 (defn render [app {:keys [on-render]}]
   (let [state @app
@@ -39,5 +40,9 @@
   (js/document.body.addEventListener "click" #(relay-body-clicks app %))
   (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
   (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
-  (actions/execute-action! app [:go-to-current-location])
+  (actions/execute-action!
+   app
+   (if (empty? (:query-params (router/get-current-location)))
+     [:go-to-location {:query-params {:scene (:id (first (:scenes @app)))}}]
+     [:go-to-current-location]))
   app)
