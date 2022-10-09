@@ -65,6 +65,12 @@
                      (map (fn [ref] [ref ::portfolio])))
      :update-window-location (router/get-url location)}))
 
+(defn remove-scene-argument [scene-id k]
+  {:actions [[:dissoc-in [scene-id :args k]]]})
+
+(defn set-scene-argument [scene-id k v]
+  {:actions [[:assoc-in [scene-id :args k] v]]})
+
 (declare execute-action!)
 
 (defn process-action-result! [app res]
@@ -101,10 +107,14 @@
      :assoc-in {:assoc-in (rest action)}
      :dissoc-in {:dissoc-in (rest action)}
      :go-to-location (apply go-to-location @app (rest action))
-     :go-to-current-location (go-to-location @app (router/get-current-location))))
+     :go-to-current-location (go-to-location @app (router/get-current-location))
+     :remove-scene-argument (apply remove-scene-argument (rest action))
+     :set-scene-argument (apply set-scene-argument (rest action))))
   app)
 
-(def available-actions #{:assoc-in :dissoc-in :go-to-location :go-to-current-location})
+(def available-actions
+  #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
+    :remove-scene-argument :set-scene-argument})
 
 (defn actions? [x]
   (and (sequential? x)
