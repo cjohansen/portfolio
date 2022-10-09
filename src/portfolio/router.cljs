@@ -36,8 +36,11 @@
     (cond-> {:path path}
       (string? query) (assoc :query-params (parse-query-params query)))))
 
+(defn get-current-url []
+  (js/window.location.href.replace js/window.location.origin ""))
+
 (defn get-current-location []
-  (get-location (js/window.location.href.replace js/window.location.origin "")))
+  (get-location (get-current-url)))
 
 (defn- blank? [v]
   (or (nil? v)
@@ -65,11 +68,12 @@
                 (let [k (stringify-key k)]
                   (cond
                     (true? v) k
-                    (keyword? v) (str k "=" (str (when-let [ns (namespace v)]
-                                                   (str ns "/")) (name v)))
+                    (keyword? v) (str k "=" (js/encodeURIComponent
+                                             (str (when-let [ns (namespace v)]
+                                                    (str ns "/")) (name v))))
                     :else (str k "=" (js/encodeURIComponent v))))))
          (str/join "&"))))
 
 (defn get-url [location]
   (let [qs (encode-query-params (:query-params location))]
-    (str (:path location) (when-not (empty? qs)) (str "?" qs))))
+    (str (:path location) (when-not (empty? qs) (str "?" qs)))))

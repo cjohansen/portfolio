@@ -65,7 +65,8 @@
                    (map (fn [ref] [ref ::portfolio])))
      :subscribe (->> (map :args next-scenes)
                      (filter atom?)
-                     (map (fn [ref] [ref ::portfolio])))}))
+                     (map (fn [ref] [ref ::portfolio])))
+     :update-window-location (router/get-url location)}))
 
 (defn process-action-result! [app res]
   (doseq [[ref k] (:release res)]
@@ -77,6 +78,10 @@
   (doseq [[ref k] (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
     (add-watch ref k (fn [_ _ _ _] (swap! app update :heartbeat (fnil inc 0)))))
+  (when-let [url (:update-window-location res)]
+    (when-not (= url (router/get-current-url))
+      (println "Updating browser URL to" url)
+      (.pushState js/history false false url)))
   (when (or (:dissoc-in res) (:assoc-in res))
     (when (:assoc-in res)
       (println ":assoc-in" (pr-str (:assoc-in res))))
