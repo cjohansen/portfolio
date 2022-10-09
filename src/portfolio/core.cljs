@@ -2,13 +2,6 @@
   (:require [portfolio.protocols :as portfolio]
             [portfolio.router :as router]))
 
-(defn get-current-scene [state location]
-  (or (when-let [scene (some-> location :query-params :scene keyword)]
-        (->> (:scenes state)
-             (filter (comp #{scene} :id))
-             first))
-      (first (:scenes state))))
-
 (defn get-current-scenes [state location]
   (or (when-let [scene (some-> location :query-params :scene keyword)]
         (->> (:scenes state)
