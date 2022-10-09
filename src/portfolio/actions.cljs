@@ -116,14 +116,25 @@
   "Given a Portfolio `app` instance and some prepared data to render, wrap
   collections of actions in a function that executes these actions. Using this
   function makes it possible to prepare event handlers as a sequence of action
-  tuples, and have them seemlessly emitted as actions in the components."
+  tuples, and have them seemlessly emitted as actions in the components.
+
+  If you need to access the `.-value` of the event target (e.g. for on-change on
+  input fields, etc), use `:event.target/value` as a placeholder in your action,
+  and it will be replaced with the value."
   [app data]
   (walk/prewalk
    (fn [x]
      (if (actions? x)
-       (fn [_]
+       (fn [e]
          (doseq [action x]
-           (execute-action! app action)))
+           (execute-action!
+            app
+            (walk/prewalk
+             (fn [ax]
+               (if (= :event.target/value ax)
+                 (some-> e .-target .-value)
+                 ax))
+             action))))
        x))
    data))
 
