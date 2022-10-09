@@ -1,0 +1,82 @@
+@import url('./fonts.css');
+@import url('./reset.css');
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-size: 14px;
+}
+
+body {
+  background: #f6f9fc;
+  font-weight: normal;
+  font-style: normal;
+  font-family: Lato, helvetica, arial, sans-serif;
+  font-stretch: normal;
+  letter-spacing: normal;
+  line-height: 1.33;
+  min-height: 100%;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings */
+.h1 {font-size: 1.6rem;}
+.h2 {font-size: 1.3rem;}
+.h3 {font-size: 1.2rem;}
+.h4 {font-size: 1.1rem;}
+
+.text-s {font-size: 0.92rem;}
+
+a,
+a:link,
+a:visited,
+.link {
+  color: #1ea7fd;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover,
+a:link:hover,
+a:visited:hover,
+a.inverted,
+a.inverted:link,
+a.inverted:visited,
+.link:hover {
+  text-decoration: underline;
+}
+
+.boldable {
+
+}
+
+.boldable::after {
+  display: block;
+  content: attr(title);
+  font-weight: bold;
+  height: 1px;
+  color: transparent;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: block;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.hoverable:hover {
+  background: #1ea7fd26;
+}

@@ -1,0 +1,7 @@
+{:main "portfolio.dev"
+ :optimizations :none
+ :pretty-print true
+ :source-map true
+ :asset-path "/portfolio/js/dev"
+ :output-to "resources/public/portfolio/js/app.js"
+ :output-dir "resources/public/portfolio/js/dev"}

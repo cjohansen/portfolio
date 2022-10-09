@@ -1,0 +1,11 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/clojurescript {:mvn/version "1.11.60"}
+        cjohansen/dumdom {:mvn/version "2022.09.28"}
+        ring/ring {:mvn/version "1.9.6"}}
+ :aliases
+ {:dev {:extra-paths ["dev" "test" "dev-resources"]
+        :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.18"}
+                     cider/piggieback {:mvn/version "0.5.3"}
+                     cjohansen/gadget-inspector {:mvn/version "0.2020.09.10"}}
+        :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}}}

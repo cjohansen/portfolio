@@ -1,0 +1,3 @@
+{:known-macros [dumdom.core/defcomponent match]
+ :rules {:if-without-else true
+         :unused-fn-parameters true}}
