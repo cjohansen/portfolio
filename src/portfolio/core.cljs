@@ -9,6 +9,17 @@
              first))
       (first (:scenes state))))
 
+(defn get-current-scenes [state location]
+  (or (when-let [scene (some-> location :query-params :scene keyword)]
+        (->> (:scenes state)
+             (filter (comp #{scene} :id))
+             (take 1)))
+      (when-let [ns (some-> location :query-params :namespace keyword)]
+        (->> (:scenes state)
+             (filter (comp keyword? :id))
+             (filter (comp #{ns} namespace :id))))
+      (take 1 (:scenes state))))
+
 (defn get-scene-namespace [{:keys [namespaces]} {:keys [id]}]
   (->> namespaces
        (filter (comp #{(some-> id namespace)} :namespace))

@@ -48,36 +48,33 @@
   (satisfies? cljs.core/IWatchable x))
 
 (defn go-to-location [state location]
-  (let [current-scene (portfolio/get-current-scene state (:location state))
-        next-scene (portfolio/get-current-scene state location)
-        ref (when (atom? (:args next-scene)) (:args next-scene))
-        ns (:namespace (portfolio/get-scene-namespace state current-scene))]
-    (cond-> {:assoc-in [[:location] location]}
-      (not (get-in state [ns :expanded?]))
-      (update :assoc-in into [[ns :expanded?] true])
-
-      (atom? (:args current-scene))
-      (assoc :release [(:args current-scene) ::portfolio])
-
-      ref
-      (assoc :subscribe [ref ::portfolio])
-
-      (:on-unmount current-scene)
-      (update :fns conj (let [{:keys [on-unmount args id title]} current-scene]
-                          [:on-unmount (or id title) on-unmount args]))
-
-      (:on-mount next-scene)
-      (update :fns conj (let [{:keys [on-mount args id title]} next-scene]
-                          [:on-mount (or id title) on-mount args])))))
+  (let [current-scenes (portfolio/get-current-scenes state (:location state))
+        next-scenes (portfolio/get-current-scenes state location)
+        ns (:namespace (portfolio/get-scene-namespace state (first current-scenes)))]
+    {:assoc-in (cond-> [[:location] location]
+                 (not (get-in state [ns :expanded?]))
+                 (into [[ns :expanded?] true]))
+     :fns (into (->> (filter :on-unmount current-scenes)
+                     (map (fn [{:keys [on-unmount args id title]}]
+                            [:on-unmount (or id title) on-unmount args])))
+                (->> (filter :on-mount next-scenes)
+                     (map (fn [{:keys [on-mount args id title]}]
+                            [:on-mount (or id title) on-mount args]))))
+     :release (->> (map :args current-scenes)
+                   (filter atom?)
+                   (map (fn [ref] [ref ::portfolio])))
+     :subscribe (->> (map :args next-scenes)
+                     (filter atom?)
+                     (map (fn [ref] [ref ::portfolio])))}))
 
 (defn process-action-result! [app res]
-  (when-let [[ref k] (:release res)]
+  (doseq [[ref k] (:release res)]
     (println "Stop watching atom" (pr-str ref))
     (remove-watch ref k))
   (doseq [[k t f & args] (:fns res)]
     (println (str "Calling " k " on " t " with") (pr-str args))
     (apply f args))
-  (when-let [[ref k] (:subscribe res)]
+  (doseq [[ref k] (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
     (add-watch ref k (fn [_ _ _ _] (swap! app update :heartbeat (fnil inc 0)))))
   (when (or (:dissoc-in res) (:assoc-in res))
