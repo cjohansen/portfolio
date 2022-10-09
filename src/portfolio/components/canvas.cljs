@@ -1,5 +1,7 @@
 (ns portfolio.components.canvas
   (:require [dumdom.core :as d]
+            [portfolio.components.tab-bar :refer [TabBar]]
+            [portfolio.components.triangle :refer [TriangleButton]]
             [portfolio.protocols :as portfolio]))
 
 (defn get-iframe [canvas-el]
@@ -94,6 +96,20 @@
                  :border-bottom "1px solid #e5e5e5"}}
    (map ToolbarButton tools)])
 
+(d/defcomponent CanvasPanel [data]
+  [:div {:style {:border-top "1px solid #ccc"
+                 :background "#ffffff"
+                 :height (if (:minimized? data) "40px" "30%")
+                 :transition "height 0.25s"
+                 :position "relative"}}
+   (when-let [button (:button data)]
+     [:div {:style {:position "absolute"
+                    :right 20
+                    :top 10}}
+      (TriangleButton button)])
+   (TabBar data)
+   (portfolio/render-view (:content data))])
+
 (d/defcomponent CanvasView [data]
   [:div {:style {:background "#eee"
                  :flex-grow 1
@@ -116,4 +132,5 @@
                                   :flex-grow "1"}}
                     (map Canvas canvases)]])
                 (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
-        (interpose [:div {:style {:border-top "5px solid #ddd"}}]))])
+        (interpose [:div {:style {:border-top "5px solid #ddd"}}]))
+   (some-> data :panel CanvasPanel)])

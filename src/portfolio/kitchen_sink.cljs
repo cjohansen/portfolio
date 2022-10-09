@@ -4,7 +4,8 @@
             [portfolio.views.canvas :as canvas]
             [portfolio.views.canvas.background :as canvas-bg]
             [portfolio.views.canvas.grid :as canvas-grid]
-            [portfolio.views.canvas.viewport :as canvas-vp]))
+            [portfolio.views.canvas.viewport :as canvas-vp]
+            [portfolio.views.canvas.args :as canvas-args]))
 
 (defn create-app [config]
   (-> config
@@ -12,7 +13,8 @@
                       {:canvas/layout (:canvas/layout config)
                        :tools [(canvas-bg/create-background-tool config)
                                (canvas-vp/create-viewport-tool config)
-                               (canvas-grid/create-grid-tool config)]})])
+                               (canvas-grid/create-grid-tool config)]
+                       :addons [(canvas-args/create-args-panel config)]})])
       atom))
 
 (defn start! [config & opt]

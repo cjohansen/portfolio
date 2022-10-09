@@ -21,6 +21,10 @@
   :extend-via-metadata true
   (finalize-layer [self el opt]))
 
+(defprotocol ICanvasAddon
+  :extend-via-metadata true
+  (prepare-addon-content [panel state location canvas]))
+
 (extend-type cljs.core/PersistentArrayMap
   ICanvasFinalizer
   (finalize-layer [data el opt])

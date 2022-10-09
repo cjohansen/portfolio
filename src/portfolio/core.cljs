@@ -84,13 +84,22 @@
     (= (:id current-view) (:id view))
     (assoc :selected? true)))
 
-(defn realize-scenes [scenes]
+(defn get-scene-args-overrides [state scene]
+  (get-in state [(:id scene) :args]))
+
+(defn get-scene-args [state scene]
+  (if (map? (:args scene))
+    (merge (:args scene) (get-scene-args-overrides state scene))
+    (:args scene)))
+
+(defn realize-scenes [state scenes]
   (for [scene scenes]
     (cond-> scene
-      (:component-fn scene) (assoc :component ((:component-fn scene) (:args scene))))))
+      (:component-fn scene)
+      (assoc :component ((:component-fn scene) (get-scene-args state scene))))))
 
 (defn prepare-data [state location]
-  (let [current-scenes (realize-scenes (get-current-scenes state location))
+  (let [current-scenes (realize-scenes state (get-current-scenes state location))
         ;; There might be multiple scenes, but multiple scenes across different
         ;; namespaces is not (yet) supported.
         current-namespace (get-scene-namespace state (first current-scenes))
