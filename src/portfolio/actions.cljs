@@ -65,6 +65,8 @@
                      (map (fn [ref] [ref ::portfolio])))
      :update-window-location (router/get-url location)}))
 
+(declare execute-action!)
+
 (defn process-action-result! [app res]
   (doseq [[ref k] (:release res)]
     (println "Stop watching atom" (pr-str ref))
@@ -87,7 +89,9 @@
     (swap! app (fn [state]
                  (apply assoc-in*
                         (apply dissoc-in* state (:dissoc-in res))
-                        (:assoc-in res))))))
+                        (:assoc-in res)))))
+  (doseq [action (:actions res)]
+    (execute-action! app action)))
 
 (defn execute-action! [app action]
   (println "execute-action!" action)
