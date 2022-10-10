@@ -30,10 +30,13 @@
   ;; TODO: Eventually support more views
   (first (:views state)))
 
-(defn prepare-scene-link [location {:keys [id title]}]
+(defn get-scene-url [location scene]
+  (router/get-url (assoc location :query-params {:scene (:id scene)})))
+
+(defn prepare-scene-link [location {:keys [id title] :as scene}]
   (let [selected? (= id (some-> (get-in location [:query-params :scene]) keyword))]
     (cond-> {:title title}
-      (not selected?) (assoc :url (router/get-url (assoc location :query-params {:scene id})))
+      (not selected?) (assoc :url (get-scene-url location scene))
       selected? (assoc :selected? true))))
 
 (defn namespace-selected? [state ns scenes]
