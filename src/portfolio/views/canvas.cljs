@@ -1,5 +1,6 @@
 (ns portfolio.views.canvas
   (:require [portfolio.components.canvas :refer [CanvasView]]
+            [portfolio.core :as p]
             [portfolio.protocols :as portfolio]))
 
 (def view-impl
@@ -86,13 +87,19 @@
        (for [[row y] (map vector (:layout layout) (range))]
          (for [[opt x] (map vector row (range))]
            (let [vid [(:source layout) x y]
-                 overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))]
+                 overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))
+                 multi-scene? (< 1 (count scenes))]
              (when (seq scenes)
                {:toolbar (prepare-toolbar state vid (:tools view) overrides)
-                :canvases (for [canvas scenes]
-                            {:scene canvas
-                             :tools (:tools view)
-                             :opt (apply merge opt overrides)})}))))
+                :canvases
+                (for [scene scenes]
+                  (cond->
+                      {:scene scene
+                       :tools (:tools view)
+                       :opt (apply merge opt overrides)}
+                    multi-scene? (assoc :title (:title scene)
+                                        :url (p/get-scene-url location scene)
+                                        :description (:description scene))))}))))
        :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
                 (prepare-panel state location (first scenes) (:addons view)))}
       view-impl)))

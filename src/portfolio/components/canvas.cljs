@@ -117,6 +117,22 @@
    (TabBar data)
    (some-> data :content portfolio/render-view)])
 
+(d/defcomponent CanvasHeader [{:keys [title url description]}]
+  [:div {:style {:margin 20}}
+   [:h2.h3 {:style {:margin "0 0 10px"}}
+    [:a {:href url} title]]
+   (when-not (empty? description)
+     [:p description])])
+
+(defn render-canvas [data]
+  (->> [(when (:title data)
+          (CanvasHeader data))
+        (when (:scene data)
+          (Canvas data))
+        (when (= :separator (:kind data))
+          [:div {:style {:height 20}}])]
+       (remove nil?)))
+
 (d/defcomponent CanvasView [data]
   [:div {:style {:background "#eee"
                  :flex-grow 1
@@ -137,7 +153,9 @@
                    (some-> toolbar Toolbar)
                    [:div {:style {:overflow "scroll"
                                   :flex-grow "1"}}
-                    (map Canvas canvases)]])
+                    (->> canvases
+                         (interpose {:kind :separator})
+                         (mapcat render-canvas))]])
                 (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
         (interpose [:div {:style {:border-top "5px solid #ddd"}}]))
    (some-> data :panel CanvasPanel)])
