@@ -16,12 +16,23 @@
 
     :else width))
 
+(defn get-style-px [style prop]
+  (if-let [v (some-> style (.getPropertyValue prop) not-empty)]
+    (js/parseInt v 10)
+    0))
+
 (defn get-height [frame frame-body height]
   (cond
     (= :auto height)
-    (let [style (js/window.getComputedStyle frame)]
-      (str (+ (js/parseInt (.getPropertyValue style "padding-top") 10)
-              (js/parseInt (.getPropertyValue style "padding-bottom") 10)
+    (let [style (js/window.getComputedStyle frame)
+          root-el-style (some-> frame-body
+                                .-firstElementChild
+                                .-firstElementChild
+                                js/window.getComputedStyle)]
+      (str (+ (get-style-px style "padding-top")
+              (get-style-px style "padding-bottom")
+              (get-style-px root-el-style "margin-top")
+              (get-style-px root-el-style "margin-bottom")
               (.-scrollHeight frame-body)) "px"))
 
     (number? height) (str height "px")
@@ -37,7 +48,7 @@
            frame-body (canvas/get-iframe-body el)
            w (get-width frame frame-body width)]
        (set! (.. el -style -width)
-             (if (and (= "100%" w) (not (#{nil "100%"} height)))
+             (if (and (= "100%" w) (not= "100%" (or height "100%")))
                (str "calc(100% - 40px)")
                w))
        (js/setTimeout
