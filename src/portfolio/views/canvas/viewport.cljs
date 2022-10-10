@@ -36,7 +36,10 @@
      (let [frame (canvas/get-iframe el)
            frame-body (canvas/get-iframe-body el)
            w (get-width frame frame-body width)]
-       (set! (.. el -style -width) w)
+       (set! (.. el -style -width)
+             (if (and (= "100%" w) (not (#{nil "100%"} height)))
+               (str "calc(100% - 40px)")
+               w))
        (js/setTimeout
         (fn []
           (let [h (get-height frame frame-body height)
@@ -45,10 +48,7 @@
                                   ["0" "none"])]
             (set! (.. el -style -height) h)
             (set! (.. el -style -margin) margin)
-            (set! (.. el -style -boxShadow) shadow)
-
-            (when (and (= "100%" w) (= "20px" margin))
-              (set! (.. el -style -width) "calc(100% - 40px)"))))
+            (set! (.. el -style -boxShadow) shadow)))
         100)))})
 
 (defn create-viewport-tool [config]
