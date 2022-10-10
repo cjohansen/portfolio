@@ -8,8 +8,11 @@
       [:tr
        [:td {:style {:padding-right 20}}
         [:label label]]
-       [:td {:style {:padding-right 20}}
-        [:input {:type "text" :on-input actions :value value}]]
+       [:td {:style {:padding "5px 20px 5px 0"}}
+        [:input.input
+         {:type "text"
+          :on-input actions
+          :value value}]]
        [:td
         (when clear-actions
           [:div

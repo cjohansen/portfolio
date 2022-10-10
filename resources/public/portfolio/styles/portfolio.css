@@ -80,3 +80,16 @@ a.inverted:visited,
 .hoverable:hover {
   background: #1ea7fd26;
 }
+
+.input {
+  padding: 6px 10px;
+  transition: box-shadow 200ms ease-out 0s, opacity 200ms ease-out 0s;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+}
+
+.input:focus {
+  box-shadow: #1ea7fd 0px 0px 0px 1px inset;
+}

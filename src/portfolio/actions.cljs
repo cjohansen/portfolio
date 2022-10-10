@@ -65,11 +65,28 @@
                      (map (fn [ref] [ref ::portfolio])))
      :update-window-location (router/get-url location)}))
 
-(defn remove-scene-argument [scene-id k]
-  {:actions [[:dissoc-in [scene-id :args k]]]})
+(defn remove-scene-argument [state scene-id k]
+  (let [args (->> state :scenes (filter (comp #{scene-id} :id)) first :args)]
+    (cond
+      (map? args)
+      {:actions [[:dissoc-in [scene-id :args k]]]}
 
-(defn set-scene-argument [scene-id k v]
-  {:actions [[:assoc-in [scene-id :args k] v]]})
+      (atom? args)
+      {:swap [args [k] (get-in state [scene-id :original k])]
+       :actions [[:dissoc-in [scene-id :args k]]
+                 [:dissoc-in [scene-id :original k]]]})))
+
+(defn set-scene-argument [state scene-id k v]
+  (let [args (->> state :scenes (filter (comp #{scene-id} :id)) first :args)]
+    (cond
+      (map? args)
+      {:actions [[:assoc-in [scene-id :args k] v]]}
+
+      (atom? args)
+      {:swap [args [k] v]
+       :actions (cond-> [[:assoc-in [scene-id :args k] v]]
+                  (not (get-in state [scene-id :original k]))
+                  (into [[:assoc-in [scene-id :original k] (k @args)]]))})))
 
 (declare execute-action!)
 
@@ -97,7 +114,9 @@
                         (apply dissoc-in* state (:dissoc-in res))
                         (:assoc-in res)))))
   (doseq [action (:actions res)]
-    (execute-action! app action)))
+    (execute-action! app action))
+  (when-let [[ref path v] (:swap res)]
+    (swap! ref assoc-in path v)))
 
 (defn execute-action! [app action]
   (println "execute-action!" action)
@@ -108,8 +127,8 @@
      :dissoc-in {:dissoc-in (rest action)}
      :go-to-location (apply go-to-location @app (rest action))
      :go-to-current-location (go-to-location @app (router/get-current-location))
-     :remove-scene-argument (apply remove-scene-argument (rest action))
-     :set-scene-argument (apply set-scene-argument (rest action))))
+     :remove-scene-argument (apply remove-scene-argument @app (rest action))
+     :set-scene-argument (apply set-scene-argument @app (rest action))))
   app)
 
 (def available-actions

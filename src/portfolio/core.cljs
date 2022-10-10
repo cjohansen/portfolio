@@ -84,12 +84,12 @@
     (= (:id current-view) (:id view))
     (assoc :selected? true)))
 
-(defn get-scene-args-overrides [state scene]
+(defn get-scene-arg-overrides [state scene]
   (get-in state [(:id scene) :args]))
 
 (defn get-scene-args [state scene]
   (if (map? (:args scene))
-    (merge (:args scene) (get-scene-args-overrides state scene))
+    (merge (:args scene) (get-scene-arg-overrides state scene))
     (:args scene)))
 
 (defn realize-scenes [state scenes]

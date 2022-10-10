@@ -11,14 +11,15 @@
   (when (:args scene)
     (with-meta
       {:args (let [args (p/get-scene-args state scene)
-                   overrides (p/get-scene-args-overrides state scene)]
+                   args (if (satisfies? cljs.core/IWatchable args) @args args)
+                   overrides (p/get-scene-arg-overrides state scene)]
                (when (map? args)
                  (for [[k v] args]
                    (cond->
                        {:label (str/replace (str k) #"^:" "")
                         :value v
                         :actions [[:set-scene-argument (:id scene) k :event.target/value]]}
-                     (k overrides)
+                     (= (k args) (k overrides))
                      (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))}
       render-impl)))
 
