@@ -66,7 +66,7 @@
      :update-window-location (router/get-url location)}))
 
 (defn remove-scene-argument [state scene-id k]
-  (let [args (->> state :scenes (filter (comp #{scene-id} :id)) first :args)]
+  (let [args (get-in state [:scenes scene-id :args])]
     (cond
       (map? args)
       {:actions [[:dissoc-in [scene-id :args k]]]}
@@ -77,7 +77,7 @@
                  [:dissoc-in [scene-id :original k]]]})))
 
 (defn set-scene-argument [state scene-id k v]
-  (let [args (->> state :scenes (filter (comp #{scene-id} :id)) first :args)]
+  (let [args (get-in state [:scenes scene-id :args])]
     (cond
       (map? args)
       {:actions [[:assoc-in [scene-id :args k] v]]}
@@ -178,13 +178,3 @@
              action))))
        x))
    data))
-
-(comment
-  @(execute-action
-    (atom {:scenes [{:args (atom {})}]})
-    [:go-to-location {}])
-
-  (go-to-location {:scenes [{:id :my.components/button
-                             :args (atom {})}]
-                   :namespaces [{:namespace "my.components"}]} {})
-  )

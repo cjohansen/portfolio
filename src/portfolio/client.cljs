@@ -43,6 +43,6 @@
   (actions/execute-action!
    app
    (if (empty? (:query-params (router/get-current-location)))
-     [:go-to-location {:query-params {:scene (:id (first (:scenes @app)))}}]
+     [:go-to-location {:query-params {:scene (:id (first (sort (vals (:scenes @app)))))}}]
      [:go-to-current-location]))
   app)

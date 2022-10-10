@@ -3,6 +3,7 @@
             [gadget.inspector :as inspector]
             [portfolio.actions :as actions]
             [portfolio.adapters.dumdom :as pd]
+            [portfolio.core :as p]
             [portfolio.kitchen-sink :as portfolio]))
 
 (set! dumdom.component/*render-eagerly?* true)
@@ -112,5 +113,5 @@
 
 (defn ^:after-load render []
   (actions/execute-action! app [:go-to-location {}])
-  (swap! app merge config)
+  (swap! app merge (p/init-state config))
   (actions/execute-action! app [:go-to-current-location]))

@@ -5,26 +5,24 @@
 (defn get-current-scenes [state location]
   (or (when-let [scene (some-> location :query-params :scene keyword)]
         (->> (:scenes state)
+             vals
              (filter (comp #{scene} :id))
              (take 1)))
       (when-let [ns (some-> location :query-params :namespace)]
         (->> (:scenes state)
+             vals
              (filter (comp keyword? :id))
              (filter (comp #{ns} namespace :id))))))
 
 (defn get-scene-namespace [{:keys [namespaces]} {:keys [id]}]
-  (->> namespaces
-       (filter (comp #{(some-> id namespace)} :namespace))
-       first))
+  (get namespaces (some-> id namespace)))
 
 (defn get-scene-collection [state scene]
   (->> (get-scene-namespace state scene)
        :collection))
 
 (defn get-collection [state collection]
-  (->> (:collections state)
-       (filter (comp #{collection} :id))
-       first))
+  (get-in state [:collections collection]))
 
 (defn get-current-view [state location]
   ;; TODO: Eventually support more views
@@ -75,6 +73,7 @@
   {:width 230
    :title (or (not-empty (:title state)) "Portfolio")
    :lists (->> (:scenes state)
+               vals
                (group-by #(get-scene-collection state %))
                (sort-by first)
                (map (fn [[collection scenes]]
@@ -114,3 +113,9 @@
     {:sidebar (prepare-sidebar state location)
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
      :view (portfolio/prepare-data current-view state location)}))
+
+(defn init-state [config]
+  (-> config
+      (update :scenes #(->> % (map (juxt :id identity)) (into {})))
+      (update :namespaces #(->> % (map (juxt :namespace identity)) (into {})))
+      (update :collections #(->> % (map (juxt :id identity)) (into {})))))
