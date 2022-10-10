@@ -49,34 +49,41 @@
              :height "100%"}}]])
 
 (d/defcomponent PopupMenu [{:keys [options]}]
-  [:div {:style
-         {:position "absolute"
-          :margin-top 6
-          :background "#fff"
-          :box-shadow "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"
-          :border-radius 4
-          :transform "translateX(-50%)"
-          :padding "10px 0"
-          :left "50%"
-          :width 200
-          :z-index 1}}
+  ;; First, position absolutely so that "50%" is taken as 50% of the containing
+  ;; element
+  [:div {:style {:position "absolute"
+                 :left "50%"}}
+   ;; Then position fixed so element is not clipped by a container's overflow:
+   ;; hidden
    [:div {:style
-          {:position "absolute"
-           :border-style "solid"
-           :transform "translate3d(-50%, 0px, 0px)"
-           :left "50%"
-           :top -8
-           :border-width "0px 8px 8px"
-           :border-color "transparent transparent rgba(255, 255, 255, 0.95)"}}]
-   (for [{:keys [title selected? actions]} options]
-     [:button.button.hoverable
-      {:style {:background (when selected? "#f8f8f8")
-               :font-weight (when selected? "bold")
-               :width "100%"
-               :text-align "left"
-               :padding "10px 20px"}
-       :on-click actions}
-      title])])
+          {:position "fixed"
+           :margin-top 6
+           :background "#fff"
+           :box-shadow "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"
+           :border-radius 4
+           ;; Shift element back half its own width so it's centered under the
+           ;; containing element that triggered it
+           :transform "translateX(-50%)"
+           :padding "10px 0"
+           :width 200
+           :z-index 1}}
+    [:div {:style
+           {:position "absolute"
+            :border-style "solid"
+            :transform "translate3d(-50%, 0px, 0px)"
+            :left "50%"
+            :top -8
+            :border-width "0px 8px 8px"
+            :border-color "transparent transparent rgba(255, 255, 255, 0.95)"}}]
+    (for [{:keys [title selected? actions]} options]
+      [:button.button.hoverable
+       {:style {:background (when selected? "#f8f8f8")
+                :font-weight (when selected? "bold")
+                :width "100%"
+                :text-align "left"
+                :padding "10px 20px"}
+        :on-click actions}
+       title])]])
 
 (d/defcomponent ToolbarButton [{:keys [title menu active? actions]}]
   [:span {:style {:margin-left 20
