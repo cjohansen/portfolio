@@ -88,7 +88,8 @@
         scenes (:current-scenes state)
         multi? (multi-scene? state location)]
     (with-meta
-      {:rows
+      {:mode (if multi? (:namespace (:current-namespace state)) :single-scene)
+       :rows
        (for [[row y] (map vector (:layout layout) (range))]
          (for [[opt x] (map vector row (range))]
            (let [vid [(:source layout) x y]

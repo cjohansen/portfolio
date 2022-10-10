@@ -136,7 +136,9 @@
                  :style {:height 20}}])]
        (remove nil?)))
 
-(d/defcomponent CanvasView [data]
+(d/defcomponent CanvasView
+  :keyfn :mode
+  [data]
   [:div {:style {:background "#eee"
                  :flex-grow 1
                  :display "flex"
