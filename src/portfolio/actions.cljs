@@ -141,6 +141,13 @@
        (every? #(and (sequential? %)
                      (contains? available-actions (first %))) x)))
 
+(defn parse-int [s]
+  (let [n (js/parseInt s 10)]
+    (if (not= n n)
+      ;; NaN!
+      0
+      n)))
+
 (defn actionize-data
   "Given a Portfolio `app` instance and some prepared data to render, wrap
   collections of actions in a function that executes these actions. Using this
@@ -160,9 +167,14 @@
             app
             (walk/prewalk
              (fn [ax]
-               (if (= :event.target/value ax)
+               (cond
+                 (= :event.target/value ax)
                  (some-> e .-target .-value)
-                 ax))
+
+                 (= :event.target/number-value ax)
+                 (some-> e .-target .-value parse-int)
+
+                 :default ax))
              action))))
        x))
    data))

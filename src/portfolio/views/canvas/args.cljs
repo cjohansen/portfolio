@@ -7,6 +7,24 @@
 (def render-impl
   {`portfolio/render-view #'ArgumentsPanel})
 
+(defn get-input-kind [scene k v]
+  (or (get-in scene [:arg-defs k :input/kind])
+      (cond
+        (boolean? v)
+        {:kind :boolean
+         :value v
+         :actions [[:set-scene-argument (:id scene) k (not v)]]}
+
+        (number? v)
+        {:kind :number
+         :value v
+         :actions [[:set-scene-argument (:id scene) k :event.target/number-value]]}
+
+        :default
+        {:kind :text
+         :value v
+         :actions [[:set-scene-argument (:id scene) k :event.target/value]]})))
+
 (defn prepare-addon-content [panel state location scene]
   (when (:args scene)
     (with-meta
@@ -18,7 +36,7 @@
                    (cond->
                        {:label (str/replace (str k) #"^:" "")
                         :value v
-                        :actions [[:set-scene-argument (:id scene) k :event.target/value]]}
+                        :input (get-input-kind scene k v)}
                      (= (k args) (k overrides))
                      (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))}
       render-impl)))
