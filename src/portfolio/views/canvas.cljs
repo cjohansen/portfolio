@@ -20,8 +20,14 @@
                     [:dissoc-in [(:id tool) vid :value]]
                     [:assoc-in [(:id tool) vid :value] value])]}))})
 
-(defn get-current-layout [state view]
-  (if (= 1 (count (:current-scenes state)))
+(defn multi-scene? [state location]
+  (or (contains? (:query-params location) :namespace)
+      (< 1 (count (:current-scenes state)))))
+
+(defn get-current-layout [state location view]
+  (if (multi-scene? state location)
+    {:layout [[{:viewport/height :auto}]]
+     :source ::multi-scene-default}
     (or (when-let [layout (-> state :current-scenes first :canvas/layout)]
           {:layout layout
            :source (-> state :current-scenes first :id)})
@@ -36,9 +42,7 @@
            :source :state-layout})
         (when-let [layout (:canvas/layout view)]
           {:layout layout
-           :source (:id view)}))
-    {:layout [[{:viewport/height :auto}]]
-     :source ::multi-scene-default}))
+           :source (:id view)}))))
 
 (defn prepare-toolbar [state vid tools overrides]
   (let [expand-path (get-expand-path vid)
@@ -80,15 +84,15 @@
      :content content}))
 
 (defn prepare-canvas-view [view state location]
-  (let [layout (get-current-layout state view)
-        scenes (:current-scenes state)]
+  (let [layout (get-current-layout state location view)
+        scenes (:current-scenes state)
+        multi? (multi-scene? state location)]
     (with-meta
       {:rows
        (for [[row y] (map vector (:layout layout) (range))]
          (for [[opt x] (map vector row (range))]
            (let [vid [(:source layout) x y]
-                 overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))
-                 multi-scene? (< 1 (count scenes))]
+                 overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))]
              (when (seq scenes)
                {:toolbar (prepare-toolbar state vid (:tools view) overrides)
                 :canvases
@@ -97,9 +101,10 @@
                       {:scene scene
                        :tools (:tools view)
                        :opt (apply merge opt overrides)}
-                    multi-scene? (assoc :title (:title scene)
-                                        :url (p/get-scene-url location scene)
-                                        :description (:description scene))))}))))
+                    multi?
+                    (assoc :title (:title scene)
+                           :url (p/get-scene-url location scene)
+                           :description (:description scene))))}))))
        :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
                 (prepare-panel state location (first scenes) (:addons view)))}
       view-impl)))
