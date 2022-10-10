@@ -117,7 +117,9 @@
    (TabBar data)
    (some-> data :content portfolio/render-view)])
 
-(d/defcomponent CanvasHeader [{:keys [title url description]}]
+(d/defcomponent CanvasHeader
+  :keyfn :title
+  [{:keys [title url description]}]
   [:div {:style {:margin 20}}
    [:h2.h3 {:style {:margin "0 0 10px"}}
     [:a {:href url} title]]
@@ -130,7 +132,8 @@
         (when (:scene data)
           (Canvas data))
         (when (= :separator (:kind data))
-          [:div {:style {:height 20}}])]
+          [:div {:key "separator"
+                 :style {:height 20}}])]
        (remove nil?)))
 
 (d/defcomponent CanvasView [data]

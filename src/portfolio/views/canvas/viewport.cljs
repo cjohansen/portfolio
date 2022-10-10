@@ -37,7 +37,7 @@
            frame-body (canvas/get-iframe-body el)
            w (get-width frame frame-body width)]
        (set! (.. el -style -width) w)
-       (js/requestAnimationFrame
+       (js/setTimeout
         (fn []
           (let [h (get-height frame frame-body height)
                 [margin shadow] (if (or (not= "100%" w) (not= "100%" h))
@@ -48,7 +48,8 @@
             (set! (.. el -style -boxShadow) shadow)
 
             (when (and (= "100%" w) (= "20px" margin))
-              (set! (.. el -style -width) "calc(100% - 40px)")))))))})
+              (set! (.. el -style -width) "calc(100% - 40px)"))))
+        100)))})
 
 (defn create-viewport-tool [config]
   (with-meta
