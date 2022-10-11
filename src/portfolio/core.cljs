@@ -43,7 +43,7 @@
        seq))
 
 (defn namespace-expanded? [state ns scenes]
-  (get-in state [ns :expanded?]))
+  (get-in state [:ui ns :expanded?]))
 
 (defn prepare-scenes [state location scenes]
   (->> scenes
@@ -55,15 +55,15 @@
                     browsing? (= ns current-ns)]
                 (cond->
                     {:title (:title (get-scene-namespace state (first scenes)))
-                     :expand-actions [[:assoc-in [ns :expanded?] (not expanded?)]]
+                     :expand-actions [[:assoc-in [:ui ns :expanded?] (not expanded?)]]
                      :selected? selected?}
 
                   (not browsing?)
                   (assoc :actions
                          (cond-> [[:go-to-location (assoc location :query-params {:namespace ns})]
-                                  [:assoc-in [ns :expanded?] true]]
+                                  [:assoc-in [:ui ns :expanded?] true]]
                            current-ns
-                           (into [[:assoc-in [current-ns :expanded?] false]])))
+                           (into [[:assoc-in [:ui current-ns :expanded?] false]])))
 
                   (or expanded? (and selected? (not browsing?)))
                   (into {:expanded? true
@@ -87,7 +87,7 @@
     (assoc :selected? true)))
 
 (defn get-scene-arg-overrides [state scene]
-  (get-in state [(:id scene) :args]))
+  (get-in state [:ui (:id scene) :overrides]))
 
 (defn get-scene-args [state scene]
   (if (map? (:args scene))

@@ -69,24 +69,24 @@
   (let [args (get-in state [:scenes scene-id :args])]
     (cond
       (map? args)
-      {:actions [[:dissoc-in [scene-id :args k]]]}
+      {:actions [[:dissoc-in [:ui scene-id :overrides k]]]}
 
       (atom? args)
-      {:swap [args [k] (get-in state [scene-id :original k])]
-       :actions [[:dissoc-in [scene-id :args k]]
-                 [:dissoc-in [scene-id :original k]]]})))
+      {:swap [args [k] (get-in state [:scenes scene-id :original k])]
+       :actions [[:dissoc-in [:ui scene-id :overrides k]]
+                 [:dissoc-in [:ui scene-id :original k]]]})))
 
 (defn set-scene-argument [state scene-id k v]
   (let [args (get-in state [:scenes scene-id :args])]
     (cond
       (map? args)
-      {:actions [[:assoc-in [scene-id :args k] v]]}
+      {:actions [[:assoc-in [:ui scene-id :overrides k] v]]}
 
       (atom? args)
       {:swap [args [k] v]
-       :actions (cond-> [[:assoc-in [scene-id :args k] v]]
-                  (not (get-in state [scene-id :original k]))
-                  (into [[:assoc-in [scene-id :original k] (k @args)]]))})))
+       :actions (cond-> [[:assoc-in [:ui scene-id :overrides k] v]]
+                  (not (get-in state [:ui scene-id :original k]))
+                  (into [[:assoc-in [:ui scene-id :original k] (k @args)]]))})))
 
 (declare execute-action!)
 
