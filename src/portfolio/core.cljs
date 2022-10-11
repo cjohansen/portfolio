@@ -79,7 +79,7 @@
                (map (fn [[collection scenes]]
                       {:title (or (:title (get-collection state collection))
                                   (some-> collection name))
-                       :items (prepare-scenes state location scenes)})))})
+                       :items (prepare-scenes state location (sort-by :title scenes))})))})
 
 (defn prepare-view-option [current-view view]
   (cond-> view
