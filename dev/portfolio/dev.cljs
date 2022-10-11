@@ -2,7 +2,9 @@
   (:require [dumdom.component]
             [gadget.inspector :as inspector]
             [portfolio.actions :as actions]
-            [portfolio.adapters.dumdom :as pd]
+            [portfolio.adapter.dumdom :as pd]
+            [portfolio.adapter.html :as html]
+            [portfolio.adapter.dom :as dom]
             [portfolio.core :as p]
             [portfolio.kitchen-sink :as portfolio]))
 
@@ -39,6 +41,23 @@
       :component-fn (fn [{:keys [text]}]
                       [:button.button text])
       :args {:text "Hello, clicky!"}})
+
+    (html/create-scene
+     {:id :portfolio.components.button/html
+      :title "HTML string button"
+      :component-fn (fn [{:keys [text]}]
+                      (str "<button>" text "</button>"))
+      :args {:text "Hello, stringy!"}})
+
+    (dom/create-scene
+     {:id :portfolio.components.button/dom
+      :title "DOM element button"
+      :component-fn (fn [{:keys [text]}]
+                      (let [el (js/document.createElement "button")]
+                        (set! (.. el -style -border) "2px solid red")
+                        (set! (.-innerHTML el) text)
+                        el))
+      :args {:text "Hello, DOM!"}})
 
     (pd/create-scene
      {:id :portfolio.components.button/stateful
