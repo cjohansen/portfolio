@@ -1,11 +1,16 @@
 (ns portfolio.views.canvas
   (:require [portfolio.components.canvas :refer [CanvasView]]
-            [portfolio.views.canvas.protocols :as protocols]
             [portfolio.core :as p]
-            [portfolio.protocols :as portfolio]))
+            [portfolio.view :as view]
+            [portfolio.views.canvas.protocols :as canvas]))
 
 (def view-impl
-  {`portfolio/render-view #'CanvasView})
+  {`view/render-view #'CanvasView})
+
+(extend-type cljs.core/PersistentArrayMap
+  canvas/ICanvasToolValue
+  (get-tool-value [tool state canvas-id]
+    (get-in state [(:id tool) canvas-id :value])))
 
 (defn multi-scene? [state location]
   (or (contains? (:query-params location) :namespace)
@@ -39,7 +44,7 @@
 (defn prepare-panel [state location scene addons]
   (let [current-addon (get-current-addon location addons)
         minimize-path [:canvas/panel :minimized?]
-        content (portfolio/prepare-addon-content current-addon state location scene)
+        content (canvas/prepare-panel-content current-addon state scene)
         minimized? (get-in state minimize-path (not content))]
     {:tabs (for [addon addons]
              (cond-> addon
@@ -66,13 +71,13 @@
          (for [[opt x] (map vector row (range))]
            (let [pane-id [(:source layout) x y]
                  options (->> (:tools view)
-                              (map #(portfolio/get-local-overrides % state pane-id))
+                              (map #(canvas/get-tool-value % state pane-id))
                               (apply merge opt))]
              (when (seq scenes)
                {:toolbar
                 {:tools
                  (->> (:tools view)
-                      (keep #(protocols/prepare-toolbar-button
+                      (keep #(canvas/prepare-toolbar-button
                               % state {:pane-id pane-id
                                        :pane-options options})))}
                 :canvases
@@ -90,7 +95,7 @@
       view-impl)))
 
 (def data-impl
-  {`portfolio/prepare-data #'prepare-canvas-view})
+  {`view/prepare-data #'prepare-canvas-view})
 
 (defn create-canvas [{:keys [tools addons layout]}]
   (-> {:id ::canvas

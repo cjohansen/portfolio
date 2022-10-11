@@ -2,7 +2,7 @@
   (:require [dumdom.core :as d]
             [portfolio.components.sidebar :refer [Sidebar]]
             [portfolio.components.tab-bar :refer [TabBar]]
-            [portfolio.protocols :as portfolio]))
+            [portfolio.view :as view]))
 
 (d/defcomponent App [data]
   [:div {:style {:display "flex"
@@ -20,4 +20,4 @@
                   :flex-direction "column"
                   :margin "10px 10px 10px 0"}}
     (TabBar (:tab-bar data))
-    (portfolio/render-view (:view data))]])
+    (view/render-view (:view data))]])

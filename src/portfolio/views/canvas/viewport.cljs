@@ -41,7 +41,7 @@
 
     :else height))
 
-(defn prepare-layer [data el {:viewport/keys [width height]}]
+(defn prepare-canvas [data el {:viewport/keys [width height]}]
   (let [frame (canvas/get-iframe el)
         frame-body (canvas/get-iframe-body el)
         w (get-width frame frame-body width)]
@@ -72,4 +72,4 @@
                :value {:viewport/width 390
                        :viewport/height 844}
                :type :mobile}]
-    :prepare-layer #'prepare-layer}))
+    :prepare-canvas #'prepare-canvas}))

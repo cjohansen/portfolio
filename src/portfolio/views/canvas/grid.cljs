@@ -3,7 +3,7 @@
             [portfolio.components.canvas :as canvas]
             [portfolio.views.canvas.addons :as addons]))
 
-(defn prepare-layer [data el {:grid/keys [offset size group-size] :as opt}]
+(defn prepare-canvas [data el {:grid/keys [offset size group-size] :as opt}]
   (let [body-style (.-style (canvas/get-iframe el))
         zoom (or (:zoom/level opt) 1)]
     (if (and (number? size) (not= 0 size))
@@ -33,4 +33,4 @@
                        :grid/group-size 5}}
               {:title "No grid"
                :value {:grid/size 0}}]
-    :prepare-layer #'prepare-layer}))
+    :prepare-canvas #'prepare-canvas}))

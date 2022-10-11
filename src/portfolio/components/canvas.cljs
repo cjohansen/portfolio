@@ -3,8 +3,8 @@
             [portfolio.adapter :as adapter]
             [portfolio.components.tab-bar :refer [TabBar]]
             [portfolio.components.triangle :refer [TriangleButton]]
-            [portfolio.protocols :as portfolio]
-            [portfolio.views.canvas.protocols :as protocols]))
+            [portfolio.view :as view]
+            [portfolio.views.canvas.protocols :as canvas]))
 
 (defn get-iframe [canvas-el]
   (some-> canvas-el .-firstChild))
@@ -14,13 +14,9 @@
 
 (defn render-scene [el {:keys [scene tools opt]}]
   (doseq [tool tools]
-    (portfolio/prepare-layer tool el opt))
+    (canvas/prepare-canvas tool el opt))
   (let [canvas (some-> el .-firstChild .-contentDocument (.getElementById "canvas"))]
-    (adapter/render-component (:component scene) canvas))
-  (js/requestAnimationFrame
-   (fn [_]
-     (doseq [tool tools]
-       (portfolio/finalize-layer tool el opt)))))
+    (adapter/render-component (:component scene) canvas)))
 
 (defn on-mounted [el f]
   (if (some-> el .-contentDocument (.getElementById "canvas"))
@@ -53,7 +49,7 @@
 (d/defcomponent Toolbar [{:keys [tools]}]
   [:nav {:style {:background "#fff"
                  :border-bottom "1px solid #e5e5e5"}}
-   (map protocols/render-toolbar-button tools)])
+   (map canvas/render-toolbar-button tools)])
 
 (d/defcomponent CanvasPanel [data]
   [:div {:style {:border-top "1px solid #ccc"
@@ -67,7 +63,7 @@
                     :top 10}}
       (TriangleButton button)])
    (TabBar data)
-   (some-> data :content portfolio/render-view)])
+   (some-> data :content view/render-view)])
 
 (d/defcomponent CanvasHeader
   :keyfn :title

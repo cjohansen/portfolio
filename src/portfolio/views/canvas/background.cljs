@@ -2,7 +2,7 @@
   (:require [portfolio.components.canvas :as canvas]
             [portfolio.views.canvas.addons :as addons]))
 
-(defn prepare-layer [data el {:background/keys [background-color body-class]}]
+(defn prepare-canvas [data el {:background/keys [background-color body-class]}]
   (set! (.. (canvas/get-iframe el) -style -backgroundColor) background-color)
   (set! (.-className (canvas/get-iframe-body el)) (or body-class "")))
 
@@ -18,4 +18,4 @@
                :title "Dark (body.dark-bg)"
                :value {:background/background-color "#111111"
                        :background/body-class "dark-bg"}}]
-    :prepare-layer #'prepare-layer}))
+    :prepare-canvas #'prepare-canvas}))

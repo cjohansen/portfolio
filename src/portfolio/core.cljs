@@ -1,6 +1,6 @@
 (ns portfolio.core
-  (:require [portfolio.protocols :as portfolio]
-            [portfolio.router :as router]))
+  (:require [portfolio.router :as router]
+            [portfolio.view :as view]))
 
 (defn get-current-scenes [state location]
   (or (when-let [scene (some-> location :query-params :scene keyword)]
@@ -112,7 +112,7 @@
                      :current-collection (get-collection state (:collection current-namespace)))]
     {:sidebar (prepare-sidebar state location)
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
-     :view (portfolio/prepare-data current-view state location)}))
+     :view (view/prepare-data current-view state location)}))
 
 (defn init-state [config]
   (-> config

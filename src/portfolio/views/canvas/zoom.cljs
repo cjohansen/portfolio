@@ -1,7 +1,6 @@
 (ns portfolio.views.canvas.zoom
   (:require [portfolio.components.canvas :as canvas]
             [portfolio.components.canvas-toolbar-buttons :refer [Button]]
-            [portfolio.protocols :as portfolio]
             [portfolio.views.canvas.addons :as addons]
             [portfolio.views.canvas.protocols :as protocols]))
 
@@ -28,7 +27,7 @@
       {`protocols/render-toolbar-button #'Button})))
 
 (def impl
-  {`portfolio/prepare-layer (fn [_ el opt] (zoom el opt))
+  {`protocols/prepare-canvas (fn [_ el opt] (zoom el opt))
    `protocols/prepare-toolbar-button #'prepare-zoom-button})
 
 (defn create-zoom-in-tool [config]
@@ -56,7 +55,7 @@
   (addons/create-action-button
    {:id :canvas/zoom-reset
     :title "Reset zoom"
-    :prepare-layer #'reset-canvas-zoom
+    :prepare-canvas #'reset-canvas-zoom
     :get-actions (fn [_ _ {:keys [pane-id]}]
                    [[:dissoc-in [:canvas/zoom pane-id :value :zoom/level]]])
     :show? (fn [_ _ {:keys [pane-options]}]

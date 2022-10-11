@@ -1,11 +1,12 @@
 (ns portfolio.views.canvas.args
-  (:require [portfolio.protocols :as portfolio]
+  (:require [clojure.string :as str]
             [portfolio.components.arguments-panel :refer [ArgumentsPanel]]
             [portfolio.core :as p]
-            [clojure.string :as str]))
+            [portfolio.view :as view]
+            [portfolio.views.canvas.protocols :as canvas]))
 
 (def render-impl
-  {`portfolio/render-view #'ArgumentsPanel})
+  {`view/render-view #'ArgumentsPanel})
 
 (defn get-input-kind [scene k v]
   (or (get-in scene [:arg-defs k :input/kind])
@@ -25,7 +26,7 @@
          :value v
          :actions [[:set-scene-argument (:id scene) k :event.target/value]]})))
 
-(defn prepare-addon-content [panel state location scene]
+(defn prepare-panel-content [panel state scene]
   (when (:args scene)
     (with-meta
       {:args (let [args (p/get-scene-args state scene)
@@ -49,7 +50,7 @@
       render-impl)))
 
 (def data-impl
-  {`portfolio/prepare-addon-content #'prepare-addon-content})
+  {`canvas/prepare-panel-content #'prepare-panel-content})
 
 (defn create-args-panel [config]
   (with-meta

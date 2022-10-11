@@ -1,7 +1,6 @@
 (ns portfolio.views.canvas.addons
   (:require [portfolio.components.canvas-toolbar-buttons :refer [MenuButton]]
-            [portfolio.protocols :as portfolio]
-            [portfolio.views.canvas.protocols :as protocols]))
+            [portfolio.views.canvas.protocols :as canvas]))
 
 (defn get-expand-path [vid]
   [:canvas/tools vid :expanded])
@@ -20,7 +19,7 @@
 (defn prepare-toolbar-menu-button [tool state {:keys [pane-id]}]
   (let [expand-path (get-expand-path pane-id)
         expanded? (= (:id tool) (get-in state expand-path))
-        value (portfolio/get-local-overrides tool state pane-id)]
+        value (canvas/get-tool-value tool state pane-id)]
     (with-meta
       {:text (:title tool)
        :actions (if expanded?
@@ -29,31 +28,31 @@
        :active? (boolean value)
        :menu (when expanded?
                (prepare-tool-menu pane-id tool value))}
-      {`protocols/render-toolbar-button #'MenuButton})))
+      {`canvas/render-toolbar-button #'MenuButton})))
 
 (defn create-toolbar-menu-button [data]
-  (doseq [k #{:id :title :options :prepare-layer}]
+  (doseq [k #{:id :title :options :prepare-canvas}]
     (when-not (k data)
       (throw (ex-info "Can't create toolbar menu button without key"
                       {:k k :data data}))))
   (with-meta
-    (dissoc data :prepare-layer)
-    {`protocols/prepare-toolbar-button #'prepare-toolbar-menu-button
-     `portfolio/prepare-layer (:prepare-layer data)}))
+    (dissoc data :prepare-canvas)
+    {`canvas/prepare-toolbar-button #'prepare-toolbar-menu-button
+     `canvas/prepare-canvas (:prepare-canvas data)}))
 
 (defn create-action-button [data]
-  (doseq [k #{:title :get-actions :prepare-layer}]
+  (doseq [k #{:title :get-actions :prepare-canvas}]
     (when-not (k data)
       (throw (ex-info "Can't create toolbar action button without key"
                       {:k k :data data}))))
   (let [show? (or (:show? data) (constantly true))]
     (with-meta
-      (dissoc data :show? :get-actions :prepare-layer)
-      {`portfolio/prepare-layer (:prepare-layer data)
-       `protocols/prepare-toolbar-button
+      (dissoc data :show? :get-actions :prepare-canvas)
+      {`canvas/prepare-canvas (:prepare-canvas data)
+       `canvas/prepare-toolbar-button
        (fn [tool state options]
          (when (show? tool state options)
            (with-meta
              {:text (:title data)
               :actions ((:get-actions data) tool state options)}
-             {`protocols/render-toolbar-button #'MenuButton})))})))
+             {`canvas/render-toolbar-button #'MenuButton})))})))
