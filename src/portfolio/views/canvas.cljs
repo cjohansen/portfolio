@@ -66,7 +66,7 @@
 
 (defn prepare-panel [state location scene addons]
   (let [current-addon (get-current-addon location addons)
-        minimize-path [(:id scene) :minimize-panel?]
+        minimize-path [:canvas/panel :minimized?]
         content (portfolio/prepare-addon-content current-addon state location scene)
         minimized? (get-in state minimize-path (not content))]
     {:tabs (for [addon addons]
