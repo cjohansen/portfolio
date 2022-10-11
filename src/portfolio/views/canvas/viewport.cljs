@@ -1,6 +1,6 @@
 (ns portfolio.views.canvas.viewport
-  (:require [portfolio.protocols :as portfolio]
-            [portfolio.components.canvas :as canvas]))
+  (:require [portfolio.components.canvas :as canvas]
+            [portfolio.views.canvas.addons :as addons]))
 
 (defn get-width [frame frame-body width]
   (cond
@@ -41,37 +41,35 @@
 
     :else height))
 
-(def impl
-  {`portfolio/prepare-layer
-   (fn [data el {:viewport/keys [width height]}]
-     (let [frame (canvas/get-iframe el)
-           frame-body (canvas/get-iframe-body el)
-           w (get-width frame frame-body width)]
-       (set! (.. el -style -width)
-             (if (and (= "100%" w) (not= "100%" (or height "100%")))
-               (str "calc(100% - 40px)")
-               w))
-       (js/setTimeout
-        (fn []
-          (let [h (get-height frame frame-body height)
-                [margin shadow] (if (or (not= "100%" w) (not= "100%" h))
-                                  ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
-                                  ["0" "none"])]
-            (set! (.. el -style -height) h)
-            (set! (.. el -style -margin) margin)
-            (set! (.. el -style -boxShadow) shadow)))
-        100)))})
+(defn prepare-layer [data el {:viewport/keys [width height]}]
+  (let [frame (canvas/get-iframe el)
+        frame-body (canvas/get-iframe-body el)
+        w (get-width frame frame-body width)]
+    (set! (.. el -style -width)
+          (if (and (= "100%" w) (not= "100%" (or height "100%")))
+            (str "calc(100% - 40px)")
+            w))
+    (js/setTimeout
+     (fn []
+       (let [h (get-height frame frame-body height)
+             [margin shadow] (if (or (not= "100%" w) (not= "100%" h))
+                               ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
+                               ["0" "none"])]
+         (set! (.. el -style -height) h)
+         (set! (.. el -style -margin) margin)
+         (set! (.. el -style -boxShadow) shadow)))
+     100)))
 
 (defn create-viewport-tool [config]
-  (with-meta
-    {:id :canvas/viewport
-     :title "Viewport"
-     :options [{:title "Auto"
-                :value {:viewport/width "100%"
-                        :viewport/height "100%"}
-                :type :desktop}
-               {:title "iPhone 12 / 13 Prop"
-                :value {:viewport/width 390
-                        :viewport/height 844}
-                :type :mobile}]}
-    impl))
+  (addons/create-toolbar-menu-button
+   {:id :canvas/viewport
+    :title "Viewport"
+    :options [{:title "Auto"
+               :value {:viewport/width "100%"
+                       :viewport/height "100%"}
+               :type :desktop}
+              {:title "iPhone 12 / 13 Prop"
+               :value {:viewport/width 390
+                       :viewport/height 844}
+               :type :mobile}]
+    :prepare-layer #'prepare-layer}))

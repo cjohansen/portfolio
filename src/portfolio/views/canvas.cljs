@@ -1,24 +1,11 @@
 (ns portfolio.views.canvas
   (:require [portfolio.components.canvas :refer [CanvasView]]
+            [portfolio.views.canvas.protocols :as protocols]
             [portfolio.core :as p]
             [portfolio.protocols :as portfolio]))
 
 (def view-impl
   {`portfolio/render-view #'CanvasView})
-
-(defn get-expand-path [vid]
-  [:canvas/tools vid :expanded])
-
-(defn prepare-tool-menu [vid tool current-value]
-  {:options
-   (for [{:keys [title value]} (:options tool)]
-     (let [selected? (= value current-value)]
-       {:title title
-        :selected? selected?
-        :actions [[:dissoc-in (get-expand-path vid)]
-                  (if selected?
-                    [:dissoc-in [(:id tool) vid :value]]
-                    [:assoc-in [(:id tool) vid :value] value])]}))})
 
 (defn multi-scene? [state location]
   (or (contains? (:query-params location) :namespace)
@@ -43,21 +30,6 @@
         (when-let [layout (:canvas/layout view)]
           {:layout layout
            :source (:id view)}))))
-
-(defn prepare-toolbar [state vid tools overrides]
-  (let [expand-path (get-expand-path vid)
-        expanded (get-in state expand-path)]
-    {:tools
-     (map (fn [tool value]
-            (let [expanded? (= (:id tool) expanded)]
-              (assoc tool
-                     :actions (if expanded?
-                                [[:dissoc-in expand-path]]
-                                [[:assoc-in expand-path (:id tool)]])
-                     :active? (boolean value)
-                     :menu (when expanded?
-                             (prepare-tool-menu vid tool value)))))
-          tools overrides)}))
 
 (defn get-current-addon [location addons]
   (or (when-let [id (some-> location :query-params :addon keyword)]
@@ -92,16 +64,23 @@
        :rows
        (for [[row y] (map vector (:layout layout) (range))]
          (for [[opt x] (map vector row (range))]
-           (let [vid [(:source layout) x y]
-                 overrides (map #(portfolio/get-local-overrides % state vid) (:tools view))]
+           (let [pane-id [(:source layout) x y]
+                 options (->> (:tools view)
+                              (map #(portfolio/get-local-overrides % state pane-id))
+                              (apply merge opt))]
              (when (seq scenes)
-               {:toolbar (prepare-toolbar state vid (:tools view) overrides)
+               {:toolbar
+                {:tools
+                 (->> (:tools view)
+                      (keep #(protocols/prepare-toolbar-button
+                              % state {:pane-id pane-id
+                                       :pane-options options})))}
                 :canvases
                 (for [scene scenes]
                   (cond->
                       {:scene scene
                        :tools (:tools view)
-                       :opt (apply merge opt overrides)}
+                       :opt options}
                     multi?
                     (assoc :title (:title scene)
                            :url (p/get-scene-url location scene)
