@@ -3,16 +3,17 @@
             [portfolio.components.canvas :as canvas]
             [portfolio.views.canvas.addons :as addons]))
 
-(defn prepare-layer [data el {:grid/keys [offset size group-size]}]
-  (let [body-style (.-style (canvas/get-iframe el))]
+(defn prepare-layer [data el {:grid/keys [offset size group-size] :as opt}]
+  (let [body-style (.-style (canvas/get-iframe el))
+        zoom (or (:zoom/level opt) 1)]
     (if (and (number? size) (not= 0 size))
-      (do
+      (let [real-size (* zoom size)]
         (set! (.-backgroundSize body-style)
-              (let [big (* (or group-size 5) size)]
+              (let [big (* (or group-size 5) real-size)]
                 (str big "px " big "px, " big "px " big "px, "
-                     size "px " size "px, " size "px " size "px")))
+                     real-size "px " real-size "px, " real-size "px " real-size "px")))
         (set! (.-backgroundPosition body-style)
-              (let [offset (or offset 0)]
+              (let [offset (- (or offset 0) (- real-size size))]
                 (str/join ", " (repeat 4 (str offset "px " offset "px")))))
         (set! (.-backgroundBlendMode body-style) "difference")
         (set! (.-backgroundImage body-style)
