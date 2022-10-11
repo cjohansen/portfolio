@@ -1,9 +1,5 @@
 (ns portfolio.protocols)
 
-(defprotocol IComponentLibrary
-  :extend-via-metadata true
-  (render-component [component el]))
-
 (defprotocol IViewData
   :extend-via-metadata true
   (prepare-data [view state location]))

@@ -1,9 +1,9 @@
-(ns portfolio.adapters.dumdom
+(ns portfolio.adapter.dumdom
   (:require [dumdom.core :as d]
-            [portfolio.protocols :as portfolio]))
+            [portfolio.adapter :as adapter]))
 
 (def component-impl
-  {`portfolio/render-component
+  {`adapter/render-component
    (fn [component el]
      (if el
        (d/render component el)

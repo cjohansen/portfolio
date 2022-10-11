@@ -1,5 +1,6 @@
 (ns portfolio.components.canvas
   (:require [dumdom.core :as d]
+            [portfolio.adapter :as adapter]
             [portfolio.components.tab-bar :refer [TabBar]]
             [portfolio.components.triangle :refer [TriangleButton]]
             [portfolio.protocols :as portfolio]
@@ -15,7 +16,7 @@
   (doseq [tool tools]
     (portfolio/prepare-layer tool el opt))
   (let [canvas (some-> el .-firstChild .-contentDocument (.getElementById "canvas"))]
-    (portfolio/render-component (:component scene) canvas))
+    (adapter/render-component (:component scene) canvas))
   (js/requestAnimationFrame
    (fn [_]
      (doseq [tool tools]
