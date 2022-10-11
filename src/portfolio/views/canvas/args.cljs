@@ -40,13 +40,14 @@
                         :input (get-input-kind scene k v)}
                      (= (k args) (k overrides))
                      (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))
-       :arg-list {:title "Taps"
-                  :items
-                  (->> (:taps state)
-                       (take 15)
-                       (map (fn [v]
-                              {:text (pr-str v)
-                               :actions [[:set-scene-argument (:id scene) v]]})))}}
+       :arg-list (when-let [items (->> (:taps state)
+                                       (take 15)
+                                       (map (fn [v]
+                                              {:text (pr-str v)
+                                               :actions [[:set-scene-argument (:id scene) v]]}))
+                                       seq)]
+                   {:title "Taps"
+                    :items items})}
       render-impl)))
 
 (def data-impl
