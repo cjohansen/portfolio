@@ -39,6 +39,7 @@
 (defn start-app [app & [{:keys [on-render]}]]
   (js/document.body.addEventListener "click" #(relay-body-clicks app %))
   (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
+  (add-tap #(swap! app update :taps conj %))
   (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
   (actions/execute-action!
    app

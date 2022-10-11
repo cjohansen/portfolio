@@ -76,17 +76,27 @@
        :actions [[:dissoc-in [:ui scene-id :overrides k]]
                  [:dissoc-in [:ui scene-id :original k]]]})))
 
-(defn set-scene-argument [state scene-id k v]
-  (let [args (get-in state [:scenes scene-id :args])]
-    (cond
-      (map? args)
-      {:actions [[:assoc-in [:ui scene-id :overrides k] v]]}
+(defn set-scene-argument
+  ([state scene-id v]
+   (let [args (get-in state [:scenes scene-id :args])]
+     (cond
+       (map? args)
+       {:actions [[:assoc-in [:ui scene-id :overrides] v]]}
 
-      (atom? args)
-      {:swap [args [k] v]
-       :actions (cond-> [[:assoc-in [:ui scene-id :overrides k] v]]
-                  (not (get-in state [:ui scene-id :original k]))
-                  (into [[:assoc-in [:ui scene-id :original k] (k @args)]]))})))
+       (atom? args)
+       {:reset [args v]
+        :actions [[:assoc-in [:ui scene-id :overrides] v]]})))
+  ([state scene-id k v]
+   (let [args (get-in state [:scenes scene-id :args])]
+     (cond
+       (map? args)
+       {:actions [[:assoc-in [:ui scene-id :overrides k] v]]}
+
+       (atom? args)
+       {:swap [args [k] v]
+        :actions (cond-> [[:assoc-in [:ui scene-id :overrides k] v]]
+                   (not (get-in state [:ui scene-id :original k]))
+                   (into [[:assoc-in [:ui scene-id :original k] (k @args)]]))}))))
 
 (declare execute-action!)
 
@@ -116,7 +126,9 @@
   (doseq [action (:actions res)]
     (execute-action! app action))
   (when-let [[ref path v] (:swap res)]
-    (swap! ref assoc-in path v)))
+    (swap! ref assoc-in path v))
+  (when-let [[ref v] (:reset res)]
+    (reset! ref v)))
 
 (defn execute-action! [app action]
   (println "execute-action!" action)
