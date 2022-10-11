@@ -79,6 +79,7 @@ a.inverted:visited,
 
 .hoverable:hover {
   background: #1ea7fd26;
+  cursor: pointer;
 }
 
 .input {
