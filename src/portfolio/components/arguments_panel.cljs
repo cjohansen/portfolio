@@ -54,11 +54,13 @@
             "x"])]])]]
    (when-let [{:keys [title items]} (:arg-list data)]
      [:div {:style {:flex "1 0 50%"}}
-      [:h2.h3 title]
+      [:h2.h3 {:style {:margin-bottom 10}}
+       title]
       [:ul
-       (for [{:keys [actions text]} items]
+       (for [{:keys [actions selected? text]} items]
          [:li.hoverable
           {:on-click actions
-           :style {:padding "5px 0"}}
+           :style {:background (when selected? "#1ea7fd")
+                   :padding "5px"}}
           [:pre {:style {:font-family "monospace"}}
            text]])]])])

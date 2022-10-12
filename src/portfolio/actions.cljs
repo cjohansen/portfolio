@@ -65,16 +65,27 @@
                      (map (fn [ref] [ref ::portfolio])))
      :update-window-location (router/get-url location)}))
 
-(defn remove-scene-argument [state scene-id k]
-  (let [args (get-in state [:scenes scene-id :args])]
-    (cond
-      (map? args)
-      {:actions [[:dissoc-in [:ui scene-id :overrides k]]]}
+(defn remove-scene-argument
+  ([state scene-id]
+   (let [args (get-in state [:scenes scene-id :args])]
+     (cond
+       (map? args)
+       {:actions [[:dissoc-in [:ui scene-id :overrides]]]}
 
-      (atom? args)
-      {:swap [args [k] (get-in state [:scenes scene-id :original k])]
-       :actions [[:dissoc-in [:ui scene-id :overrides k]]
-                 [:dissoc-in [:ui scene-id :original k]]]})))
+       (atom? args)
+       {:reset [args (get-in state [:ui scene-id :original])]
+        :actions [[:dissoc-in [:ui scene-id :overrides]]
+                  [:dissoc-in [:ui scene-id :original]]]})))
+  ([state scene-id k]
+   (let [args (get-in state [:scenes scene-id :args])]
+     (cond
+       (map? args)
+       {:actions [[:dissoc-in [:ui scene-id :overrides k]]]}
+
+       (atom? args)
+       {:swap [args [k] (get-in state [:scenes scene-id :original k])]
+        :actions [[:dissoc-in [:ui scene-id :overrides k]]
+                  [:dissoc-in [:ui scene-id :original k]]]}))))
 
 (defn set-scene-argument
   ([state scene-id v]
@@ -85,7 +96,8 @@
 
        (atom? args)
        {:reset [args v]
-        :actions [[:assoc-in [:ui scene-id :overrides] v]]})))
+        :actions [[:assoc-in [:ui scene-id :overrides] v]
+                  [:assoc-in [:ui scene-id :original] @args]]})))
   ([state scene-id k v]
    (let [args (get-in state [:scenes scene-id :args])]
      (cond

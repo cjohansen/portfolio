@@ -26,28 +26,37 @@
          :value v
          :actions [[:set-scene-argument (:id scene) k :event.target/value]]})))
 
+(defn prepare-taps [scene overrides taps]
+  (when-let [items (seq (take 15 taps))]
+    {:title "Taps"
+     :items
+     (->> items
+          (map (fn [v]
+                 (let [selected? (= v overrides)]
+                   {:text (pr-str v)
+                    :selected? selected?
+                    :actions [(if selected?
+                                [:remove-scene-argument (:id scene)]
+                                [:set-scene-argument (:id scene) v])]}))))}))
+
+(defn prepare-arguments [scene overrides args]
+  (when (map? args)
+    (for [[k v] args]
+      (cond->
+          {:label (str/replace (str k) #"^:" "")
+           :value v
+           :input (get-input-kind scene k v)}
+        (= (k args) (k overrides))
+        (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))
+
 (defn prepare-panel-content [panel state scene]
   (when (:args scene)
     (with-meta
-      {:args (let [args (p/get-scene-args state scene)
-                   args (if (satisfies? cljs.core/IWatchable args) @args args)
-                   overrides (p/get-scene-arg-overrides state scene)]
-               (when (map? args)
-                 (for [[k v] args]
-                   (cond->
-                       {:label (str/replace (str k) #"^:" "")
-                        :value v
-                        :input (get-input-kind scene k v)}
-                     (= (k args) (k overrides))
-                     (assoc :clear-actions [[:remove-scene-argument (:id scene) k]])))))
-       :arg-list (when-let [items (->> (:taps state)
-                                       (take 15)
-                                       (map (fn [v]
-                                              {:text (pr-str v)
-                                               :actions [[:set-scene-argument (:id scene) v]]}))
-                                       seq)]
-                   {:title "Taps"
-                    :items items})}
+      (let [args (p/get-scene-args state scene)
+            args (if (satisfies? cljs.core/IWatchable args) @args args)
+            overrides (p/get-scene-arg-overrides state scene)]
+        {:args (prepare-arguments scene overrides args)
+         :arg-list (prepare-taps scene overrides (:taps state))})
       render-impl)))
 
 (def data-impl
