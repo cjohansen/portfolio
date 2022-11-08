@@ -1,6 +1,5 @@
 (ns portfolio.views.canvas.args
-  (:require [clojure.string :as str]
-            [portfolio.components.arguments-panel :refer [ArgumentsPanel]]
+  (:require [portfolio.components.arguments-panel :refer [ArgumentsPanel]]
             [portfolio.core :as p]
             [portfolio.view :as view]
             [portfolio.views.canvas.protocols :as canvas]))
@@ -26,24 +25,11 @@
          :value v
          :actions [[:set-scene-argument (:id scene) k :event.target/value]]})))
 
-(defn prepare-taps [scene overrides taps]
-  (when-let [items (seq (take 15 taps))]
-    {:title "Taps"
-     :items
-     (->> items
-          (map (fn [v]
-                 (let [selected? (= v overrides)]
-                   {:text (pr-str v)
-                    :selected? selected?
-                    :actions [(if selected?
-                                [:remove-scene-argument (:id scene)]
-                                [:set-scene-argument (:id scene) v])]}))))}))
-
 (defn prepare-arguments [scene overrides args]
   (when (map? args)
     (for [[k v] args]
       (cond->
-          {:label (str/replace (str k) #"^:" "")
+          {:label (str k)
            :value v
            :input (get-input-kind scene k v)}
         (= (k args) (k overrides))
@@ -55,8 +41,7 @@
       (let [args (p/get-scene-args state scene)
             args (if (satisfies? cljs.core/IWatchable args) @args args)
             overrides (p/get-scene-arg-overrides state scene)]
-        {:args (prepare-arguments scene overrides args)
-         :arg-list (prepare-taps scene overrides (:taps state))})
+        {:args (prepare-arguments scene overrides args)})
       render-impl)))
 
 (def data-impl

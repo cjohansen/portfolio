@@ -2,6 +2,7 @@
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/clojurescript {:mvn/version "1.11.60"}
         cjohansen/dumdom {:mvn/version "2022.09.28"}
+        cljsjs/codemirror {:mvn/version "5.44.0-1"}
         ring/ring {:mvn/version "1.9.6"}}
  :aliases
  {:dev {:extra-paths ["dev" "test" "dev-resources"]

@@ -1,5 +1,7 @@
 @import url('./fonts.css');
 @import url('./reset.css');
+@import url('./prism.css');
+@import url('./codemirror.css');
 
 *,
 *:before,

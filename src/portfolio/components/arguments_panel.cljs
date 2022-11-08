@@ -26,41 +26,27 @@
       (TextInput (assoc data :type :text)))))
 
 (d/defcomponent ArgumentsPanel [data]
-  [:div {:style {:padding 20
-                 :display "flex"}}
-   [:div {:style {:flex "1 0 50%"}}
-    [:table
-     (for [{:keys [label input clear-actions]} (:args data)]
-       [:tr
-        [:td {:style {:padding-right 20
-                      :vertical-align "middle"}}
-         [:label label]]
-        [:td {:style {:padding "5px 10px 5px 0"
-                      :vertical-align "middle"}}
-         (render-input input)]
-        [:td {:style {:vertical-align "middle"}}
-         (when clear-actions
-           [:div
-            {:on-click clear-actions
-             :style {:width 24
-                     :height 24
-                     :background "#f0f0f0"
-                     :cursor "pointer"
-                     :border-radius "50%"
-                     :font-weight "bold"
-                     :text-align "center"
-                     :line-height "1.5"
-                     :color "#999"}}
-            "x"])]])]]
-   (when-let [{:keys [title items]} (:arg-list data)]
-     [:div {:style {:flex "1 0 50%"}}
-      [:h2.h3 {:style {:margin-bottom 10}}
-       title]
-      [:ul
-       (for [{:keys [actions selected? text]} items]
-         [:li.hoverable
-          {:on-click actions
-           :style {:background (when selected? "#1ea7fd")
-                   :padding "5px"}}
-          [:pre {:style {:font-family "monospace"}}
-           text]])]])])
+  [:div {:style {:padding 20}}
+   [:table
+    (for [{:keys [label input clear-actions]} (:args data)]
+      [:tr
+       [:td {:style {:padding-right 20
+                     :vertical-align "middle"}}
+        [:label {:style {:font-family "monospace"}} label]]
+       [:td {:style {:padding "5px 10px 5px 0"
+                     :vertical-align "middle"}}
+        (render-input input)]
+       [:td {:style {:vertical-align "middle"}}
+        (when clear-actions
+          [:div
+           {:on-click clear-actions
+            :style {:width 24
+                    :height 24
+                    :background "#f0f0f0"
+                    :cursor "pointer"
+                    :border-radius "50%"
+                    :font-weight "bold"
+                    :text-align "center"
+                    :line-height "1.5"
+                    :color "#999"}}
+           "x"])]])]])
