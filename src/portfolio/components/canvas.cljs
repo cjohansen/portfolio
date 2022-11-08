@@ -98,17 +98,19 @@
                          :flex-grow 1
                          :justify-content "space-evenly"
                          :overflow "hidden"}}
-           (->> (for [{:keys [toolbar canvases]} row]
-                  [:div {:style {:flex-grow 1
-                                 :display "flex"
-                                 :flex-direction "column"
-                                 :overflow "hidden"}}
-                   (some-> toolbar Toolbar)
-                   [:div {:style {:overflow "scroll"
-                                  :flex-grow "1"}}
-                    (->> canvases
-                         (interpose {:kind :separator})
-                         (mapcat render-canvas))]])
+           (->> (for [{:keys [toolbar canvases layout]} row]
+                  (if layout
+                    (CanvasView layout)
+                    [:div {:style {:flex-grow 1
+                                   :display "flex"
+                                   :flex-direction "column"
+                                   :overflow "hidden"}}
+                     (some-> toolbar Toolbar)
+                     [:div {:style {:overflow "scroll"
+                                    :flex-grow "1"}}
+                      (->> canvases
+                           (interpose {:kind :separator})
+                           (mapcat render-canvas))]]))
                 (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
         (interpose [:div {:style {:border-top "5px solid #ddd"}}]))
    (some-> data :panel CanvasPanel)])
