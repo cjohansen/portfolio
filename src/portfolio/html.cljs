@@ -1,5 +1,6 @@
-(ns portfolio.adapter.html
-  (:require [portfolio.adapter :as adapter]))
+(ns portfolio.html
+  (:require [portfolio.adapter :as adapter])
+  (:require-macros [portfolio.html]))
 
 (def component-impl
   {`adapter/render-component

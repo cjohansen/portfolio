@@ -1,136 +1,107 @@
 (ns ^:figwheel-hooks portfolio.dev
   (:require [dumdom.component]
             [gadget.inspector :as inspector]
-            [portfolio.actions :as actions]
-            [portfolio.adapter.dumdom :as pd]
-            [portfolio.adapter.html :as html]
-            [portfolio.adapter.dom :as dom]
-            [portfolio.core :as p]
-            [portfolio.kitchen-sink :as portfolio]))
+            [portfolio.ui :as ui]
+            [portfolio.data :as data]
+            [portfolio.scenes :as scenes]))
+
+::scenes/keep
 
 (set! dumdom.component/*render-eagerly?* true)
 
-(def button-atom (atom {:text "I'm stateful!"}))
+(comment
+  (tap> {:text "Ooh, mama"
+         :number 42
+         :boolean true})
+  (tap> {:text "Hey there!"})
+  (tap> {:text "Oh, boy"
+         :items [{:text "Lol"}]})
 
-(defn shuffle-text [ref texts]
-  (js/setTimeout
-   (fn [_]
-     (when-let [text (first texts)]
-       (when (:mounted? @ref)
-         (swap! ref assoc :text text)
-         (shuffle-text ref (next texts)))))
-   2000))
+  (tap> {:text "Oh boi"
+         :request-log
+         [{:method :post
+           :url "https://security.test/api/Token"}
+          {:status 200
+           :body {:access_token "lol"
+                  :expires_in 60000}}
 
-(def config
-  {:canvas/layout [[{}]]
+          {:method :get
+           :url "https://crm.test/api/DeliverySite/707057500066666666"}
+          {:status 200
+           :body {:Address
+                  {:StreetName "Kreklingen"
+                   :Number "5"
+                   :Letter ""
+                   :City "Sofiemyr"
+                   :Zip "1412"
+                   :CountryCode "NO"}}}
 
-   :scenes
-   [(pd/create-scene
-     {:id :portfolio.components.button/default
-      :title "Button!"
-      :component [:button.button "I am a button"]})
+          {:method :get
+           :url "https://google-maps/maps/api/geocode/json"
+           :query-params {:address "Kreklingen 5 1412 Sofiemyr Norway"
+                          :key "google-maps"}
+           :as :json
+           :throw-exceptions false}
+          {:status 200
+           :body {:status "OK"
+                  :results
+                  [{:geometry
+                    {:location {:lat 59.787733 :lng 10.812987}}
+                    :types ["premise"]}]}}
 
-    (pd/create-scene
-     {:id :portfolio.components.button/aggressive
-      :title "Aggressive button"
-      :component [:button.button "I am a damn button!"]})
+          {:method :post
+           :url "https://enode.api/charging-locations"
+           :oauth-token "enode.system.token"
+           :form-params {:name "At mah house, yo"
+                         :longitude 10.812987
+                         :latitude 59.787733}}
+          {:status 200
+           :body {:id "634424b2-ebe3-4910-826f-e996496ecac9"
+                  :name "At mah house, yo"
+                  :longitude 10.812987
+                  :latitude 59.787733}}]})
 
-    (pd/create-scene
-     {:id :portfolio.components.button/parameterized
-      :title "Parameterized button"
-      :component-fn (fn [{:keys [text]}]
-                      [:button.button text])
-      :args {:text "Hello, clicky!"}})
+  )
 
-    (html/create-scene
-     {:id :portfolio.components.button/html
-      :title "HTML string button"
-      :component-fn (fn [{:keys [text]}]
-                      (str "<button>" text "</button>"))
-      :args {:text "Hello, stringy!"}})
+(comment
+  (data/register-namespace!
+   {:namespace "portfolio.components.button"
+    :collection :elements
+    :title "Button"})
 
-    (dom/create-scene
-     {:id :portfolio.components.button/dom
-      :title "DOM element button"
-      :component-fn (fn [{:keys [text]}]
-                      (let [el (js/document.createElement "button")]
-                        (set! (.. el -style -border) "2px solid red")
-                        (set! (.-innerHTML el) text)
-                        el))
-      :args {:text "Hello, DOM!"}})
+  (data/register-namespace!
+   {:namespace "portfolio.components.heading"
+    :collection :elements
+    :title "Heading"})
 
-    (pd/create-scene
-     {:id :portfolio.components.button/stateful
-      :title "Stateful button"
-      :component-fn (fn [ref]
-                      [:button.button (:text @ref)])
-      :args button-atom
-      :on-mount (fn [ref]
-                  (swap! ref assoc :mounted? true)
-                  (shuffle-text ref (cycle ["Tick ..." "... tock"])))
-      :on-unmount (fn [ref]
-                    (swap! ref assoc :mounted? false))})
+  (data/register-namespace!
+   {:namespace "portfolio.components.link"
+    :collection :elements
+    :title "Link"})
 
-    (pd/create-scene
-     {:id :portfolio.components.heading/default
-      :title "Heading"
-      :component [:h1 "I am a heading"]
-      :canvas/layout [[{} {:background/background-color "#000"
-                           :background/body-class "dark-mode"}]]})
+  (data/register-namespace!
+   {:namespace "portfolio.layouts.home-page"
+    :collection :layouts
+    :title "Home page"})
 
-    (pd/create-scene
-     {:id :portfolio.components.link/default
-      :title "Link"
-      :component [:a {:href "#"} "I am a link"]})
+  (data/register-collection!
+   {:id :elements
+    :title "Elements"})
 
-    (pd/create-scene
-     {:id :portfolio.layouts.home-page/default
-      :title "Default homepage"
-      :component [:div
-                  [:h1 "Heading"]
-                  [:p [:a {:href "#"} "I am a link"]]
-                  [:button.button "Click it"]]})]
+  (data/register-collection!
+   {:id :layouts
+    :title "Layouts"}))
 
-   :namespaces
-   [{:namespace "portfolio.components.button"
-     :collection :elements
-     :title "Button"}
+(inspector/inspect "Application data" ui/app)
 
-    {:namespace "portfolio.components.heading"
-     :collection :elements
-     :title "Heading"}
+(comment
 
-    {:namespace "portfolio.components.link"
-     :collection :elements
-     :title "Link"}
+  (data/register-collection!
+   {:id :elements
+    :title "Elements"})
 
-    {:namespace "portfolio.layouts.home-page"
-     :collection :layouts
-     :title "Home page"}]
+  (inspector/inspect "Application data" ui/app)
 
-   :collections
-   [{:id :elements
-     :canvas/layout [[{:grid/size 22
-                       :grid/offset -2}]
-                     [{:viewport/width 306
-                       :viewport/height :auto
-                       :grid/size 22
-                       :grid/offset -2}
-                      {:viewport/width 350
-                       :viewport/height 300}]]
-     :title "Elements"}
+  (ui/start!)
 
-    {:id :layouts
-     :title "Layouts"}]
-
-   })
-
-(defonce app
-  (let [app (portfolio/start! config {:on-render #(inspector/inspect "Page data" %)})]
-    (inspector/inspect "Application data" app)
-    app))
-
-(defn ^:after-load render []
-  (actions/execute-action! app [:go-to-location {}])
-  (swap! app merge (p/init-state config))
-  (actions/execute-action! app [:go-to-current-location]))
+)

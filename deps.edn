@@ -5,7 +5,7 @@
         cljsjs/codemirror {:mvn/version "5.44.0-1"}
         ring/ring {:mvn/version "1.9.6"}}
  :aliases
- {:dev {:extra-paths ["dev" "test" "dev-resources"]
+ {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src"]
         :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.18"}
                      cider/piggieback {:mvn/version "0.5.3"}
                      cjohansen/gadget-inspector {:mvn/version "0.2020.09.10"}}
