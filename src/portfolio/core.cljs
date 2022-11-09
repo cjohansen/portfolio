@@ -15,14 +15,18 @@
              (filter (comp #{ns} namespace :id))))))
 
 (defn get-scene-namespace [{:keys [namespaces]} {:keys [id]}]
-  (get namespaces (some-> id namespace)))
+  (or (get namespaces (some-> id namespace))
+      (when-let [ns (some-> id namespace)]
+        {:title ns
+         :namespace ns})))
 
 (defn get-scene-collection [state scene]
-  (->> (get-scene-namespace state scene)
-       :collection))
+  (let [ns (get-scene-namespace state scene)]
+    (or (:collection ns) :default)))
 
 (defn get-collection [state collection]
-  (get-in state [:collections collection]))
+  (or (get-in state [:collections collection])
+      {:id collection}))
 
 (defn get-current-view [state location]
   ;; TODO: Eventually support more views
