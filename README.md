@@ -55,7 +55,9 @@ Currently these adapters are supported:
 - DOM API - `portfolio.dom`
 - HTML strings - `portfolio.html`
 
-All these namespaces have a `defscene` macro that works the same way.
+All these namespaces have a `defscene` macro that works the same way. Note that
+Portfolio does not depend on any of these, so if you're using
+`portfolio.reagent`, you must explicitly pull in `reagent` yourself.
 
 `defscene` takes a symbol name and a component as its minimum input, but it can
 also take additional key/value pairs:
