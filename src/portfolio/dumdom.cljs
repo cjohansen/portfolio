@@ -1,7 +1,10 @@
 (ns portfolio.dumdom
   (:require [dumdom.core :as d]
-            [portfolio.adapter :as adapter])
+            [portfolio.adapter :as adapter]
+            [portfolio.data :as data])
   (:require-macros [portfolio.dumdom]))
+
+::data/keep
 
 (def component-impl
   {`adapter/render-component

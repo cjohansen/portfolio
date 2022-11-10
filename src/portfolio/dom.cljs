@@ -1,6 +1,9 @@
 (ns portfolio.dom
-  (:require [portfolio.adapter :as adapter])
+  (:require [portfolio.adapter :as adapter]
+            [portfolio.data :as data])
   (:require-macros [portfolio.dom]))
+
+::data/keep
 
 (def component-impl
   {`adapter/render-component
