@@ -22,7 +22,7 @@
 
 (defn get-scene-collection [state scene]
   (let [ns (get-scene-namespace state scene)]
-    (or (:collection ns) :default)))
+    (or (:collection ns) ::default)))
 
 (defn get-collection [state collection]
   (or (get-in state [:collections collection])
@@ -52,6 +52,7 @@
 (defn prepare-scenes [state location scenes]
   (->> scenes
        (group-by (comp namespace :id))
+       (sort-by first)
        (map (fn [[ns scenes]]
               (let [expanded? (namespace-expanded? state ns scenes)
                     selected? (namespace-selected? state ns scenes)
@@ -82,7 +83,8 @@
                (sort-by first)
                (map (fn [[collection scenes]]
                       {:title (or (:title (get-collection state collection))
-                                  (some-> collection name))
+                                  (when-not (= ::default collection)
+                                    (some-> collection name)))
                        :items (prepare-scenes state location (sort-by :title scenes))})))})
 
 (defn prepare-view-option [current-view view]
