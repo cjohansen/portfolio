@@ -44,7 +44,7 @@ an entire page layout, is completely up to you. You define scenes with the
 
 At its very minimal, a scene is just a named instance of a component. Where you
 require `defscene` from depends on your rendering library of choice. If you're
-using [https://github.com/reagent-project/reagent](reagent), you'll
+using [reagent](https://github.com/reagent-project/reagent), you'll
 `(:require [portfolio.reagent :refer-macros [defscene]])`.
 
 Currently these adapters are supported:
