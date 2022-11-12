@@ -9,4 +9,5 @@
             [portfolio.layouts.home-page]
             [portfolio.ui :as ui]))
 
-(ui/start!)
+(ui/start!
+ {:config {:css-paths ["/portfolio/demo.css"]}})

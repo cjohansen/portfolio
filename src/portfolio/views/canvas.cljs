@@ -91,6 +91,8 @@
   (let [scenes (for [scene scenes]
                  (cond->
                      {:scene scene
+                      :css-paths (:css-paths state)
+                      :canvas-path (:canvas-path state)
                       :tools (:tools view)}
                    multi?
                    (assoc :title (:title scene)

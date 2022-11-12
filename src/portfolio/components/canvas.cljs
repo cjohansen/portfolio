@@ -9,8 +9,11 @@
 (defn get-iframe [canvas-el]
   (some-> canvas-el .-firstChild))
 
+(defn get-iframe-document [canvas-el]
+  (some-> canvas-el get-iframe .-contentWindow .-document))
+
 (defn get-iframe-body [canvas-el]
-  (some-> canvas-el get-iframe .-contentWindow .-document .-body))
+  (some-> canvas-el get-iframe-document .-body))
 
 (defn render-scene [el {:keys [scene tools opt]}]
   (doseq [tool tools]
@@ -33,14 +36,22 @@
 
 (d/defcomponent Canvas
   :on-mount (fn [el data]
-              (on-mounted (.-firstChild el) #(render-scene el data)))
+              (on-mounted (.-firstChild el)
+                          (fn []
+                            (doseq [path (:css-paths data)]
+                              (let [link (js/document.createElement "link")]
+                                (set! (.-rel link) "stylesheet")
+                                (set! (.-type link) "text/css")
+                                (set! (.-href link) path)
+                                (.appendChild (.-head (get-iframe-document el)) link)))
+                            (render-scene el data))))
   :on-update (fn [el data]
                (on-mounted (.-firstChild el) #(render-scene el data)))
   [data]
   [:div {:style {:background "#f8f8f8"
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe
-    {:src "/portfolio/canvas.html"
+    {:src (or (:canvas-path data) "/portfolio/canvas.html")
      :style {:border "none"
              :padding 20
              :width "100%"
