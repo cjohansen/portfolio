@@ -96,3 +96,30 @@ You can take the Portfolio UI for a spin by cloning this repo, starting
 figwheel, and then checking out [http://localhost:5995](http://localhost:5995),
 which will show you all the scenes defined in [./sample/src/portfolio](the
 sample project).
+
+## Disabling Portfolio in production
+
+The `defscene` macro can be placed anywhere you like - in separate files, or
+inline in production code alongside the implementation being demonstrated. In
+the latter case, you probably want to strip the macros from you production
+builds. It is assumed that most people will put Portfolio scenes in a separate
+directory that can easily be excluded from production builds, so Portfolio is
+enabled by default. To disable it in your build, use any of the following two
+options.
+
+### Adding a compiler option
+
+Add `:portfolio/enabled? false` to your ClojureScript compiler options:
+
+```clj
+{:main "myns.prod"
+ :optimizations :advanced
+ :source-map true
+ :portfolio/enabled? false}
+```
+
+### Using a Closure define
+
+Your second option is to set the `portfolio.core/enabled` [Closure
+define](https://clojurescript.org/reference/compiler-options#closure-defines) to
+`false`. Closure defines can be set several ways, see the link.

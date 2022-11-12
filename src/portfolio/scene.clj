@@ -1,4 +1,14 @@
-(ns portfolio.scene)
+(ns portfolio.scene
+  (:require [cljs.env :as env]))
+
+(defn portfolio-active? []
+  (if-let [options (and cljs.env/*compiler*
+                        (:options @cljs.env/*compiler*))]
+    (cond
+      (false? (:portfolio/enabled? options)) false
+      (false? (get-in options [:closure-defines "portfolio.core/enabled"])) false
+      :else true)
+    true))
 
 (defn get-options-map [id syms]
   (let [pairs (partition-all 2 syms)
