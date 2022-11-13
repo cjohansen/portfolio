@@ -47,6 +47,16 @@
 (defn atom? [x]
   (satisfies? cljs.core/IWatchable x))
 
+(defn get-page-title [location]
+  (let [params (:query-params location)
+        scene (when (:scene params) (keyword (:scene params)))]
+    (cond
+      scene
+      (str "Scene: " (name scene) " (" (namespace scene) ") - Portfolio")
+
+      (:namespace params)
+      (str "Namespace: " (:namespace params) " - Portfolio"))))
+
 (defn go-to-location [state location]
   (let [current-scenes (portfolio/get-current-scenes state (:location state))
         next-scenes (portfolio/get-current-scenes state location)]
@@ -63,6 +73,7 @@
      :subscribe (->> (map :args next-scenes)
                      (filter atom?)
                      (map (fn [ref] [ref ::portfolio])))
+     :set-page-title (get-page-title location)
      :update-window-location (router/get-url location)}))
 
 (defn remove-scene-argument
@@ -126,6 +137,8 @@
     (when-not (= url (router/get-current-url))
       (println "Updating browser URL to" url)
       (.pushState js/history false false url)))
+  (when-let [title (:set-page-title res)]
+    (set! js/document.title title))
   (when (or (:dissoc-in res) (:assoc-in res))
     (when (:assoc-in res)
       (println ":assoc-in" (pr-str (:assoc-in res))))
