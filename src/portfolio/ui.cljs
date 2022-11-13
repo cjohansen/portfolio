@@ -10,7 +10,7 @@
 
 (def app (atom nil))
 
-(defn create-app [config]
+(defn create-app [config canvas-tools]
   (-> (assoc config
              :scenes (vals @data/scenes)
              :namespaces (vals @data/namespaces)
@@ -18,15 +18,16 @@
       portfolio/init-state
       (assoc :views [(canvas/create-canvas
                       {:canvas/layout (:canvas/layout config)
-                       :tools [(canvas-bg/create-background-tool config)
-                               (canvas-vp/create-viewport-tool config)
-                               (canvas-grid/create-grid-tool config)
-                               (canvas-zoom/create-zoom-in-tool config)
-                               (canvas-zoom/create-zoom-out-tool config)
-                               (canvas-zoom/create-reset-zoom-tool config)]})])))
+                       :tools (into [(canvas-bg/create-background-tool config)
+                                     (canvas-vp/create-viewport-tool config)
+                                     (canvas-grid/create-grid-tool config)
+                                     (canvas-zoom/create-zoom-in-tool config)
+                                     (canvas-zoom/create-zoom-out-tool config)
+                                     (canvas-zoom/create-reset-zoom-tool config)]
+                                    canvas-tools)})])))
 
-(defn start! [& [{:keys [on-render config]}]]
-  (reset! app (create-app config))
+(defn start! [& [{:keys [on-render config canvas-tools]}]]
+  (reset! app (create-app config canvas-tools))
   (add-watch data/scenes ::app (fn [_ _ _ scenes] (swap! app assoc :scenes scenes)))
   (add-watch data/namespaces ::app (fn [_ _ _ namespaces] (swap! app assoc :namespaces namespaces)))
   (add-watch data/collections ::app (fn [_ _ _ collections] (swap! app assoc :collections collections)))
