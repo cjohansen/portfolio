@@ -12,7 +12,9 @@
         app-data (actions/actionize-data app page-data)]
     (when (ifn? on-render)
       (on-render page-data))
-    (d/render (App app-data) (js/document.getElementById "app"))))
+    (if-let [el (js/document.getElementById "portfolio")]
+      (d/render (App app-data) el)
+      (js/console.error "Unable to render portfolio: no element with id \"portfolio\""))))
 
 (defn- a-element [el]
   (loop [el el]
@@ -48,8 +50,15 @@
       (.appendChild js/document.head el))
     (f)))
 
+(defn ensure-element! []
+  (when-not (js/document.getElementById "portfolio")
+    (let [el (js/document.createElement "div")]
+      (set! (.-id el) "portfolio")
+      (.appendChild js/document.body el))))
+
 (defn start-app [app & [{:keys [on-render]}]]
   (js/document.body.addEventListener "click" #(relay-body-clicks app %))
+  (ensure-element!)
   (ensure-portfolio-css!
    (fn []
      (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
