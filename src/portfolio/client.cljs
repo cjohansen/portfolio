@@ -36,14 +36,28 @@
           (.pushState js/history false false path)
           (actions/execute-action! app [:go-to-current-location]))))))
 
+(defn ensure-portfolio-css! [f]
+  (if-not (js/document.getElementById "portfolio-css")
+    (let [el (js/document.createElement "link")]
+      (set! (.-rel el) "stylesheet")
+      (set! (.-type el) "text/css")
+      (set! (.-href el) "/portfolio/styles/portfolio.css")
+      (.addEventListener el "load" (fn listener [e]
+                                     (.removeEventListener el "load" listener)
+                                     (f)))
+      (.appendChild js/document.head el))
+    (f)))
+
 (defn start-app [app & [{:keys [on-render]}]]
   (js/document.body.addEventListener "click" #(relay-body-clicks app %))
-  (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
-  (add-tap #(swap! app update :taps conj %))
-  (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
-  (actions/execute-action!
-   app
-   (if (empty? (:query-params (router/get-current-location)))
-     [:go-to-location {:query-params {:scene (:id (first (sort-by :id (vals (:scenes @app)))))}}]
-     [:go-to-current-location]))
+  (ensure-portfolio-css!
+   (fn []
+     (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
+     (add-tap #(swap! app update :taps conj %))
+     (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
+     (actions/execute-action!
+      app
+      (if (empty? (:query-params (router/get-current-location)))
+        [:go-to-location {:query-params {:scene (:id (first (sort-by :id (vals (:scenes @app)))))}}]
+        [:go-to-current-location]))))
   app)
