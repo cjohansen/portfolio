@@ -48,7 +48,7 @@
   :on-update (fn [el data]
                (on-mounted (.-firstChild el) #(render-scene el data)))
   [data]
-  [:div {:style {:background "#f8f8f8"
+  [:div {:style {:background "#fff"
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
@@ -58,7 +58,7 @@
              :height "100%"}}]])
 
 (d/defcomponent Toolbar [{:keys [tools]}]
-  [:nav {:style {:background "#fff"
+  [:nav {:style {:background "#f8f8f8"
                  :border-bottom "1px solid #e5e5e5"}}
    (map canvas/render-toolbar-button tools)])
 
