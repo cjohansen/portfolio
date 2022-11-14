@@ -96,3 +96,11 @@ a.inverted:visited,
 .input:focus {
   box-shadow: #1ea7fd 0px 0px 0px 1px inset;
 }
+
+.error {
+  color: #fd1e37;
+}
+
+.mod {margin: 20px 0;}
+
+.vs-s .mod {margin: 10px 0}

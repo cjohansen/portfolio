@@ -1,6 +1,7 @@
 (ns portfolio.components.canvas
   (:require [dumdom.core :as d]
             [portfolio.adapter :as adapter]
+            [portfolio.components.code :refer [Code]]
             [portfolio.components.tab-bar :refer [TabBar]]
             [portfolio.components.triangle :refer [TriangleButton]]
             [portfolio.view :as view]
@@ -57,6 +58,23 @@
              :width "100%"
              :height "100%"}}]])
 
+(d/defcomponent ComponentError [{:keys [component-args error] :as lol}]
+  [:div {:style {:background "#fff"
+                 :width "100%"
+                 :height "100%"
+                 :padding 20}}
+   [:h1.h1.error "Failed to render component"]
+   [:p.mod (:message error)]
+   (when component-args
+     [:div.vs-s.mod
+      [:h2.h3.mod "Component arguments"]
+      [:p.mod (Code {:code component-args})]])
+   (when-let [data (:ex-data error)]
+     [:div.vs-s.mod
+      [:h2.h3.mod "ex-data"]
+      [:p.mod (Code {:code data})]])
+   [:p [:pre (:stack error)]]])
+
 (d/defcomponent Toolbar [{:keys [tools]}]
   [:nav {:style {:background "#f8f8f8"
                  :border-bottom "1px solid #e5e5e5"}}
@@ -89,7 +107,9 @@
   (->> [(when (:title data)
           (CanvasHeader data))
         (when (:scene data)
-          (Canvas data))
+          (if (:component (:scene data))
+            (Canvas data)
+            (ComponentError (:scene data))))
         (when (= :separator (:kind data))
           [:div {:key "separator"
                  :style {:height 20}}])]

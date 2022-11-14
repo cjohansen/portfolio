@@ -54,7 +54,11 @@
   (when-not (js/document.getElementById "portfolio")
     (let [el (js/document.createElement "div")]
       (set! (.-id el) "portfolio")
-      (.appendChild js/document.body el))))
+      (.appendChild js/document.body el))
+    (let [script (js/document.createElement "script")]
+      (set! (.-type script) "text/javascript")
+      (set! (.-src script) "/portfolio/prism.js")
+      (.appendChild js/document.body script))))
 
 (defn start-app [app & [{:keys [on-render]}]]
   (js/document.body.addEventListener "click" #(relay-body-clicks app %))

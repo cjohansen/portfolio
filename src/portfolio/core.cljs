@@ -1,6 +1,16 @@
 (ns portfolio.core
-  (:require [portfolio.router :as router]
+  (:require [cljs.pprint :as pprint]
+            [portfolio.router :as router]
             [portfolio.view :as view]))
+
+(defn blank? [x]
+  (or (nil? x)
+      (and (coll? x) (empty? x))
+      (and (string? x) (empty? x))))
+
+(defn code-str [data]
+  (when (not (blank? data))
+    (with-out-str (pprint/pprint data))))
 
 (defn get-current-scenes [state location]
   (or (when-let [scene (some-> location :query-params :scene keyword)]
@@ -102,9 +112,17 @@
 
 (defn realize-scenes [state scenes]
   (for [scene scenes]
-    (cond-> scene
-      (:component-fn scene)
-      (assoc :component ((:component-fn scene) (get-scene-args state scene))))))
+    (let [args (get-scene-args state scene)]
+      (try
+        (cond-> scene
+          (:component-fn scene)
+          (assoc :component ((:component-fn scene) args)))
+        (catch :default e
+          (assoc scene
+                 :error {:message (.-message e)
+                         :ex-data (code-str (ex-data e))
+                         :stack (.-stack e)}
+                 :component-args (code-str args)))))))
 
 (defn prepare-data [state location]
   (let [current-scenes (realize-scenes state (get-current-scenes state location))
