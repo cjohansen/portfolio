@@ -27,7 +27,7 @@
                                     canvas-tools)})])))
 
 (defn start! [& [{:keys [on-render config canvas-tools]}]]
-  (reset! app (create-app config canvas-tools))
+  (swap! app merge (create-app config canvas-tools))
   (add-watch data/scenes ::app (fn [_ _ _ scenes] (swap! app assoc :scenes scenes)))
   (add-watch data/namespaces ::app (fn [_ _ _ namespaces] (swap! app assoc :namespaces namespaces)))
   (add-watch data/collections ::app (fn [_ _ _ collections] (swap! app assoc :collections collections)))
