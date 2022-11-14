@@ -6,3 +6,7 @@
   :args {:text "Hello, stringy!"}
   [{:keys [text]}]
   (str "<button>" text "</button>"))
+
+(defscene inline-html-button
+  :title "Inline HTML string button"
+  "<button>Hello!</button>")
