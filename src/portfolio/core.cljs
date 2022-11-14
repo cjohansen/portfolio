@@ -118,12 +118,14 @@
       (try
         (cond-> scene
           (:component-fn scene)
-          (assoc :component ((:component-fn scene) args)))
+          (assoc :component ((:component-fn scene) args)
+                 :component-args (code-str args)))
         (catch :default e
           (assoc scene
                  :error {:message (.-message e)
                          :ex-data (code-str (ex-data e))
-                         :stack (.-stack e)}
+                         :stack (.-stack e)
+                         :title "Failed to render component"}
                  :component-args (code-str args)))))))
 
 (defn prepare-data [state location]

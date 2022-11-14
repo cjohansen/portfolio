@@ -3,7 +3,7 @@
             [portfolio.components.triangle :refer [Triangle]]))
 
 (d/defcomponent Sidebar [{:keys [width title lists]}]
-  [:div {:style {:width width}}
+  [:div {:style {:width width :flex-shrink "0"}}
    [:h1.h1 {:style {:margin "20px 10px"}} title]
    (for [list lists]
      [:div {:style {:margin-bottom 20}}

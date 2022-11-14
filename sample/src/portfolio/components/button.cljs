@@ -1,5 +1,9 @@
 (ns portfolio.components.button
-  (:require [portfolio.dumdom :refer-macros [defscene]]))
+  (:require [portfolio.dumdom :refer-macros [defscene]]
+            [dumdom.core :as d]))
+
+(d/defcomponent Bomb [_]
+  (throw (ex-info "Oh no!" {:data 42})))
 
 (defn shuffle-text [ref texts]
   (js/setTimeout
@@ -34,3 +38,6 @@
                 (swap! ref assoc :mounted? false))
   [ref]
   [:button.button (:text @ref)])
+
+(defscene bomb
+  (Bomb {}))
