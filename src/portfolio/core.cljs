@@ -75,7 +75,7 @@
                          :items (map #(prepare-scene-link location %) scenes)})))))))
 
 (defn prepare-sidebar [state location]
-  {:width 230
+  {:width 250
    :title (or (not-empty (:title state)) "Portfolio")
    :lists (->> (:scenes state)
                vals
