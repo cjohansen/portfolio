@@ -17,6 +17,6 @@
          (take-while (comp keyword? first))
          (map vec)
          (into (cond-> {:id (keyword (str *ns*) (str id))}
-                 (= 1 (count rest)) (assoc :component (first rest))
+                 (= 1 (count rest)) (assoc :component-fn `(fn [_#] ~(first rest)))
                  (< 1 (count rest)) (assoc :component-fn `(fn ~(first rest)
                                                             ~@(drop 1 rest))))))))
