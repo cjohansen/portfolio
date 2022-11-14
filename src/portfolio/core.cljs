@@ -1,5 +1,6 @@
 (ns portfolio.core
   (:require [cljs.pprint :as pprint]
+            [clojure.string :as str]
             [portfolio.router :as router]
             [portfolio.view :as view]))
 
@@ -25,10 +26,11 @@
              (filter (comp #{ns} namespace :id))))))
 
 (defn get-scene-namespace [{:keys [namespaces]} {:keys [id]}]
-  (or (get namespaces (some-> id namespace))
-      (when-let [ns (some-> id namespace)]
-        {:title ns
-         :namespace ns})))
+  (let [ns (some-> id namespace)]
+    (or (get namespaces ns)
+        (when ns
+          {:title ns
+           :namespace ns}))))
 
 (defn get-scene-collection [state scene]
   (let [ns (get-scene-namespace state scene)]
@@ -138,8 +140,49 @@
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
      :view (view/prepare-data current-view state location)}))
 
+(defn ns->path [ns]
+  (str/split ns #"\."))
+
+(defn get-paths [namespaces]
+  (let [paths (map ns->path namespaces)]
+    (loop [candidates (drop-last 1 (first paths))
+           paths paths]
+      (if (and (not (empty? candidates))
+               (every? (comp #{(first candidates)} first) paths))
+        (recur (next candidates) (map #(drop 1 %) paths))
+        paths))))
+
+(defn get-default-organization [namespaces collections scenes]
+  (let [nses (set (map (comp namespace :id) (vals scenes)))
+        paths (get-paths nses)
+        colls (when (and (empty? (remove ::generated? (vals collections)))
+                         (every? #(< 1 (count %)) paths))
+                (map (fn [path]
+                       {:id (first path)
+                        :title (first path)
+                        ::generated? true}) paths))]
+    {:namespaces (merge
+                  (->> paths
+                       (map (fn [ns path]
+                              [ns (if colls
+                                    {:namespace ns
+                                     :title (str/join " / " (drop 1 path))
+                                     :collection (first path)}
+                                    {:namespace ns
+                                     :title (str/join " / " path)})])
+                            nses)
+                       (into {}))
+                  namespaces)
+     :collections (some->> colls
+                           (map (juxt :collection identity))
+                           (into {}))}))
+
 (defn init-state [config]
-  (-> config
-      (update :scenes #(->> % (map (juxt :id identity)) (into {})))
-      (update :namespaces #(->> % (map (juxt :namespace identity)) (into {})))
-      (update :collections #(->> % (map (juxt :id identity)) (into {})))))
+  (let [app (-> config
+                (update :scenes #(->> % (map (juxt :id identity)) (into {})))
+                (update :namespaces #(->> % (map (juxt :namespace identity)) (into {})))
+                (update :collections #(->> % (map (juxt :id identity)) (into {}))))
+        defaults (get-default-organization (:namespaces app) (:collections app) (:scenes app))]
+    (cond-> app
+      (:namespaces defaults) (assoc :namespaces (:namespaces defaults))
+      (:collections defaults) (assoc :collections (:collections defaults)))))
