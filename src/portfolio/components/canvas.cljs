@@ -47,6 +47,7 @@
       (adapter/render-component (:component scene) canvas)
       (catch :default e
         (let [error (js/document.createElement "div")]
+          (js/setTimeout #(set! (.. el -style -height) "auto") 100)
           (set! (.-className error) "error-container")
           (set! (.. error -style -overflow) "scroll")
           (.appendChild el error)
