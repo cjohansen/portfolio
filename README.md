@@ -18,16 +18,14 @@ its plugins, etc, are still subject to change.
 
 ## Install
 
-With tools.deps:
+Portfolio is under active initial development, so there's no official release
+yet. Stuff is added and refined on a ~daily basis, so just use the latest git
+sha:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "0.2022.11.11"}
-```
-
-With Leiningen:
-
-```clj
-[no.cjohansen/dumdom "0.2022.11.11"]
+no.cjohansen/portfolio
+{:git/url "https://github.com/cjohansen/portfolio"
+ :sha "..."}
 ```
 
 ## Usage
