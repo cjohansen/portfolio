@@ -69,12 +69,13 @@
       (doseq [tool tools]
         (canvas/prepare-canvas tool el opt))
       (adapter/render-component (:component scene) canvas)
-      (js/requestAnimationFrame
+      (js/setTimeout
        #(try
           (doseq [tool tools]
             (canvas/finalize-canvas tool el opt))
           (catch :default e
-            (render-error el iframe scene e))))
+            (render-error el iframe scene e)))
+       50)
       (catch :default e
         (render-error el iframe scene e)))))
 
