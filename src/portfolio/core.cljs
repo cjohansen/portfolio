@@ -84,7 +84,9 @@
 
                   (or expanded? (and selected? (not browsing?)))
                   (into {:expanded? true
-                         :items (map #(prepare-scene-link location %) scenes)})))))))
+                         :items (->> scenes
+                                     (sort-by :idx)
+                                     (map #(prepare-scene-link location %)))})))))))
 
 (defn prepare-sidebar [state location]
   {:width 250
@@ -129,7 +131,9 @@
                  :component-args (code-str args)))))))
 
 (defn prepare-data [state location]
-  (let [current-scenes (realize-scenes state (get-current-scenes state location))
+  (let [current-scenes (->> (get-current-scenes state location)
+                            (realize-scenes state)
+                            (sort-by :idx))
         ;; There might be multiple scenes, but multiple scenes across different
         ;; namespaces is not (yet) supported.
         current-namespace (get-scene-namespace state (first current-scenes))
