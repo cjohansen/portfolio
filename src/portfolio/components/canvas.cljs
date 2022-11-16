@@ -91,16 +91,25 @@
              (.appendChild (.-body doc) el)))
          (f))))))
 
+(defn init-canvas [el data]
+  (let [document (get-iframe-document el)
+        head (.-head document)]
+    (doseq [path (:css-paths data)]
+      (let [link (js/document.createElement "link")]
+        (set! (.-rel link) "stylesheet")
+        (set! (.-type link) "text/css")
+        (set! (.-href link) path)
+        (.appendChild head link)))
+    (set! (.. document -body -style -paddingTop) "20px")
+    (set! (.. document -body -style -paddingBottom) "20px")
+    (set! (.. document -documentElement -style -paddingLeft) "20px")
+    (set! (.. document -documentElement -style -paddingRight) "20px")))
+
 (d/defcomponent Canvas
   :on-mount (fn [el data]
               (on-mounted (get-iframe el)
                           (fn []
-                            (doseq [path (:css-paths data)]
-                              (let [link (js/document.createElement "link")]
-                                (set! (.-rel link) "stylesheet")
-                                (set! (.-type link) "text/css")
-                                (set! (.-href link) path)
-                                (.appendChild (.-head (get-iframe-document el)) link)))
+                            (init-canvas el data)
                             (render-scene el data))))
   :on-update (fn [el data]
                (on-mounted (get-iframe el) #(render-scene el data)))
@@ -110,7 +119,6 @@
    [:iframe.canvas
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
      :style {:border "none"
-             :padding 20
              :width "100%"
              :height "100%"}}]])
 

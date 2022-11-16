@@ -1,5 +1,6 @@
 (ns portfolio.scenes
-  (:require [portfolio.components.button]
+  (:require [portfolio.components.box]
+            [portfolio.components.button]
             [portfolio.components.dom]
             [portfolio.components.heading]
             [portfolio.components.html]
