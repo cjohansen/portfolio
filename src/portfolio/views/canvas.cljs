@@ -65,27 +65,34 @@
                 :actions [[:assoc-in minimize-path true]]})
      :content content}))
 
+(defn get-tool-defaults [tools]
+  (apply merge (map :default-value tools)))
+
+(defn get-tool-values [state id tools]
+  (apply merge (map #(canvas/get-tool-value % state id) tools)))
+
 (defn prepare-rows [state root-layout source view scenes path layout]
   (for [[row y] (map vector layout (range))]
-     (for [[opt x] (map vector row (range))]
-       (let [path (into path [y x])]
-         (if (vector? opt)
-           {:layout (prepare-rows state root-layout source view scenes path opt)}
-           (let [id (concat source path)
-                 options (->> (:tools view)
-                              (map #(canvas/get-tool-value % state id))
-                              (apply merge opt))]
-             (when (seq scenes)
-               {:toolbar
-                {:tools
-                 (->> (:tools view)
-                      (keep #(canvas/prepare-toolbar-button
-                              % state {:pane-id id
-                                       :pane-options options
-                                       :pane-path path
-                                       :layout-path [:layout source]
-                                       :layout root-layout})))}
-                :canvases (map #(assoc % :opt options) scenes)})))))))
+    (for [[opt x] (map vector row (range))]
+      (let [path (into path [y x])]
+        (if (vector? opt)
+          {:layout (prepare-rows state root-layout source view scenes path opt)}
+          (let [id (concat source path)
+                options (merge (get-tool-defaults (:tools view))
+                               opt
+                               (get-tool-values state id (:tools view)))]
+            (when (seq scenes)
+              {:toolbar
+               {:tools
+                (->> (:tools view)
+                     (keep #(canvas/prepare-toolbar-button
+                             % state {:pane-id id
+                                      :pane-options options
+                                      :pane-path path
+                                      :layout-path [:layout source]
+                                      :layout root-layout
+                                      :config-source source})))}
+               :canvases (map #(assoc % :opt options) scenes)})))))))
 
 (defn prepare-layout [state location view {:keys [layout source]} scenes multi?]
   (let [scenes (for [scene scenes]
