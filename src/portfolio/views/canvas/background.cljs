@@ -15,7 +15,7 @@
 (defn prepare-canvas [data el {:background/keys [background-color body-class]}]
   (set! (.. (canvas/get-iframe el) -style -backgroundColor) background-color)
   (let [body (canvas/get-iframe-body el)]
-    (doseq [{:keys [value]} options]
+    (doseq [{:keys [value]} (:options data)]
       (when-not (empty? (:background/body-class value))
         (if (= body-class (:background/body-class value))
           (.add (.-classList body) body-class)
