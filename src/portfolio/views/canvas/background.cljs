@@ -5,7 +5,7 @@
 (def default-options
   [{:id :light-mode
     :title "Light (.light-mode)"
-    :value {:background/background-color "#fff"
+    :value {:background/background-color "#f8f8f8"
             :background/body-class "light-mode"}}
    {:id :dark-mode
     :title "Dark (.dark-mode)"
