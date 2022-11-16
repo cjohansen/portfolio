@@ -10,7 +10,8 @@
 
 (defprotocol ICanvasTool
   :extend-via-metadata true
-  (prepare-canvas [self el opt]))
+  (prepare-canvas [self el opt])
+  (finalize-canvas [self el opt]))
 
 (defprotocol ICanvasToolValue
   :extend-via-metadata true

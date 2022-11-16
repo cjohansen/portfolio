@@ -28,6 +28,7 @@
 
 (def impl
   {`protocols/prepare-canvas (fn [_ el opt] (zoom el opt))
+   `protocols/finalize-canvas (fn [_ _ _])
    `protocols/prepare-toolbar-button #'prepare-zoom-button})
 
 (defn create-zoom-in-tool [config]

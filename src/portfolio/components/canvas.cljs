@@ -34,6 +34,30 @@
       [:p.mod (Code {:code data})]])
    [:p [:pre (:stack error)]]])
 
+(defn get-error-container [el]
+  (or (when-let [el (.querySelector el "error-container")]
+        (set! (.-innerHTML el) "")
+        el)
+      (let [error (js/document.createElement "div")]
+        (set! (.-className error) "error-container")
+        (set! (.. error -style -overflow) "scroll")
+        (.appendChild el error)
+        error)))
+
+(defn render-error [el iframe scene e]
+  (let [error (get-error-container el)]
+    (js/setTimeout #(set! (.. el -style -height) "auto") 100)
+    (set! (.. iframe -style -display) "none")
+    (d/render
+     (ComponentError
+      {:component-args (:component-args scene)
+       :error {:title "Failed to mount component"
+               :message (.-message e)
+               :stack (.-stack e)
+               :ex-data (when-let [data (ex-data e)]
+                          (with-out-str (pprint/pprint data)))}})
+     error)))
+
 (defn render-scene [el {:keys [scene tools opt]}]
   (let [iframe (get-iframe el)
         canvas (some-> iframe .-contentDocument (.getElementById "canvas"))
@@ -45,22 +69,14 @@
       (doseq [tool tools]
         (canvas/prepare-canvas tool el opt))
       (adapter/render-component (:component scene) canvas)
+      (js/requestAnimationFrame
+       #(try
+          (doseq [tool tools]
+            (canvas/finalize-canvas tool el opt))
+          (catch :default e
+            (render-error el iframe scene e))))
       (catch :default e
-        (let [error (js/document.createElement "div")]
-          (js/setTimeout #(set! (.. el -style -height) "auto") 100)
-          (set! (.-className error) "error-container")
-          (set! (.. error -style -overflow) "scroll")
-          (.appendChild el error)
-          (set! (.. iframe -style -display) "none")
-          (d/render
-           (ComponentError
-            {:component-args (:component-args scene)
-             :error {:title "Failed to mount component"
-                     :message (.-message e)
-                     :stack (.-stack e)
-                     :ex-data (when-let [data (ex-data e)]
-                                (with-out-str (pprint/pprint data)))}})
-           error))))))
+        (render-error el iframe scene e)))))
 
 (defn on-mounted [el f]
   (if (some-> el .-contentDocument (.getElementById "canvas"))

@@ -54,7 +54,8 @@
   (with-meta
     (dissoc data :prepare-canvas)
     {`canvas/prepare-toolbar-button #'prepare-toolbar-menu-button
-     `canvas/prepare-canvas (:prepare-canvas data)}))
+     `canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
+     `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))}))
 
 (defn create-action-button [data]
   (doseq [k #{:title :get-actions :prepare-canvas}]
@@ -64,7 +65,8 @@
   (let [show? (or (:show? data) (constantly true))]
     (with-meta
       (dissoc data :show? :get-actions :prepare-canvas)
-      {`canvas/prepare-canvas (:prepare-canvas data)
+      {`canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
+       `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))
        `canvas/prepare-toolbar-button
        (fn [tool state options]
          (when (show? tool state options)
