@@ -33,6 +33,7 @@
        {:style {:background (when selected? "#f8f8f8")
                 :font-weight (when selected? "bold")
                 :width "100%"
+                :cursor (if actions "pointer" "default")
                 :text-align "left"
                 :padding "10px 20px"}
         :on-click actions}
