@@ -2,15 +2,15 @@
   (:require [portfolio.components.canvas :as canvas]
             [portfolio.views.canvas.addons :as addons]))
 
-(def options
-  [{:id :light
-    :title "Light (.light-bg)"
-    :value {:background/background-color "#f8f8f8"
-            :background/body-class "light-bg"}}
-   {:id :dark
-    :title "Dark (body.dark-bg)"
+(def default-options
+  [{:id :light-mode
+    :title "Light (.light-mode)"
+    :value {:background/background-color "#fff"
+            :background/body-class "light-mode"}}
+   {:id :dark-mode
+    :title "Dark (.dark-mode)"
     :value {:background/background-color "#111111"
-            :background/body-class "dark-bg"}}])
+            :background/body-class "dark-mode"}}])
 
 (defn prepare-canvas [data el {:background/keys [background-color body-class]}]
   (set! (.. (canvas/get-iframe el) -style -backgroundColor) background-color)
@@ -22,8 +22,14 @@
           (.remove (.-classList body) body-class))))))
 
 (defn create-background-tool [config]
-  (addons/create-toolbar-menu-button
-   {:id :canvas/background
-    :title "Background"
-    :options options
-    :prepare-canvas #'prepare-canvas}))
+  (let [options (or (:background/options config) default-options)]
+    (addons/create-toolbar-menu-button
+     {:id :canvas/background
+      :title "Background"
+      :options (or (:background/options config) options)
+      :default-value (->> (or (when-let [id (:background/default-option-id config)]
+                                (filter (comp #{id} :id) options))
+                              options)
+                          first
+                          :value)
+      :prepare-canvas #'prepare-canvas})))
