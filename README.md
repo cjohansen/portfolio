@@ -90,6 +90,88 @@ Currently supported key/value pairs:
 - `:on-unmount` - A function called when the scene is removed from the DOM. The
   function is passed the component arguments.
 
+### Starting the Portfolio UI
+
+After you have created your scenes, start the UI:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!)
+```
+
+### Custom CSS
+
+By default your scenes will render in a blank HTML page called the canvas. This
+page has no default styling, and comes as bare as possible out of the package.
+You might want to add some CSS files to the canvas, which can be done with
+`ui/start!`:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+  {:config {:css-paths ["/myapp/custom.css"]}})
+```
+
+Add as many CSS files as you like.
+
+### Custom Canvas HTML
+
+If you need to make more adjustments to the canvas, such as adding meta tags,
+global JavaScripts etc, you're better off providing your own canvas:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+  {:config {:canvas-path "/my/custom/portfolio.html"}})
+```
+
+There are no requirements to how you format this file. Portfolio will add a div
+with id `"canvas"` to it, in which it will render the scene. If there already is
+an element with that id, it will be used instead, so be aware of that.
+
+## Customizing the Portfolio UI
+
+The Portfolio UI is highly customizable: The default canvas tools are all
+optional, and their options can be configured to your liking.
+
+### Background
+
+The background tool sets a background color for your scene, and adds a class
+name to the `body` element, to help your CSS choose between dark mode and light
+mode. See [./src/portfolio/views/canvas/background.cljs](background.cljs) for
+specifics about the default options. To default Portfolio to use dark mode for
+scenes, specify `:background/default-option-id` when calling `ui/start!`:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+  {:config {:background/default-option-id :dark-mode}})
+```
+
+To change the available options, use `:background/options`:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+ {:config
+  {:background/options
+   [{:id :bright-mode
+     :title "Bright mode (.bright-mode)"
+     :value {:background/background-color "#f8f8f8"
+             :background/body-class "light-mode"}}
+    {:id :bleak-mode
+     :title "Bleak mode (.bleak-mode)"
+     :value {:background/background-color "#000000"
+             :background/body-class "dark-mode"}}]
+
+   :background/default-option-id :bleak-mode}})
+```
+
 ## Try it out
 
 You can take the Portfolio UI for a spin by cloning this repo, starting
