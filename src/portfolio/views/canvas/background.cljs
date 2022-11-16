@@ -18,8 +18,8 @@
     (doseq [{:keys [value]} (:options data)]
       (when-not (empty? (:background/body-class value))
         (if (= body-class (:background/body-class value))
-          (.add (.-classList body) body-class)
-          (.remove (.-classList body) body-class))))))
+          (.add (.-classList body) (:background/body-class value))
+          (.remove (.-classList body) (:background/body-class value)))))))
 
 (defn create-background-tool [config]
   (let [options (or (:background/options config) default-options)]
