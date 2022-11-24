@@ -1,7 +1,16 @@
 (ns portfolio.components.popup-menu
   (:require [dumdom.core :as d]))
 
-(d/defcomponent PopupMenu [{:keys [options]}]
+(d/defcomponent PopupMenu
+  :on-render (fn [el _]
+               (let [left (.. el getBoundingClientRect -left)
+                     width (.. el -firstChild getBoundingClientRect -width)
+                     button-width (.. el -parentNode getBoundingClientRect -width)]
+                 (when (< (- left (/ width 2)) 0)
+                   (set! (.. el -style -left) "0")
+                   (set! (.. el -firstChild -style -transform) nil)
+                   (set! (.. el -firstChild -firstChild -style -left) (str (/ button-width 2) "px")))))
+  [{:keys [options]}]
   ;; First, position absolutely so that "50%" is taken as 50% of the containing
   ;; element
   [:div {:style {:position "absolute"

@@ -88,18 +88,46 @@
                                      (sort-by :idx)
                                      (map #(prepare-scene-link location %)))})))))))
 
+(defn small-screen? [state]
+  (< (-> state :win :w) 650))
+
+(defn sidebar? [{:keys [sidebar-status] :as state}]
+  (cond
+    (= sidebar-status :hidden)
+    false
+
+    (= sidebar-status :visible)
+    true
+
+    :default
+    (not (small-screen? state))))
+
+(defn prepare-header [state _]
+  (when-not (sidebar? state)
+    {:title (or (not-empty (:title state)) "Portfolio")
+     :actions [[:assoc-in [:sidebar-status]
+                (if (small-screen? state)
+                  :visible
+                  :auto)]]}))
+
 (defn prepare-sidebar [state location]
-  {:width 250
-   :title (or (not-empty (:title state)) "Portfolio")
-   :lists (->> (:scenes state)
-               vals
-               (group-by #(get-scene-collection state %))
-               (sort-by first)
-               (map (fn [[collection scenes]]
-                      {:title (or (:title (get-collection state collection))
-                                  (when-not (= ::default collection)
-                                    (some-> collection name)))
-                       :items (prepare-scenes state location (sort-by :title scenes))})))})
+  (when (sidebar? state)
+    {:width 250
+     :slide? (boolean (:sidebar-status state))
+     :title (or (not-empty (:title state)) "Portfolio")
+     :actions [[:assoc-in [:sidebar-status]
+                (if (small-screen? state)
+                  :auto
+                  :hidden)]]
+     :lists (->> (:scenes state)
+                 vals
+                 (group-by #(get-scene-collection state %))
+                 (sort-by first)
+                 (map (fn [[collection scenes]]
+                        {:title (or (:title (get-collection state collection))
+                                    (when-not (= ::default collection)
+                                      (some-> collection name)))
+                         :items (prepare-scenes state location (sort-by :title scenes))})))}))
 
 (defn prepare-view-option [current-view view]
   (cond-> view
@@ -142,7 +170,8 @@
                      :current-scenes current-scenes
                      :current-namespace current-namespace
                      :current-collection (get-collection state (:collection current-namespace)))]
-    {:sidebar (prepare-sidebar state location)
+    {:header (prepare-header state location)
+     :sidebar (prepare-sidebar state location)
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
      :view (view/prepare-data current-view state location)}))
 

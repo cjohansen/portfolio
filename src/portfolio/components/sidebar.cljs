@@ -1,9 +1,20 @@
 (ns portfolio.components.sidebar
   (:require [dumdom.core :as d]
-            [portfolio.components.triangle :refer [Triangle]]))
+            [portfolio.components.triangle :refer [Triangle]]
+            [portfolio.icons.caret-double-left :as caret-double-left]))
 
-(d/defcomponent Sidebar [{:keys [width title lists]}]
-  [:div {:style {:width width :flex-shrink "0"}}
+(d/defcomponent Sidebar [{:keys [width title lists actions slide?]}]
+  [:div {:style {:width (if slide? 0 width)
+                 :flex-shrink "0"
+                 :transition "width 0.25s ease"}
+         :mounted-style {:width width}
+         :leaving-style {:width 0}}
+   [:div {:style {:margin "20px 0 0 10px"
+                  :width 16
+                  :height 16
+                  :cursor "pointer"}
+          :on-click actions}
+    caret-double-left/icon]
    [:h1.h1 {:style {:margin "20px 10px"}} title]
    (for [list lists]
      [:div {:style {:margin-bottom 20}}

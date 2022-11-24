@@ -60,11 +60,29 @@
       (set! (.-src script) "/portfolio/prism.js")
       (.appendChild js/document.body script))))
 
+(defn debounce [f ms]
+  (let [timer (atom nil)]
+    (fn [& args]
+      (some-> @timer js/clearTimeout)
+      (reset! timer (js/setTimeout #(apply f args) ms)))))
+
+(defn set-window-size [app]
+  (let [dim {:w js/window.innerWidth
+             :h js/window.innerHeight}]
+    (swap! app assoc :win dim)))
+
+(def ^:private set-window-size-debounced (debounce set-window-size 100))
+
+(defn keep-size-up-to-date [app]
+  (set-window-size app)
+  (set! js/window.onresize #(set-window-size-debounced app)))
+
 (defn start-app [app & [{:keys [on-render]}]]
   (if (::started? @app)
     (render app {:on-render on-render})
     (do
       (js/document.body.addEventListener "click" #(relay-body-clicks app %))
+      (keep-size-up-to-date app)
       (ensure-element!)
       (ensure-portfolio-css!
        (fn []
