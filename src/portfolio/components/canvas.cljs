@@ -92,14 +92,23 @@
              (.appendChild (.-body doc) el)))
          (f))))))
 
-(defn init-canvas [el data]
+(defn init-canvas [el data f]
   (let [document (get-iframe-document el)
-        head (.-head document)]
+        head (.-head document)
+        loaded (atom 0)
+        try-complete #(when (= (count (:css-paths data)) @loaded)
+                        (f))]
+    (try-complete)
     (doseq [path (:css-paths data)]
       (let [link (js/document.createElement "link")]
         (set! (.-rel link) "stylesheet")
         (set! (.-type link) "text/css")
         (set! (.-href link) path)
+        (.addEventListener
+         link "load"
+         (fn [_]
+           (swap! loaded inc)
+           (try-complete)))
         (.appendChild head link)))
     (set! (.. document -body -style -paddingTop) "20px")
     (set! (.. document -body -style -paddingBottom) "20px")
@@ -110,8 +119,7 @@
   :on-mount (fn [el data]
               (on-mounted (get-iframe el)
                           (fn []
-                            (init-canvas el data)
-                            (render-scene el data))))
+                            (init-canvas el data #(render-scene el data)))))
   :on-update (fn [el data]
                (on-mounted (get-iframe el) #(render-scene el data)))
   [data]
