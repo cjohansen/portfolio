@@ -23,6 +23,7 @@
                    :flex-grow 1
                    :display "flex"
                    :flex-direction "column"
+                   :overflow "hidden"
                    :margin (if (:sidebar data)
                              "10px 10px 10px 0"
                              10)}}
