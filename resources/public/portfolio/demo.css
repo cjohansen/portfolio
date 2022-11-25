@@ -3,6 +3,10 @@ html, body {
   margin: 0;
 }
 
+html {
+  height: 100%;
+}
+
 .dark-mode {
   color: #fff;
 }

@@ -86,6 +86,7 @@
      el "load"
      (fn [_]
        (let [doc (->> el .-contentDocument)]
+         (set! (.. doc -documentElement -style -height) "auto")
          (when-not (.getElementById doc "canvas")
            (let [el (doc.createElement "div")]
              (set! (.-id el) "canvas")
