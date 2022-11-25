@@ -7,6 +7,7 @@
             [portfolio.components.link]
             [portfolio.components.reagent]
             [portfolio.components.rum]
+            [portfolio.layouts.boxes]
             [portfolio.layouts.home-page]
             [portfolio.ui :as ui]))
 

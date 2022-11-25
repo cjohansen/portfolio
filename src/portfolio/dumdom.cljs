@@ -8,9 +8,9 @@
 
 (def component-impl
   {`adapter/render-component
-   (fn [{:keys [component]} el]
+   (fn [{:keys [component id]} el]
      (if el
-       (d/render component el)
+       (d/render [:div {:key id} component] el)
        (js/console.error "Asked to render Dumdom component without an element")))})
 
 (defn create-scene [scene]
