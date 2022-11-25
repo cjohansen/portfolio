@@ -13,7 +13,7 @@
                  :right 0
                  :bottom 0}}
    (some-> data :sidebar Sidebar)
-   [:div {:style {:background "#f8f8f8"
+   [:div {:style {:background "#e1e4ec"
                   :display "flex"
                   :flex-direction "column"
                   :flex-grow 1}}

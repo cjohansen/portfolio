@@ -4,7 +4,8 @@
             [portfolio.icons.caret-double-left :as caret-double-left]))
 
 (d/defcomponent Sidebar [{:keys [width title lists actions slide?]}]
-  [:div {:style {:width (if slide? 0 width)
+  [:div {:style {:background "#e1e4ec"
+                 :width (if slide? 0 width)
                  :flex-shrink "0"
                  :transition "width 0.25s ease"}
          :mounted-style {:width width}

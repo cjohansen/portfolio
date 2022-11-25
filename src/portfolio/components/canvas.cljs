@@ -133,7 +133,7 @@
              :height "100%"}}]])
 
 (d/defcomponent Toolbar [{:keys [tools]}]
-  [:nav {:style {:background "#f8f8f8"
+  [:nav {:style {:background "#fff"
                  :border-bottom "1px solid #e5e5e5"}}
    (map canvas/render-toolbar-button tools)])
 
