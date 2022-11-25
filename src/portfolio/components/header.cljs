@@ -4,6 +4,7 @@
 
 (d/defcomponent Header [{:keys [title actions]}]
   [:div {:style {:display "flex"
+                 :flex-shrink "0"
                  :padding "0 20px"
                  :transition "height 0.25s ease"
                  :height 0
