@@ -134,7 +134,9 @@
 
 (d/defcomponent Toolbar [{:keys [tools]}]
   [:nav {:style {:background "#fff"
-                 :border-bottom "1px solid #e5e5e5"}}
+                 :border-bottom "1px solid #e5e5e5"
+                 :display "flex"
+                 :align-items "center"}}
    (map canvas/render-toolbar-button tools)])
 
 (d/defcomponent CanvasPanel [data]

@@ -1,6 +1,9 @@
 (ns portfolio.views.canvas.zoom
   (:require [portfolio.components.canvas :as canvas]
             [portfolio.components.canvas-toolbar-buttons :refer [Button]]
+            [portfolio.icons.arrow-counter-clockwise :as reset]
+            [portfolio.icons.magnifying-glass-minus :as minus]
+            [portfolio.icons.magnifying-glass-plus :as plus]
             [portfolio.views.canvas.addons :as addons]
             [portfolio.views.canvas.protocols :as protocols]))
 
@@ -17,7 +20,8 @@
   (let [level (or (:zoom/level pane-options) 1)
         increment (or (:zoom-increment tool) 0.25)]
     (with-meta
-      {:text (:title tool)
+      {:title (:title tool)
+       :icon (:icon tool)
        :active? (if (< 0 increment)
                   (< 1 level)
                   (< level 1))
@@ -35,6 +39,7 @@
   (with-meta
     {:id :canvas/zoom
      :title "Zoom in"
+     :icon plus/icon
      :zoom-increment (or (:zoom-increment config) 0.25)}
     impl))
 
@@ -42,6 +47,7 @@
   (with-meta
     {:id :canvas/zoom
      :title "Zoom out"
+     :icon minus/icon
      :zoom-increment (or (:zoom-increment config) -0.25)}
     impl))
 
@@ -56,6 +62,7 @@
   (addons/create-action-button
    {:id :canvas/zoom-reset
     :title "Reset zoom"
+    :icon reset/icon
     :prepare-canvas #'reset-canvas-zoom
     :get-actions (fn [_ _ {:keys [pane-id]}]
                    [[:dissoc-in [:canvas/zoom pane-id :value :zoom/level]]])

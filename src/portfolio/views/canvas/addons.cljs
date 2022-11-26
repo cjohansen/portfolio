@@ -71,6 +71,8 @@
        (fn [tool state options]
          (when (show? tool state options)
            (with-meta
-             {:text (:title data)
+             {:text (when-not (:icon data) (:title data))
+              :title (:title data)
+              :icon (:icon data)
               :actions ((:get-actions data) tool state options)}
              {`canvas/render-toolbar-button #'MenuButton})))})))
