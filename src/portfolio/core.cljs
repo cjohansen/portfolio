@@ -1,17 +1,8 @@
 (ns portfolio.core
-  (:require [cljs.pprint :as pprint]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
+            [portfolio.code :as code]
             [portfolio.router :as router]
             [portfolio.view :as view]))
-
-(defn blank? [x]
-  (or (nil? x)
-      (and (coll? x) (empty? x))
-      (and (string? x) (empty? x))))
-
-(defn code-str [data]
-  (when (not (blank? data))
-    (with-out-str (pprint/pprint data))))
 
 (defn get-current-scenes [state location]
   (or (when-let [scene (some-> location :query-params :scene keyword)]
@@ -149,14 +140,14 @@
         (cond-> scene
           (:component-fn scene)
           (assoc :component ((:component-fn scene) args)
-                 :component-args (code-str args)))
+                 :component-args (code/code-str args)))
         (catch :default e
           (assoc scene
                  :error {:message (.-message e)
-                         :ex-data (code-str (ex-data e))
+                         :ex-data (code/code-str (ex-data e))
                          :stack (.-stack e)
                          :title "Failed to render component"}
-                 :component-args (code-str args)))))))
+                 :component-args (code/code-str args)))))))
 
 (defn prepare-data [state location]
   (let [current-scenes (->> (get-current-scenes state location)

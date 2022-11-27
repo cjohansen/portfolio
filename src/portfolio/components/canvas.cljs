@@ -174,6 +174,13 @@
                  :style {:height 20}}])]
        (remove nil?)))
 
+(d/defcomponent Problem [{:keys [title text code]}]
+  [:div {:style {:background "#fff"
+                 :padding 20}}
+   [:h2.h2 title]
+   [:p.mod text]
+   (Code {:code code})])
+
 (d/defcomponent CanvasView
   :keyfn :mode
   [data]
@@ -182,6 +189,9 @@
                  :display "flex"
                  :flex-direction "column"
                  :overflow "hidden"}}
+   (when-let [problems (:problems data)]
+     [:div {:style {:overflow "scroll"}}
+      (map Problem problems)])
    (->> (for [row (:rows data)]
           [:div {:style {:display "flex"
                          :flex-direction "row"

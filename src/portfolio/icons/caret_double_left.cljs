@@ -1,7 +1,8 @@
 (ns portfolio.icons.caret-double-left
-  "Phosphor icons: https://phosphoricons.com")
+  "Phosphor icons: https://phosphoricons.com"
+  (:require [portfolio.icon :refer-macros [deficon]]))
 
-(def icon
+(deficon icon
   [:svg {:fill "none"
          :viewBox "0 0 256 256"}
    [:rect {:height "256"

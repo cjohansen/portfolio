@@ -1,6 +1,7 @@
-(ns portfolio.icons.arrow-counter-clockwise)
+(ns portfolio.icons.arrow-counter-clockwise
+  (:require [portfolio.icon :refer-macros [deficon]]))
 
-(def icon
+(deficon icon
   [:svg {:fill "none"
          :viewBox "0 0 256 256"}
    [:polyline

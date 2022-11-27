@@ -1,6 +1,7 @@
-(ns portfolio.icons.magnifying-glass-minus)
+(ns portfolio.icons.magnifying-glass-minus
+  (:require [portfolio.icon :refer-macros [deficon]]))
 
-(def icon
+(deficon icon
   [:svg {:fill "none"
          :viewBox "0 0 256 256"}
    [:line

@@ -1,7 +1,8 @@
 (ns portfolio.icons.hamburger
-  "Phosphor icons: https://phosphoricons.com")
+  "Phosphor icons: https://phosphoricons.com"
+  (:require [portfolio.icon :refer-macros [deficon]]))
 
-(def icon
+(deficon icon
   [:svg {:viewBox "0 0 256 256"}
    [:path
     {:d "M48.8,96A8,8,0,0,1,41,86.3C47.4,55.5,83.9,32,128,32s80.6,23.5,87,54.3a8,8,0,0,1-7.8,9.7Z"

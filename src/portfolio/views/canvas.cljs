@@ -1,5 +1,6 @@
 (ns portfolio.views.canvas
-  (:require [portfolio.components.canvas :refer [CanvasView]]
+  (:require [portfolio.code :as code]
+            [portfolio.components.canvas :refer [CanvasView]]
             [portfolio.core :as p]
             [portfolio.router :as router]
             [portfolio.view :as view]
@@ -113,18 +114,28 @@
         scenes (:current-scenes state)
         multi? (multi-scene? state location)]
     (with-meta
-      (assoc (prepare-layout state location view layout scenes multi?)
-             :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
-                      (prepare-panel state location (first scenes) (:addons view))))
+      (if-let [problems (:problems view)]
+        {:problems problems}
+        (assoc (prepare-layout state location view layout scenes multi?)
+               :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
+                        (prepare-panel state location (first scenes) (:addons view)))))
       view-impl)))
 
 (def data-impl
   {`view/prepare-data #'prepare-canvas-view})
 
+(defn describe-missing-tool-id [tool]
+  {:title "Badly configured canvas tool"
+   :text [:span "Canvas tool extensions must have an " [:code ":id"] " or they won't work correctly. Please inspect this tool:"]
+   :code (code/code-str tool)})
+
 (defn create-canvas [{:keys [tools addons layout]}]
   (-> {:id ::canvas
        :title "Canvas"
-       :tools tools
+       :tools (filter :id tools)
        :addons addons
-       :layout (or layout [[{}]])}
+       :layout (or layout [[{}]])
+       :problems (->> (remove :id tools)
+                      (map describe-missing-tool-id)
+                      seq)}
       (with-meta data-impl)))
