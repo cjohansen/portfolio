@@ -21,9 +21,7 @@
                        :tools (into [(canvas-bg/create-background-tool config)
                                      (canvas-vp/create-viewport-tool config)
                                      (canvas-grid/create-grid-tool config)
-                                     (canvas-zoom/create-zoom-in-tool config)
-                                     (canvas-zoom/create-zoom-out-tool config)
-                                     (canvas-zoom/create-reset-zoom-tool config)]
+                                     (canvas-zoom/create-zoom-tool config)]
                                     canvas-tools)})])))
 
 (defn start! [& [{:keys [on-render config canvas-tools]}]]

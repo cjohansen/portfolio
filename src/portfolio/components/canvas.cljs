@@ -136,8 +136,11 @@
   [:nav {:style {:background "#fff"
                  :border-bottom "1px solid #e5e5e5"
                  :display "flex"
-                 :align-items "center"}}
-   (map canvas/render-toolbar-button tools)])
+                 :align-items "center"
+                 :padding-left 20}}
+   (for [tool tools]
+     [:div {:style {:margin-right 20}}
+      (canvas/render-toolbar-button tool)])])
 
 (d/defcomponent CanvasPanel [data]
   [:div {:style {:border-top "1px solid #ccc"
