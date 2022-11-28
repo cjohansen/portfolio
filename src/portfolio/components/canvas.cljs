@@ -68,7 +68,7 @@
     (try
       (doseq [tool tools]
         (canvas/prepare-canvas tool el opt))
-      (adapter/render-component (:component scene) canvas)
+      (adapter/render-component scene canvas)
       (js/setTimeout
        #(try
           (doseq [tool tools]
