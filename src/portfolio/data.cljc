@@ -11,7 +11,10 @@
     (do
       (when-not (get @scenes (:id scene))
         (swap! scene-order conj (:id scene)))
-      (swap! scenes assoc (:id scene) (cond-> (assoc scene :idx (.indexOf @scene-order (:id scene)))
+      (swap! scenes assoc (:id scene) (cond-> (assoc scene
+                                                     :idx (.indexOf @scene-order (:id scene))
+                                                     :updated-at #?(:cljs (.getTime (js/Date.))
+                                                                    :clj (.toEpochMilli (java.time.Instant/now))))
                                         (empty? (:title scene))
                                         (assoc :title (name (:id scene))))))))
 
