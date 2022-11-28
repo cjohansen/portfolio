@@ -1,17 +1,10 @@
 (ns portfolio.components.heading
-  (:require [dumdom.core :as d]
-            [portfolio.dumdom :refer-macros [defscene]]))
+  (:require [portfolio.dumdom :refer-macros [defscene]]
+            [portfolio.components.side-effecty :refer [SideEffecty]]))
 
 (defscene default
   :title "Heading"
   [:h1 "I am a heading"])
-
-(d/defcomponent SideEffecty
-  :on-mount
-  (fn [el data]
-    (set! (.-innerHTML el) (:text data)))
-  [data]
-  [:h1])
 
 (defscene side-effecty-component-1
   :title "Side-effecty #1"
