@@ -14,7 +14,7 @@
                      real-size "px " real-size "px, " real-size "px " real-size "px")))
         (set! (.-backgroundPosition body-style)
               (let [offset (- (or offset 0) (- real-size size))]
-                (str/join ", " (repeat 4 (str offset "px " offset "px")))))
+                (str/join ", " (repeat 4 (str offset "px " 0 "px")))))
         (set! (.-backgroundBlendMode body-style) "difference")
         (set! (.-backgroundImage body-style)
               "linear-gradient(rgba(130, 130, 130, 0.5) 1px, transparent 1px),
