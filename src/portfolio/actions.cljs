@@ -61,12 +61,13 @@
   (let [current-scenes (portfolio/get-current-scenes state (:location state))
         next-scenes (portfolio/get-current-scenes state location)]
     {:assoc-in [[:location] location]
-     :fns (into (->> (filter :on-unmount current-scenes)
-                     (map (fn [{:keys [on-unmount args id title]}]
-                            [:on-unmount (or id title) on-unmount args])))
-                (->> (filter :on-mount next-scenes)
-                     (map (fn [{:keys [on-mount args id title]}]
-                            [:on-mount (or id title) on-mount args]))))
+     :fns (concat
+           (->> (filter :on-unmount current-scenes)
+                (map (fn [{:keys [on-unmount args id title]}]
+                       [:on-unmount (or id title) on-unmount args])))
+           (->> (filter :on-mount next-scenes)
+                (map (fn [{:keys [on-mount args id title]}]
+                       [:on-mount (or id title) on-mount args]))))
      :release (->> (map :args current-scenes)
                    (filter atom?)
                    (map (fn [ref] [ref ::portfolio])))

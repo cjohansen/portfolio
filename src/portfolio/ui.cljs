@@ -1,7 +1,9 @@
 (ns portfolio.ui
-  (:require [portfolio.client :as client]
+  (:require [portfolio.actions :as actions]
+            [portfolio.client :as client]
             [portfolio.core :as portfolio]
             [portfolio.data :as data]
+            [portfolio.homeless :as h]
             [portfolio.views.canvas :as canvas]
             [portfolio.views.canvas.background :as canvas-bg]
             [portfolio.views.canvas.grid :as canvas-grid]
@@ -24,9 +26,13 @@
                                      (canvas-zoom/create-zoom-tool config)]
                                     canvas-tools)})])))
 
+(def eventually-execute (h/debounce actions/execute-action! 250))
+
 (defn start! [& [{:keys [on-render config canvas-tools]}]]
   (swap! app merge (create-app config canvas-tools))
-  (add-watch data/scenes ::app (fn [_ _ _ scenes] (swap! app assoc :scenes scenes)))
+  (add-watch data/scenes ::app (fn [_ _ _ scenes]
+                                 (swap! app assoc :scenes scenes)
+                                 (eventually-execute app [:go-to-current-location])))
   (add-watch data/namespaces ::app (fn [_ _ _ namespaces] (swap! app assoc :namespaces namespaces)))
   (add-watch data/collections ::app (fn [_ _ _ collections] (swap! app assoc :collections collections)))
   (client/start-app app {:on-render on-render}))

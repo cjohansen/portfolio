@@ -1,17 +1,10 @@
-(ns portfolio.data)
+(ns portfolio.data
+  (:require [portfolio.homeless :as h]))
 
 (def scenes (atom {}))
 (def scene-order (atom 0))
 (def namespaces (atom {}))
 (def collections (atom {}))
-
-(defn debounce [f ms]
-  #?(:cljs
-     (let [timer (atom nil)]
-       (fn [& args]
-         (some-> @timer js/clearTimeout)
-         (reset! timer (js/setTimeout #(apply f args) ms))))
-     :clj (fn [& args] (apply f args))))
 
 (defn get-deleted-scenes
   "Finds scenes that have been deleted. All the scenes in the same namespace
@@ -35,7 +28,7 @@
          (fn [scenes]
            (apply dissoc scenes (map :id (get-deleted-scenes scenes))))))
 
-(def eventually-purge-scenes (debounce purge-removed-scenes 50))
+(def eventually-purge-scenes (h/debounce purge-removed-scenes 50))
 
 (defn get-scene-context
   "Finds the line number (if available) and index of the scene. Line number 1 very

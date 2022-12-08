@@ -12,7 +12,7 @@
        (when (:mounted? @ref)
          (swap! ref assoc :text text)
          (shuffle-text ref (next texts)))))
-   10000))
+   3000))
 
 (defscene default
   :title "Button!"
