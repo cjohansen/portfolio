@@ -77,7 +77,41 @@ Scenes can also be functions:
 
 By using the latter form, you allow Portfolio to know about the component's
 arguments. This enables you to use `tap>` and Portfolio's UI to interact with
-your component, or bind the scene to an atom to trigger interactions.
+your component, or bind the scene to an atom to trigger interactions. Here's an
+example of passing an atom to your scene:
+
+```clj
+(defscene name
+  :param (atom {:title "Hello world!"})
+  [param]
+  [:h1 (:title @param)])
+```
+
+As you can see - if you pass an atom as `:param`, an atom is what is passed to
+your component function. If you just want a map, that can also benefit from this
+indirection, because it allows you to use Portfolio's UI to tinker with the
+parameter:
+
+```clj
+(defscene name
+  :param {:title "Hello world!"}
+  [param]
+  [:h1 (:title param)])
+```
+
+While a symbol is a good identifier, you probably want to set `:title` for a
+more pleasant-looking UI:
+
+```clj
+(defscene default-scenario
+  :title "Default scenario!"
+  :param {:title "Hello world!"}
+  [param]
+  [:h1 (:title param)])
+```
+
+With `:title`, this will list as `Default scenario` in the sidebar instead of
+`default-scenario`.
 
 Currently supported key/value pairs:
 
