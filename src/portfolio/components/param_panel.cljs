@@ -1,4 +1,4 @@
-(ns portfolio.components.arguments-panel
+(ns portfolio.components.param-panel
   (:require [dumdom.core :as d]
             [portfolio.components.toggle :refer [Toggle]]))
 
@@ -21,14 +21,14 @@
     :text (TextInput data)
     (do
       (js/console.error
-       "Rendering unknown argument input type as text input"
+       "Rendering unknown param input type as text input"
        (clj->js data))
       (TextInput (assoc data :type :text)))))
 
-(d/defcomponent ArgumentsPanel [data]
+(d/defcomponent ParamPanel [data]
   [:div {:style {:padding 20}}
    [:table
-    (for [{:keys [label input clear-actions]} (:args data)]
+    (for [{:keys [label input clear-actions]} (:param data)]
       [:tr
        [:td {:style {:padding-right 20
                      :vertical-align "middle"}}

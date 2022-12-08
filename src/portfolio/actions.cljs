@@ -63,64 +63,64 @@
     {:assoc-in [[:location] location]
      :fns (concat
            (->> (filter :on-unmount current-scenes)
-                (map (fn [{:keys [on-unmount args id title]}]
-                       [:on-unmount (or id title) on-unmount args])))
+                (map (fn [{:keys [on-unmount param id title]}]
+                       [:on-unmount (or id title) on-unmount param])))
            (->> (filter :on-mount next-scenes)
-                (map (fn [{:keys [on-mount args id title]}]
-                       [:on-mount (or id title) on-mount args]))))
-     :release (->> (map :args current-scenes)
+                (map (fn [{:keys [on-mount param id title]}]
+                       [:on-mount (or id title) on-mount param]))))
+     :release (->> (map :param current-scenes)
                    (filter atom?)
                    (map (fn [ref] [ref ::portfolio])))
-     :subscribe (->> (map :args next-scenes)
+     :subscribe (->> (map :param next-scenes)
                      (filter atom?)
                      (map (fn [ref] [ref ::portfolio])))
      :set-page-title (get-page-title location)
      :update-window-location (router/get-url location)}))
 
-(defn remove-scene-argument
+(defn remove-scene-param
   ([state scene-id]
-   (let [args (get-in state [:scenes scene-id :args])]
+   (let [param (get-in state [:scenes scene-id :param])]
      (cond
-       (map? args)
+       (map? param)
        {:actions [[:dissoc-in [:ui scene-id :overrides]]]}
 
-       (atom? args)
-       {:reset [args (get-in state [:ui scene-id :original])]
+       (atom? param)
+       {:reset [param (get-in state [:ui scene-id :original])]
         :actions [[:dissoc-in [:ui scene-id :overrides]]
                   [:dissoc-in [:ui scene-id :original]]]})))
   ([state scene-id k]
-   (let [args (get-in state [:scenes scene-id :args])]
+   (let [param (get-in state [:scenes scene-id :param])]
      (cond
-       (map? args)
+       (map? param)
        {:actions [[:dissoc-in [:ui scene-id :overrides k]]]}
 
-       (atom? args)
-       {:swap [args [k] (get-in state [:scenes scene-id :original k])]
+       (atom? param)
+       {:swap [param [k] (get-in state [:scenes scene-id :original k])]
         :actions [[:dissoc-in [:ui scene-id :overrides k]]
                   [:dissoc-in [:ui scene-id :original k]]]}))))
 
-(defn set-scene-argument
+(defn set-scene-param
   ([state scene-id v]
-   (let [args (get-in state [:scenes scene-id :args])]
+   (let [param (get-in state [:scenes scene-id :param])]
      (cond
-       (map? args)
+       (map? param)
        {:actions [[:assoc-in [:ui scene-id :overrides] v]]}
 
-       (atom? args)
-       {:reset [args v]
+       (atom? param)
+       {:reset [param v]
         :actions [[:assoc-in [:ui scene-id :overrides] v]
-                  [:assoc-in [:ui scene-id :original] @args]]})))
+                  [:assoc-in [:ui scene-id :original] @param]]})))
   ([state scene-id k v]
-   (let [args (get-in state [:scenes scene-id :args])]
+   (let [param (get-in state [:scenes scene-id :param])]
      (cond
-       (map? args)
+       (map? param)
        {:actions [[:assoc-in [:ui scene-id :overrides k] v]]}
 
-       (atom? args)
-       {:swap [args [k] v]
+       (atom? param)
+       {:swap [param [k] v]
         :actions (cond-> [[:assoc-in [:ui scene-id :overrides k] v]]
                    (not (get-in state [:ui scene-id :original k]))
-                   (into [[:assoc-in [:ui scene-id :original k] (k @args)]]))}))))
+                   (into [[:assoc-in [:ui scene-id :original k] (k @param)]]))}))))
 
 (declare execute-action!)
 
@@ -165,13 +165,13 @@
      :dissoc-in {:dissoc-in (rest action)}
      :go-to-location (apply go-to-location @app (rest action))
      :go-to-current-location (go-to-location @app (router/get-current-location))
-     :remove-scene-argument (apply remove-scene-argument @app (rest action))
-     :set-scene-argument (apply set-scene-argument @app (rest action))))
+     :remove-scene-param (apply remove-scene-param @app (rest action))
+     :set-scene-param (apply set-scene-param @app (rest action))))
   app)
 
 (def available-actions
   #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
-    :remove-scene-argument :set-scene-argument})
+    :remove-scene-param :set-scene-param})
 
 (defn actions? [x]
   (and (sequential? x)

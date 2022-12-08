@@ -27,13 +27,13 @@
 
 (defscene parameterized
   :title "Parameterized button"
-  :args {:text "Hello, clicky!"}
+  :param {:text "Hello, clicky!"}
   [{:keys [text]}]
   [:button.button text])
 
 (defscene stateful
   :title "Stateful button"
-  :args (atom {:text "I'm stateful!"})
+  :param (atom {:text "I'm stateful!"})
   :on-mount (fn [ref]
               (swap! ref assoc :mounted? true)
               (shuffle-text ref (cycle ["Tick ..." "... tock"])))

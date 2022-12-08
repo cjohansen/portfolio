@@ -71,8 +71,8 @@ Scenes can also be functions:
 ```clj
 (defscene name
   ;; key/value pairs
-  [args]
-  (render-component args))
+  [param]
+  (render-component param))
 ```
 
 By using the latter form, you allow Portfolio to know about the component's
@@ -82,7 +82,7 @@ your component, or bind the scene to an atom to trigger interactions.
 Currently supported key/value pairs:
 
 - `:title` - Give the scene a nice string name
-- `:args` - The initial arguments passed to the component function
+- `:param` - The initial parameter passed to the component function
 - `:on-mount` - A function called when the scene is initially mounted. The
   function is passed the component arguments.
 - `:on-unmount` - A function called when the scene is removed from the DOM. The

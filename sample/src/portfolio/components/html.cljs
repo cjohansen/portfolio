@@ -3,7 +3,7 @@
 
 (defscene html-button
   :title "HTML string button"
-  :args {:text "Hello, stringy!"}
+  :param {:text "Hello, stringy!"}
   [{:keys [text]}]
   (str "<button>" text "</button>"))
 

@@ -125,29 +125,29 @@
     (= (:id current-view) (:id view))
     (assoc :selected? true)))
 
-(defn get-scene-arg-overrides [state scene]
+(defn get-scene-param-overrides [state scene]
   (get-in state [:ui (:id scene) :overrides]))
 
-(defn get-scene-args [state scene]
-  (if (map? (:args scene))
-    (merge (:args scene) (get-scene-arg-overrides state scene))
-    (:args scene)))
+(defn get-scene-param [state scene]
+  (if (map? (:param scene))
+    (merge (:param scene) (get-scene-param-overrides state scene))
+    (:param scene)))
 
 (defn realize-scenes [state scenes]
   (for [scene scenes]
-    (let [args (get-scene-args state scene)]
+    (let [param (get-scene-param state scene)]
       (try
         (cond-> scene
           (:component-fn scene)
-          (assoc :component ((:component-fn scene) args)
-                 :component-args (code/code-str args)))
+          (assoc :component ((:component-fn scene) param)
+                 :component-param (code/code-str param)))
         (catch :default e
           (assoc scene
                  :error {:message (.-message e)
                          :ex-data (code/code-str (ex-data e))
                          :stack (.-stack e)
                          :title "Failed to render component"}
-                 :component-args (code/code-str args)))))))
+                 :component-param (code/code-str param)))))))
 
 (defn prepare-data [state location]
   (let [current-scenes (->> (get-current-scenes state location)

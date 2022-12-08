@@ -3,7 +3,7 @@
 
 (defscene dom-button
   :title "DOM element button"
-  :args {:text "Hello, DOM!"}
+  :param {:text "Hello, DOM!"}
   [{:keys [text]}]
   (let [el (js/document.createElement "button")]
     (set! (.. el -style -border) "2px solid red")

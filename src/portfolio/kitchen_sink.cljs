@@ -3,9 +3,9 @@
   (:require [portfolio.client :as client]
             [portfolio.core :as portfolio]
             [portfolio.views.canvas :as canvas]
-            [portfolio.views.canvas.args :as canvas-args]
             [portfolio.views.canvas.background :as canvas-bg]
             [portfolio.views.canvas.grid :as canvas-grid]
+            [portfolio.views.canvas.param :as canvas-param]
             [portfolio.views.canvas.viewport :as canvas-vp]
             [portfolio.views.canvas.zoom :as canvas-zoom]))
 
@@ -19,7 +19,7 @@
                                (canvas-zoom/create-zoom-in-tool config)
                                (canvas-zoom/create-zoom-out-tool config)
                                (canvas-zoom/create-reset-zoom-tool config)]
-                       :addons [(canvas-args/create-args-panel config)]})])
+                       :addons [(canvas-param/create-param-panel config)]})])
       atom))
 
 (defn start! [config & opt]
