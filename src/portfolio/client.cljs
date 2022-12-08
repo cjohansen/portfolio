@@ -4,6 +4,7 @@
             [portfolio.actions :as actions]
             [portfolio.components.app :refer [App]]
             [portfolio.core :as portfolio]
+            [portfolio.homeless :as h]
             [portfolio.router :as router]))
 
 (defn render [app {:keys [on-render]}]
@@ -60,18 +61,12 @@
       (set! (.-src script) "/portfolio/prism.js")
       (.appendChild js/document.body script))))
 
-(defn debounce [f ms]
-  (let [timer (atom nil)]
-    (fn [& args]
-      (some-> @timer js/clearTimeout)
-      (reset! timer (js/setTimeout #(apply f args) ms)))))
-
 (defn set-window-size [app]
   (let [dim {:w js/window.innerWidth
              :h js/window.innerHeight}]
     (swap! app assoc :win dim)))
 
-(def ^:private set-window-size-debounced (debounce set-window-size 100))
+(def ^:private set-window-size-debounced (h/debounce set-window-size 100))
 
 (defn keep-size-up-to-date [app]
   (set-window-size app)
