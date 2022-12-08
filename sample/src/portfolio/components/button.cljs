@@ -18,6 +18,9 @@
   :title "Button!"
   [:button.button "I am a button"])
 
+;; (defscene deleted
+;;   [:button.button "BOINK"])
+
 (defscene aggressive
   :title "Aggressive button"
   [:button.button "I am a damn button!"])

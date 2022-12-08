@@ -5,4 +5,4 @@
   (when (scene/portfolio-active?)
     `(portfolio.data/register-scene!
       (portfolio.reagent/create-scene
-       ~(scene/get-options-map id opts)))))
+       ~(scene/get-options-map id (:line &env) opts)))))

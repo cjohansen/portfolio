@@ -76,7 +76,7 @@
                   (or expanded? (and selected? (not browsing?)))
                   (into {:expanded? true
                          :items (->> scenes
-                                     (sort-by :idx)
+                                     (sort-by (juxt :line :idx))
                                      (map #(prepare-scene-link location %)))})))))))
 
 (defn small-screen? [state]
