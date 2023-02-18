@@ -1,6 +1,7 @@
 (ns portfolio.actions
   (:require [clojure.walk :as walk]
             [portfolio.core :as portfolio]
+            [portfolio.data :as data]
             [portfolio.router :as router]))
 
 (defn assoc-in*
@@ -71,9 +72,9 @@
      :release (->> (map :param current-scenes)
                    (filter atom?)
                    (map (fn [ref] [ref ::portfolio])))
-     :subscribe (->> (map :param next-scenes)
-                     (filter atom?)
-                     (map (fn [ref] [ref ::portfolio])))
+     :subscribe (->> (map (juxt :param identity) next-scenes)
+                     (filter (comp atom? first))
+                     (map (fn [[ref scene]] [ref ::portfolio scene])))
      :set-page-title (get-page-title location)
      :update-window-location (router/get-url location)}))
 
@@ -131,9 +132,11 @@
   (doseq [[k t f & args] (:fns res)]
     (println (str "Calling " k " on " t " with") (pr-str args))
     (apply f args))
-  (doseq [[ref k] (:subscribe res)]
+  (doseq [[ref k scene] (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
-    (add-watch ref k (fn [_ _ _ _] (swap! app update :heartbeat (fnil inc 0)))))
+    (add-watch ref k (fn [_ _ _ _]
+                       (swap! data/scenes assoc-in [(:id scene) :updated-at] (.getTime (js/Date.)))
+                       (swap! app update :heartbeat (fnil inc 0)))))
   (when-let [url (:update-window-location res)]
     (when-not (= url (router/get-current-url))
       (println "Updating browser URL to" url)
