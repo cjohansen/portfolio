@@ -27,5 +27,6 @@
                    :margin (if (:sidebar data)
                              "10px 10px 10px 0"
                              10)}}
-     (TabBar (:tab-bar data))
+     (when (< 1 (or (some-> data :tab-bar :tabs count) 0))
+       (TabBar (:tab-bar data)))
      (view/render-view (:view data))]]])
