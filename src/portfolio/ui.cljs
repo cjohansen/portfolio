@@ -12,7 +12,7 @@
 
 (def app (atom nil))
 
-(defn create-app [config canvas-tools]
+(defn create-app [config canvas-tools extra-canvas-tools]
   (-> (assoc config
              :scenes (vals @data/scenes)
              :namespaces (vals @data/namespaces)
@@ -20,16 +20,17 @@
       portfolio/init-state
       (assoc :views [(canvas/create-canvas
                       {:canvas/layout (:canvas/layout config)
-                       :tools (into [(canvas-bg/create-background-tool config)
-                                     (canvas-vp/create-viewport-tool config)
-                                     (canvas-grid/create-grid-tool config)
-                                     (canvas-zoom/create-zoom-tool config)]
-                                    canvas-tools)})])))
+                       :tools (into (or canvas-tools
+                                        [(canvas-bg/create-background-tool config)
+                                         (canvas-vp/create-viewport-tool config)
+                                         (canvas-grid/create-grid-tool config)
+                                         (canvas-zoom/create-zoom-tool config)])
+                                    extra-canvas-tools)})])))
 
 (def eventually-execute (h/debounce actions/execute-action! 250))
 
-(defn start! [& [{:keys [on-render config canvas-tools]}]]
-  (swap! app merge (create-app config canvas-tools))
+(defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools]}]]
+  (swap! app merge (create-app config canvas-tools extra-canvas-tools))
   (add-watch data/scenes ::app (fn [_ _ _ scenes]
                                  (swap! app assoc :scenes scenes)
                                  (eventually-execute app [:go-to-current-location])))
