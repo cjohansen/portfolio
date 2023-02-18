@@ -166,6 +166,7 @@
    (case (first action)
      :assoc-in {:assoc-in (rest action)}
      :dissoc-in {:dissoc-in (rest action)}
+     :fn/call (let [[fn & args] (rest action)] (apply fn args))
      :go-to-location (apply go-to-location @app (rest action))
      :go-to-current-location (go-to-location @app (router/get-current-location))
      :remove-scene-param (apply remove-scene-param @app (rest action))
