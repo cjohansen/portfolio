@@ -175,7 +175,7 @@
 
 (def available-actions
   #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
-    :remove-scene-param :set-scene-param})
+    :remove-scene-param :set-scene-param :fn/call})
 
 (defn actions? [x]
   (and (sequential? x)

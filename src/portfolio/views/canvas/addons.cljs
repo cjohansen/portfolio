@@ -14,13 +14,18 @@
     :view "Canvas config"
     :layout/default "Default config"))
 
-(defn prepare-tool-menu [tool state {:keys [pane-id pane-options config-source]}]
+(defn get-current-value [tool state {:keys [pane-id pane-options]}]
   (let [selected-value (canvas/get-tool-value tool state pane-id)
-        value (or selected-value (:default-value tool))
-        current-value (and (map? value)
-                           (not-empty (select-keys pane-options (keys value))))
+        value (or selected-value (:default-value tool))]
+    {:value value
+     :current-value
+     (and (map? value)
+          (not-empty (select-keys pane-options (keys value))))}))
+
+(defn prepare-tool-menu [tool state pane]
+  (let [{:keys [value current-value]} (get-current-value tool state pane)
         custom-options (when (and current-value (not= current-value value))
-                         [{:title (get-custom-tool-source-title config-source)
+                         [{:title (get-custom-tool-source-title (:config-source pane))
                            :value current-value
                            :disabled? true}])]
     {:options
@@ -29,16 +34,22 @@
          {:title title
           :selected? selected?
           :actions (when-not disabled?
-                     [[:dissoc-in (get-expand-path pane-id)]
-                      (if selected?
-                        [:dissoc-in [(:id tool) pane-id :value]]
-                        [:assoc-in [(:id tool) pane-id :value] value])])}))}))
+                     (->> [[:dissoc-in (get-expand-path (:pane-id pane))]
+                           (if selected?
+                             [:dissoc-in [(:id tool) (:pane-id pane) :value]]
+                             [:assoc-in [(:id tool) (:pane-id pane) :value] value])
+                           (when (ifn? (:on-select tool))
+                             [:fn/call (:on-select tool) value])]
+                          (remove nil?)))}))}))
 
 (defn prepare-toolbar-menu-button [tool state pane]
   (let [expand-path (get-expand-path (:pane-id pane))
         expanded? (= (:id tool) (get-in state expand-path))]
     (with-meta
-      {:text (:title tool)
+      {:text (or (when (ifn? (:prepare-title tool))
+                   (let [f (:prepare-title tool)]
+                     (f (:current-value (get-current-value tool state pane)))))
+                 (:title tool))
        :actions (if expanded?
                   [[:dissoc-in expand-path]]
                   [[:assoc-in expand-path (:id tool)]])
