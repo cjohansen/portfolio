@@ -111,10 +111,11 @@
            (swap! loaded inc)
            (try-complete)))
         (.appendChild head link)))
-    (set! (.. document -body -style -paddingTop) "20px")
-    (set! (.. document -body -style -paddingBottom) "20px")
-    (set! (.. document -documentElement -style -paddingLeft) "20px")
-    (set! (.. document -documentElement -style -paddingRight) "20px")))
+    (let [[t r b l] (:viewport/padding (:opt data))]
+      (set! (.. document -body -style -paddingTop) (str (or t 20) "px"))
+      (set! (.. document -body -style -paddingBottom) (str (or r 20) "px"))
+      (set! (.. document -documentElement -style -paddingLeft) (str (or b 20) "px"))
+      (set! (.. document -documentElement -style -paddingRight) (str (or l 20) "px")))))
 
 (d/defcomponent Canvas
   :on-mount (fn [el data]

@@ -70,6 +70,7 @@
   (addons/create-toolbar-menu-button
    {:id :canvas/viewport
     :title "Viewport"
+    :default-value (:viewport/defaults config)
     :options [{:title "Auto"
                :value {:viewport/width "100%"
                        :viewport/height "100%"}
