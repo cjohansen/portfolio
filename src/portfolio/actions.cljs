@@ -135,7 +135,6 @@
   (doseq [[ref k scene] (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
     (add-watch ref k (fn [_ _ _ _]
-                       (swap! data/scenes assoc-in [(:id scene) :updated-at] (.getTime (js/Date.)))
                        (swap! app update :heartbeat (fnil inc 0)))))
   (when-let [url (:update-window-location res)]
     (when-not (= url (router/get-current-url))
