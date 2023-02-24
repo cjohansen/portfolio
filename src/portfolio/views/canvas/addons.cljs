@@ -12,6 +12,7 @@
     :collection "Collection config"
     :state-layout "Global config"
     :view "Canvas config"
+    :portfolio.views.canvas/multi-scene-default "Default config (overview)"
     :layout/default "Default config"))
 
 (defn get-current-value [tool state {:keys [pane-id pane-options]}]
