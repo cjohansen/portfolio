@@ -24,7 +24,10 @@
 
 (defn get-current-layout [state location view]
   (if (multi-scene? state location)
-    (get-layout state [[{:viewport/height :auto}]] [::multi-scene-default])
+    (get-layout
+     state
+     [[(merge {:viewport/height :auto} (:canvas/multi-scene-defaults state))]]
+     [::multi-scene-default])
     (or (when-let [layout (-> state :current-scenes first :canvas/layout)]
           (get-layout state layout [:scene (-> state :current-scenes first :id)]))
         (when-let [layout (-> state :current-namespace :canvas/layout)]
