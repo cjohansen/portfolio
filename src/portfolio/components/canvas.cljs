@@ -130,8 +130,12 @@
    [:iframe.canvas
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
      :style {:border "none"
-             :width "100%"
-             :height "100%"}}]])
+             :width (or (when (number? (:viewport/width (:opt data)))
+                          (:viewport/width (:opt data)))
+                        "100%")
+             :height (or (when (number? (:viewport/height (:opt data)))
+                           (:viewport/height (:opt data)))
+                         "100%")}}]])
 
 (d/defcomponent Toolbar [{:keys [buttons]}]
   [:nav {:style {:background "#fff"
