@@ -15,11 +15,11 @@
 (ui/start!
  {:config
   {:css-paths ["/portfolio/demo.css"]
-   :canvas/multi-scene-defaults {:viewport/width 390
+   #_#_:canvas/gallery-defaults {:viewport/width 390
                                  :viewport/height 400}
 
-   :viewport/defaults {:viewport/padding [0 0 0 0]}
-   :canvas/layout [[{:viewport/width 390
+   ;;:viewport/defaults {:viewport/padding [0 0 0 0]}
+   #_#_:canvas/layout [[{:viewport/width 390
                      :viewport/height 400}]]
    ;;:canvas/layout [[{:background/background-color "#ff3300 "}]]
 

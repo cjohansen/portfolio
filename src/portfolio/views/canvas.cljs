@@ -14,7 +14,7 @@
   (get-tool-value [tool state canvas-id]
     (get-in state [(:id tool) canvas-id :value])))
 
-(defn multi-scene? [state location]
+(defn gallery? [state location]
   (or (contains? (:query-params location) :namespace)
       (< 1 (count (:current-scenes state)))))
 
@@ -23,11 +23,11 @@
    :source path})
 
 (defn get-current-layout [state location view]
-  (if (multi-scene? state location)
+  (if (gallery? state location)
     (get-layout
      state
-     [[(merge {:viewport/height :auto} (:canvas/multi-scene-defaults state))]]
-     [::multi-scene-default])
+     [[(merge {:viewport/height :auto} (:canvas/gallery-defaults state))]]
+     [::gallery-default])
     (or (when-let [layout (-> state :current-scenes first :canvas/layout)]
           (get-layout state layout [:scene (-> state :current-scenes first :id)]))
         (when-let [layout (-> state :current-namespace :canvas/layout)]
@@ -129,7 +129,7 @@
 (defn prepare-canvas-view [view state location]
   (let [layout (get-current-layout state location view)
         scenes (:current-scenes state)
-        multi? (multi-scene? state location)]
+        multi? (gallery? state location)]
     (with-meta
       (if-let [problems (:problems view)]
         {:problems problems}
