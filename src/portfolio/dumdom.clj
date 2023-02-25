@@ -6,3 +6,8 @@
     `(portfolio.data/register-scene!
       (portfolio.dumdom/create-scene
        ~(scene/get-options-map id (:line &env) opts)))))
+
+(defmacro defns [title & opts]
+  `(portfolio.data/register-namespace!
+    ~(scene/get-namespace-options title opts)))
+

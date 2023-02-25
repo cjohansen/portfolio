@@ -1,5 +1,7 @@
 (ns portfolio.components.box
-  (:require [portfolio.dumdom :refer-macros [defscene]]))
+  (:require [portfolio.dumdom :refer-macros [defscene defns]]))
+
+(defns Box)
 
 (defscene shadowed-box
   [:div {:style {:background "#fff"

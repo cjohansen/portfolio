@@ -23,3 +23,9 @@
                                                                  (< (count (first rest)) 2)
                                                                  (into ['& 'args]))
                                                             ~@(drop 1 rest))))))))
+
+(defn get-namespace-options [title opts]
+  (into {:namespace (str *ns*)
+         :title (str title)}
+        (->> (partition-all 2 opts)
+             (map vec))))

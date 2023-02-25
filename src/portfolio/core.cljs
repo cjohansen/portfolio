@@ -163,7 +163,25 @@
 (defn ns->path [ns]
   (str/split ns #"\."))
 
-(defn get-paths [namespaces]
+(defn get-paths
+  "Returns a list of unique paths represented by the namespaces. Discards
+  namespace prefixes shared by all namespaces, and turns the remaining part
+  of the namespace into a list:
+
+  ```clj
+  (get-paths [\"ui.components.button\"
+              \"ui.components.matrix\"
+              \"ui.components.pill\"])
+  ;;=> ((\"button\") (\"matrix\") (\"pill\"))
+  ```
+
+  ```clj
+  (get-paths [\"ui.components.button\"
+              \"ui.components.pill\"
+              \"ui.icons\"])
+  ;;=> ((\"components\" \"button\") (\"components\" \"pill\") (\"icons\"))
+  "
+  [namespaces]
   (let [paths (map ns->path namespaces)]
     (loop [candidates (drop-last 1 (first paths))
            paths paths]
@@ -172,29 +190,45 @@
         (recur (next candidates) (map #(drop 1 %) paths))
         paths))))
 
+(defn get-collection-title [s]
+  (some-> s
+          (str/replace #"-" " ")
+          str/capitalize))
+
 (defn get-default-organization [namespaces collections scenes]
   (let [nses (set (map (comp namespace :id) (vals scenes)))
         paths (get-paths nses)
-        colls (when (and (empty? (remove ::generated? (vals collections)))
-                         (every? #(< 1 (count %)) paths))
-                (map (fn [path]
-                       {:id (first path)
-                        :title (first path)
-                        ::generated? true}) paths))]
-    {:namespaces (merge
+        colls (->> paths
+                   (filter #(< 1 (count %)))
+                   (map (fn [path]
+                          (let [id (keyword (first path))]
+                            (merge
+                             {:id id
+                              :title (get-collection-title (first path))}
+                             (collections id)))))
+                   (concat (->> (vals namespaces)
+                                (keep :collection)
+                                (map (fn [coll]
+                                       (merge
+                                        {:id coll
+                                         :title (get-collection-title (name coll))}
+                                        (collections coll)))))))]
+    {:namespaces (into
+                  namespaces
                   (->> paths
                        (map (fn [ns path]
-                              [ns (if colls
-                                    {:namespace ns
-                                     :title (str/join " / " (drop 1 path))
-                                     :collection (first path)}
-                                    {:namespace ns
-                                     :title (str/join " / " path)})])
+                              [ns (merge
+                                   (if colls
+                                     {:namespace ns
+                                      :title (str/join " / " (drop 1 path))
+                                      :collection (keyword (first path))}
+                                     {:namespace ns
+                                      :title (str/join " / " path)})
+                                   (get namespaces ns))])
                             nses)
-                       (into {}))
-                  namespaces)
+                       (into {})))
      :collections (some->> colls
-                           (map (juxt :collection identity))
+                           (map (juxt :id identity))
                            (into {}))}))
 
 (defn init-state [config]
