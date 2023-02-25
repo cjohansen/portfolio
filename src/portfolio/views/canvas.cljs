@@ -72,8 +72,15 @@
 (defn get-tool-defaults [tools]
   (apply merge (map :default-value tools)))
 
+(defn toolbar-value? [tool]
+  (or (satisfies? canvas/ICanvasToolValue tool)
+      (ifn? (get (meta tool) `canvas/get-tool-value))))
+
 (defn get-tool-values [state id tools]
-  (apply merge (map #(canvas/get-tool-value % state id) tools)))
+  (->> tools
+       (filter toolbar-value?)
+       (map #(canvas/get-tool-value % state id))
+       (apply merge)))
 
 (defn prepare-canvas [options canvas]
   (let [f (-> canvas :scene :component-fn)
@@ -89,6 +96,10 @@
           :stack (.-stack e)
           :title "Failed to render component"})))))
 
+(defn toolbar-button? [tool]
+  (or (satisfies? canvas/ICanvasToolbarButtonData tool)
+      (ifn? (get (meta tool) `canvas/prepare-toolbar-button))))
+
 (defn prepare-rows [state root-layout source view scenes path layout]
   (for [[row y] (map vector layout (range))]
     (for [[opt x] (map vector row (range))]
@@ -101,8 +112,9 @@
                                (get-tool-values state id (:tools view)))]
             (when (seq scenes)
               {:toolbar
-               {:tools
+               {:buttons
                 (->> (:tools view)
+                     (filter toolbar-button?)
                      (keep #(canvas/prepare-toolbar-button
                              % state {:pane-id id
                                       :pane-options options
@@ -112,13 +124,18 @@
                                       :config-source source})))}
                :canvases (map (partial prepare-canvas options) scenes)})))))))
 
+(defn canvas-tool? [tool]
+  (or (satisfies? canvas/ICanvasTool tool)
+      (and (ifn? (get (meta tool) `canvas/prepare-canvas))
+           (ifn? (get (meta tool) `canvas/finalize-canvas)))))
+
 (defn prepare-layout [state location view {:keys [layout source]} scenes multi?]
   (let [scenes (for [scene scenes]
                  (cond->
                      {:scene scene
                       :css-paths (:css-paths state)
                       :canvas-path (:canvas-path state)
-                      :tools (:tools view)}
+                      :tools (filter canvas-tool? (:tools view))}
                    multi?
                    (assoc :title (:title scene)
                           :url (p/get-scene-url location scene)

@@ -133,13 +133,13 @@
              :width "100%"
              :height "100%"}}]])
 
-(d/defcomponent Toolbar [{:keys [tools]}]
+(d/defcomponent Toolbar [{:keys [buttons]}]
   [:nav {:style {:background "#fff"
                  :border-bottom "1px solid #e5e5e5"
                  :display "flex"
                  :align-items "center"
                  :padding-left 20}}
-   (for [tool tools]
+   (for [tool buttons]
      [:div {:style {:margin-right 20}}
       (canvas/render-toolbar-button tool)])])
 
