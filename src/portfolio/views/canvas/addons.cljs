@@ -69,6 +69,15 @@
      `canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
      `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))}))
 
+(defn create-canvas-extension [data]
+  (assert (:id data) "Can't create viewport extension without :id")
+  (assert (or (:prepare-canvas data)
+              (:finalize-canvas data)) "Can't create viewport extension without neither :prepare-canvas nor :finalize-canvas")
+  (with-meta
+    data
+    {`canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
+     `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))}))
+
 (defn create-action-button [data]
   (doseq [k #{:title :get-actions :prepare-canvas}]
     (when-not (k data)
@@ -77,9 +86,7 @@
   (let [show? (or (:show? data) (constantly true))]
     (with-meta
       (dissoc data :show? :get-actions :prepare-canvas)
-      {`canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
-       `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))
-       `canvas/prepare-toolbar-button
+      {`canvas/prepare-toolbar-button
        (fn [tool state options]
          (when (show? tool state options)
            (with-meta

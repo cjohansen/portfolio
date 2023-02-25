@@ -81,3 +81,11 @@
                :type :mobile}]
     :prepare-canvas #'prepare-canvas
     :finalize-canvas #'finalize-canvas}))
+
+(defn create-viewport-extension [config]
+  (addons/create-canvas-extension
+   {:id :canvas/viewport
+    :title "Viewport"
+    :default-value (:viewport/defaults config)
+    :prepare-canvas #'prepare-canvas
+    :finalize-canvas #'finalize-canvas}))
