@@ -18,6 +18,8 @@
          (map vec)
          (into (cond-> {:id (keyword (str *ns*) (str id))
                         :line line}
-                 (= 1 (count rest)) (assoc :component-fn `(fn [_#] ~(first rest)))
-                 (< 1 (count rest)) (assoc :component-fn `(fn ~(first rest)
+                 (= 1 (count rest)) (assoc :component-fn `(fn [& _#] ~(first rest)))
+                 (< 1 (count rest)) (assoc :component-fn `(fn ~(cond-> (first rest)
+                                                                 (< (count (first rest)) 2)
+                                                                 (into ['& 'args]))
                                                             ~@(drop 1 rest))))))))

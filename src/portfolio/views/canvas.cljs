@@ -75,6 +75,20 @@
 (defn get-tool-values [state id tools]
   (apply merge (map #(canvas/get-tool-value % state id) tools)))
 
+(defn prepare-canvas [options canvas]
+  (let [f (-> canvas :scene :component-fn)
+        canvas (assoc canvas :opt options)]
+    (try
+      (cond-> canvas
+        (ifn? f) (assoc-in [:scene :component] (f options)))
+      (catch :default e
+        (assoc-in canvas
+         [:scene :error]
+         {:message (.-message e)
+          :ex-data (code/code-str (ex-data e))
+          :stack (.-stack e)
+          :title "Failed to render component"})))))
+
 (defn prepare-rows [state root-layout source view scenes path layout]
   (for [[row y] (map vector layout (range))]
     (for [[opt x] (map vector row (range))]
@@ -96,7 +110,7 @@
                                       :layout-path [:layout source]
                                       :layout root-layout
                                       :config-source source})))}
-               :canvases (map #(assoc % :opt options) scenes)})))))))
+               :canvases (map (partial prepare-canvas options) scenes)})))))))
 
 (defn prepare-layout [state location view {:keys [layout source]} scenes multi?]
   (let [scenes (for [scene scenes]

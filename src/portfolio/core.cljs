@@ -133,25 +133,19 @@
     (merge (:param scene) (get-scene-param-overrides state scene))
     (:param scene)))
 
-(defn realize-scenes [state scenes]
+(defn prep-scene-fns [state scenes]
   (for [scene scenes]
     (let [param (get-scene-param state scene)]
-      (try
-        (cond-> scene
-          (:component-fn scene)
-          (assoc :component ((:component-fn scene) param)
-                 :component-param (code/code-str param)))
-        (catch :default e
-          (assoc scene
-                 :error {:message (.-message e)
-                         :ex-data (code/code-str (ex-data e))
-                         :stack (.-stack e)
-                         :title "Failed to render component"}
-                 :component-param (code/code-str param)))))))
+      (cond-> (assoc scene :component-param (code/code-str param))
+        (:component scene)
+        (assoc :component-fn #(:component scene))
+
+        (:component-fn scene)
+        (assoc :component-fn #((:component-fn scene) param %))))))
 
 (defn prepare-data [state location]
   (let [current-scenes (->> (get-current-scenes state location)
-                            (realize-scenes state)
+                            (prep-scene-fns state)
                             (sort-by :idx))
         ;; There might be multiple scenes, but multiple scenes across different
         ;; namespaces is not (yet) supported.

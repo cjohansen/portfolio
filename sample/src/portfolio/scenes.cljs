@@ -8,6 +8,7 @@
             [portfolio.components.reagent]
             [portfolio.components.rum]
             [portfolio.layouts.home-page]
+            [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]))
 
