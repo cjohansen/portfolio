@@ -58,7 +58,7 @@
 (defn prepare-panel-content [panel state scene]
   (when (:param scene)
     (with-meta
-      (let [overrides (p/get-scene-arg-overrides state scene)]
+      (let [overrides (p/get-scene-param-overrides state scene)]
         (prepare-taps scene overrides (:taps state)))
       render-impl)))
 
