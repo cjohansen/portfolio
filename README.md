@@ -71,19 +71,22 @@ Scenes can also be functions:
 ```clj
 (defscene name
   ;; key/value pairs
-  [param]
+  [param portfolio-opts]
   (render-component param))
 ```
 
 By using the latter form, you allow Portfolio to know about the component's
 arguments. This enables you to use `tap>` and Portfolio's UI to interact with
-your component, or bind the scene to an atom to trigger interactions. Here's an
-example of passing an atom to your scene:
+your component, or bind the scene to an atom to trigger interactions. It also
+allows you to use portfolio's layout options (background, viewport size, etc) to
+render the component.
+
+Here's an example of passing an atom to your scene:
 
 ```clj
 (defscene name
   :param (atom {:title "Hello world!"})
-  [param]
+  [param portfolio-opts]
   [:h1 (:title @param)])
 ```
 
@@ -95,7 +98,7 @@ parameter:
 ```clj
 (defscene name
   :param {:title "Hello world!"}
-  [param]
+  [param portfolio-opts]
   [:h1 (:title param)])
 ```
 
@@ -106,7 +109,7 @@ more pleasant-looking UI:
 (defscene default-scenario
   :title "Default scenario!"
   :param {:title "Hello world!"}
-  [param]
+  [param portfolio-opts]
   [:h1 (:title param)])
 ```
 
