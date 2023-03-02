@@ -26,7 +26,9 @@
                    :overflow "hidden"
                    :margin (if (:sidebar data)
                              "10px 10px 10px 0"
-                             10)}}
+                             (if (:small? data)
+                               "10px 0 0"
+                               10))}}
      (when (< 1 (or (some-> data :tab-bar :tabs count) 0))
        (TabBar (:tab-bar data)))
      (view/render-view (:view data))]]])

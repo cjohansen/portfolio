@@ -157,6 +157,7 @@
                      :current-collection (get-collection state (:collection current-namespace)))]
     {:header (prepare-header state location)
      :sidebar (prepare-sidebar state location)
+     :small? (small-screen? state)
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
      :view (view/prepare-data current-view state location)}))
 

@@ -50,16 +50,25 @@
         frame-body (canvas/get-iframe-body el)
         w (get-width frame frame-body width opt)]
     (set! (.. el -style -width)
-          (if (and (= "100%" w) (not= "100%" (or height "100%")))
+          (cond
+            (and (= "100%" w) (not= "100%" (or height "100%")))
             (str "calc(100% - 40px)")
-            w))))
+
+            (when (number? w)
+              (<= (.-width (.getBoundingClientRect el)) w))
+            "100%"
+
+            :default w))))
 
 (defn finalize-canvas [_ el {:viewport/keys [width height] :as opt}]
   (let [frame (canvas/get-iframe el)
         frame-body (canvas/get-iframe-body el)
         w (get-width frame frame-body width opt)
         h (get-height frame frame-body height opt)
-        [margin shadow] (if (or (not= "100%" w) (not= "100%" h))
+        el-width (.-width (.getBoundingClientRect el))
+        [margin shadow] (if (and (or (not= "100%" w) (not= "100%" h))
+                                 (or (not (number? width))
+                                     (< (+ 40 width) el-width)))
                           ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
                           ["0" "none"])]
     (set! (.. el -style -height) h)
