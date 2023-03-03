@@ -45,6 +45,11 @@
 
       :else height)))
 
+(defn get-available-width [el]
+  (-> (.-parentNode el)
+      .getBoundingClientRect
+      .-width))
+
 (defn prepare-canvas [_ el {:viewport/keys [width height] :as opt}]
   (let [frame (canvas/get-iframe el)
         frame-body (canvas/get-iframe-body el)
@@ -55,7 +60,7 @@
             (str "calc(100% - 40px)")
 
             (when (number? w)
-              (<= (.-width (.getBoundingClientRect el)) w))
+              (<= (get-available-width el) w))
             "100%"
 
             :default w))))
@@ -65,10 +70,9 @@
         frame-body (canvas/get-iframe-body el)
         w (get-width frame frame-body width opt)
         h (get-height frame frame-body height opt)
-        el-width (.-width (.getBoundingClientRect el))
         [margin shadow] (if (and (or (not= "100%" w) (not= "100%" h))
                                  (or (not (number? width))
-                                     (< (+ 40 width) el-width)))
+                                     (< (+ 40 width) (get-available-width el))))
                           ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
                           ["0" "none"])]
     (set! (.. el -style -height) h)
