@@ -27,10 +27,11 @@
   (addons/create-toolbar-menu-button
    {:id :canvas/grid
     :title "Grid"
-    :options [{:title "5 x 20px"
-               :value {:grid/offset 0
-                       :grid/size 20
-                       :grid/group-size 5}}
-              {:title "No grid"
-               :value {:grid/size 0}}]
+    :options (or (:grid/options config)
+                 [{:title "5 x 20px"
+                   :value {:grid/offset 0
+                           :grid/size 20
+                           :grid/group-size 5}}
+                  {:title "No grid"
+                   :value {:grid/size 0}}])
     :prepare-canvas #'prepare-canvas}))
