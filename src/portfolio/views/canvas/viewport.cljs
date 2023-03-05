@@ -79,19 +79,39 @@
     (set! (.. el -style -margin) margin)
     (set! (.. el -style -boxShadow) shadow)))
 
+(defn get-padding [xs]
+  (cond
+    (empty? xs)
+    [20 20 20 20]
+
+    (number? xs)
+    [xs xs xs xs]
+
+    (= 1 (count xs))
+    (let [x (first xs)]
+      [x x x x])
+
+    (= 2 (count xs))
+    (let [[v h] xs]
+      [v h v h])
+
+    :default xs))
+
 (defn create-viewport-tool [config]
   (addons/create-toolbar-menu-button
    {:id :canvas/viewport
     :title "Viewport"
-    :default-value (:viewport/defaults config)
-    :options [{:title "Auto"
-               :value {:viewport/width "100%"
-                       :viewport/height "100%"}
-               :type :desktop}
-              {:title "iPhone 12 / 13 Prop"
-               :value {:viewport/width 390
-                       :viewport/height 844}
-               :type :mobile}]
+    :default-value (update (:viewport/defaults config) :viewport/padding get-padding)
+    :options (->> (or (:viewport/options config)
+                      [{:title "Auto"
+                        :value {:viewport/width "100%"
+                                :viewport/height "100%"}
+                        :type :desktop}
+                       {:title "iPhone 12 / 13 Prop"
+                        :value {:viewport/width 390
+                                :viewport/height 844}
+                        :type :mobile}])
+                  (map #(update % :viewport/padding get-padding)))
     :prepare-canvas #'prepare-canvas
     :finalize-canvas #'finalize-canvas}))
 

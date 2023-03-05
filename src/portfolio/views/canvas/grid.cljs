@@ -7,14 +7,15 @@
   (let [body-style (.-style (canvas/get-iframe el))
         zoom (or (:zoom/level opt) 1)]
     (if (and (number? size) (not= 0 size))
-      (let [real-size (* zoom size)]
+      (let [real-size (* zoom size)
+            [t _ _ l] (:viewport/padding opt)]
         (set! (.-backgroundSize body-style)
               (let [big (* (or group-size 5) real-size)]
                 (str big "px " big "px, " big "px " big "px, "
                      real-size "px " real-size "px, " real-size "px " real-size "px")))
         (set! (.-backgroundPosition body-style)
-              (let [offset (- (or offset 0) (- real-size size))]
-                (str/join ", " (repeat 4 (str offset "px " 0 "px")))))
+              (let [offset (or offset 0)]
+                (str/join ", " (repeat 4 (str (mod (+ l (* zoom offset)) real-size) "px " (mod (* zoom (+ t offset)) real-size) "px")))))
         (set! (.-backgroundBlendMode body-style) "difference")
         (set! (.-backgroundImage body-style)
               "linear-gradient(rgba(130, 130, 130, 0.5) 1px, transparent 1px),
