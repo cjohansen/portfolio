@@ -187,7 +187,8 @@
     (loop [candidates (drop-last 1 (first paths))
            paths paths]
       (if (and (not (empty? candidates))
-               (every? (comp #{(first candidates)} first) paths))
+               (every? (comp #{(first candidates)} first) paths)
+               (every? #(< 2 (count %)) paths))
         (recur (next candidates) (map #(drop 1 %) paths))
         paths))))
 
