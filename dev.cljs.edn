@@ -1,3 +1,4 @@
+^{:css-dirs ["resources/public/portfolio"]}
 {:main "portfolio.dev"
  :optimizations :none
  :pretty-print true
