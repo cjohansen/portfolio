@@ -3,9 +3,10 @@
             [portfolio.components.popup-menu :refer [PopupMenu]]
             [portfolio.views.canvas.protocols :as protocols]))
 
-(d/defcomponent MenuButton [{:keys [text icon title menu active? actions]}]
-  [:span {:style {:display "block"
-                  :position "relative"}}
+(d/defcomponent MenuButton [{:keys [text icon title align menu active? actions]}]
+  [:span {:style (cond-> {:display "flex"
+                          :position "relative"}
+                   (= align :right) (assoc :flex "1" :justify-content "flex-end"))}
    [:button.button.boldable
     {:title (or title text)
      :style {:color (if menu "#1ea7fd" "#000")

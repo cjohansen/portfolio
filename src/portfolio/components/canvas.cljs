@@ -142,9 +142,12 @@
                  :border-bottom "1px solid #e5e5e5"
                  :display "flex"
                  :align-items "center"
-                 :padding-left 20}}
+                 :gap 20
+                 :padding-left 20
+                 :padding-right 20}}
    (for [tool buttons]
-     [:div {:style {:margin-right 20}}
+     (canvas/render-toolbar-button tool)
+#_     [:div {:style {:margin-right 20}}
       (canvas/render-toolbar-button tool)])])
 
 (d/defcomponent CanvasPanel [data]
@@ -189,8 +192,36 @@
    [:p.mod text]
    (Code {:code code})])
 
+(def direction
+  {:rows "column"
+   :cols "row"})
+
+(defn render-layout [data]
+  (if (#{:rows :cols} (:kind data))
+    [:div {:style {:flex-grow 1
+                   :display "flex"
+                   :flex-direction (direction (:kind data))
+                   :justify-content "space-evenly"
+                   :overflow "hidden"}}
+     (->> (map render-layout (:xs data))
+          (interpose [:div {:style {(if (= :rows (:kind data))
+                                      :border-top
+                                      :border-left)
+                                    "5px solid #ddd"}}]))]
+    (let [{:keys [toolbar canvases]} data]
+      [:div {:style {:flex-grow 1
+                     :display "flex"
+                     :flex-direction "column"
+                     :overflow "hidden"}}
+       (some-> toolbar Toolbar)
+       [:div {:style {:overflow "scroll"
+                      :flex-grow "1"}}
+        (->> canvases
+             (interpose {:kind :separator})
+             (mapcat render-canvas))]])))
+
 (d/defcomponent CanvasView
-  :keyfn :mode
+  :keyfn :id
   [data]
   [:div {:style {:background "#eee"
                  :flex-grow 1
@@ -200,25 +231,5 @@
    (when-let [problems (:problems data)]
      [:div {:style {:overflow "scroll"}}
       (map Problem problems)])
-   (->> (for [row (:rows data)]
-          [:div {:style {:display "flex"
-                         :flex-direction "row"
-                         :flex-grow 1
-                         :justify-content "space-evenly"
-                         :overflow "hidden"}}
-           (->> (for [{:keys [toolbar canvases layout]} row]
-                  (if layout
-                    (CanvasView layout)
-                    [:div {:style {:flex-grow 1
-                                   :display "flex"
-                                   :flex-direction "column"
-                                   :overflow "hidden"}}
-                     (some-> toolbar Toolbar)
-                     [:div {:style {:overflow "scroll"
-                                    :flex-grow "1"}}
-                      (->> canvases
-                           (interpose {:kind :separator})
-                           (mapcat render-canvas))]]))
-                (interpose [:div {:style {:border-left "5px solid #ddd"}}]))])
-        (interpose [:div {:style {:border-top "5px solid #ddd"}}]))
+   (render-layout data)
    (some-> data :panel CanvasPanel)])

@@ -7,6 +7,7 @@
             [portfolio.views.canvas :as canvas]
             [portfolio.views.canvas.background :as canvas-bg]
             [portfolio.views.canvas.grid :as canvas-grid]
+            [portfolio.views.canvas.split :as split]
             [portfolio.views.canvas.viewport :as canvas-vp]
             [portfolio.views.canvas.zoom :as canvas-zoom]))
 
@@ -24,7 +25,10 @@
                                         [(canvas-bg/create-background-tool config)
                                          (canvas-vp/create-viewport-tool config)
                                          (canvas-grid/create-grid-tool config)
-                                         (canvas-zoom/create-zoom-tool config)])
+                                         (canvas-zoom/create-zoom-tool config)
+                                         (split/create-split-horizontally-tool config)
+                                         (split/create-split-vertically-tool config)
+                                         (split/create-close-tool config)])
                                     extra-canvas-tools)})])))
 
 (def eventually-execute (h/debounce actions/execute-action! 250))

@@ -35,7 +35,7 @@
   ;; skewing the Portfolio UI design, the files are loaded as print-only CSS.
   (doseq [path paths]
     (when-not (find-link-by-href js/document.head path)
-      (.appendChild js/document.head (create-css-link path {:media "print"})))))
+      (.appendChild js/document.head (create-css-link path {:media "portfolio"})))))
 
 (defn replace-loaded-css-files [paths]
   (doseq [iframe (.querySelectorAll js/document.body "iframe")]

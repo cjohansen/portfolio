@@ -22,8 +22,15 @@
      :viewport/defaults {#_#_:viewport/padding [16]
                          #_#_#_#_:viewport/width 390
                          :viewport/height 400}
-     #_#_:canvas/layout [[{:viewport/width 390
-                           :viewport/height 400}]]
+ #_#_    :canvas/layout {:kind :cols
+                     :xs [{:viewport/width 390
+                           :viewport/height "100%"}
+                          {:kind :rows
+                           :xs [{:viewport/width 390
+                                 :viewport/height 400}
+                                {:viewport/width 390
+                                 :viewport/height 400}]}]}
+
      ;;:canvas/layout [[{:background/background-color "#ff3300 "}]]
 
      :grid/options [{:title "8 x 8px"
