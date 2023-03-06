@@ -146,9 +146,7 @@
                  :padding-left 20
                  :padding-right 20}}
    (for [tool buttons]
-     (canvas/render-toolbar-button tool)
-#_     [:div {:style {:margin-right 20}}
-      (canvas/render-toolbar-button tool)])])
+     (canvas/render-toolbar-button tool))])
 
 (d/defcomponent CanvasPanel [data]
   [:div {:style {:border-top "1px solid #ccc"
