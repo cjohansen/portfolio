@@ -1,7 +1,7 @@
 (ns portfolio.actions
   (:require [clojure.walk :as walk]
             [portfolio.core :as portfolio]
-            [portfolio.data :as data]
+            [portfolio.css :as css]
             [portfolio.router :as router]))
 
 (defn assoc-in*
@@ -156,7 +156,11 @@
   (when-let [[ref path v] (:swap res)]
     (swap! ref assoc-in path v))
   (when-let [[ref v] (:reset res)]
-    (reset! ref v)))
+    (reset! ref v))
+  (when-let [paths (:load-css-files res)]
+    (css/load-css-files paths))
+  (when-let [paths (:replace-css-files res)]
+    (css/replace-loaded-css-files paths)))
 
 (defn execute-action! [app action]
   (println "execute-action!" action)
@@ -168,6 +172,10 @@
      :fn/call (let [[fn & args] (rest action)] (apply fn args))
      :go-to-location (apply go-to-location @app (rest action))
      :go-to-current-location (go-to-location @app (router/get-current-location))
+     :set-css-files (let [[paths] (rest action)]
+                      {:assoc-in [[:css-paths] paths]
+                       :load-css-files paths
+                       :replace-css-files paths})
      :remove-scene-param (apply remove-scene-param @app (rest action))
      :set-scene-param (apply set-scene-param @app (rest action))))
   app)

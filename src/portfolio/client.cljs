@@ -1,9 +1,11 @@
 (ns portfolio.client
   "Bootstrap and render a Portfolio UI app instance"
-  (:require [dumdom.core :as d]
+  (:require [clojure.string :as str]
+            [dumdom.core :as d]
             [portfolio.actions :as actions]
             [portfolio.components.app :refer [App]]
             [portfolio.core :as portfolio]
+            [portfolio.css :as css]
             [portfolio.homeless :as h]
             [portfolio.router :as router]))
 
@@ -41,10 +43,7 @@
 
 (defn ensure-portfolio-css! [f]
   (if-not (js/document.getElementById "portfolio-css")
-    (let [el (js/document.createElement "link")]
-      (set! (.-rel el) "stylesheet")
-      (set! (.-type el) "text/css")
-      (set! (.-href el) "/portfolio/styles/portfolio.css")
+    (let [el (css/create-css-link "/portfolio/styles/portfolio.css")]
       (.addEventListener el "load" (fn listener [e]
                                      (.removeEventListener el "load" listener)
                                      (f)))
@@ -72,12 +71,27 @@
   (set-window-size app)
   (set! js/window.onresize #(set-window-size-debounced app)))
 
+(defn keep-css-files-up-to-date [app]
+  (when-not (::css-listener @app)
+    (.addEventListener
+     js/document.body
+     "figwheel.after-css-load"
+     (fn css-listener [e]
+       (swap! app assoc ::css-listener css-listener)
+       (doseq [file (:css-files (.-data e))]
+         (->> (:css-paths @app)
+              (filter #(str/includes? file %))
+              first
+              css/reload-css-file))))))
+
 (defn start-app [app & [{:keys [on-render]}]]
+  (css/load-css-files (:css-paths @app))
   (if (::started? @app)
     (render app {:on-render on-render})
     (do
       (js/document.body.addEventListener "click" #(relay-body-clicks app %))
       (keep-size-up-to-date app)
+      (keep-css-files-up-to-date app)
       (ensure-element!)
       (ensure-portfolio-css!
        (fn []
