@@ -3,6 +3,7 @@
             [portfolio.components.button]
             [portfolio.components.dom]
             [portfolio.components.heading]
+            [portfolio.components.helix]
             [portfolio.components.html]
             [portfolio.components.link]
             [portfolio.components.reagent]
