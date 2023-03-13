@@ -50,6 +50,7 @@ Currently these adapters are supported:
 - [Reagent](https://github.com/reagent-project/reagent) - `portfolio.reagent`
 - [Rum](https://github.com/tonsky/rum) - `portfolio.rum`
 - [Dumdom](https://github.com/cjohansen/dumdom) - `portfolio.dumdom`
+- React (including [Helix](https://github.com/lilactown/helix)) - `portfolio.react`
 - DOM API - `portfolio.dom`
 - HTML strings - `portfolio.html`
 
@@ -240,3 +241,7 @@ Add `:portfolio/enabled? false` to your ClojureScript compiler options:
 Your second option is to set the `portfolio.core/enabled` [Closure
 define](https://clojurescript.org/reference/compiler-options#closure-defines) to
 `false`. Closure defines can be set several ways, see the link.
+
+## Contributions
+
+- @rome-user added support for pure React components and Helix
