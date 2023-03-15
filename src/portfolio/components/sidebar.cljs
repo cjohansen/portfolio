@@ -68,7 +68,7 @@
                                   :align-items "center"
                                   :margin "4px 4px"
                                   :border-radius 4
-                                  :padding "5px 38px"}}
+                                  :padding "8px 0 8px 48px"}}
               [:div {:style {:width 16
                              :height 16
                              :margin-right 8

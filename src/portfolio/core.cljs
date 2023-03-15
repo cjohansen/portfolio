@@ -103,7 +103,7 @@
 
 (defn prepare-sidebar [state location]
   (when (sidebar? state)
-    {:width 300
+    {:width 360
      :slide? (boolean (:sidebar-status state))
      :title (not-empty (:title state))
      :actions [[:assoc-in [:sidebar-status]
