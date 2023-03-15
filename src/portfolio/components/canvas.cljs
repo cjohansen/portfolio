@@ -144,6 +144,7 @@
                  :display "flex"
                  :align-items "center"
                  :gap 20
+                 :min-height 48
                  :padding-left 20
                  :padding-right 20}}
    (for [tool buttons]
