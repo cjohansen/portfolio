@@ -19,7 +19,7 @@
    ;; hidden
    [:div {:style
           {:position "fixed"
-           :margin-top 6
+           :margin-top 40
            :background "#fff"
            :box-shadow "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"
            :border-radius 4

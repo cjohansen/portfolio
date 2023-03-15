@@ -11,11 +11,27 @@
 
 html,
 body {
-  font-size: 14px;
+  font-size: 16px;
+  --shark: #212227;
+  --shark-dark: #26262a;
+  --alto: #d5d5d5;
+  --gallery: #eee;
+  --picton-blue: #4090e4;
+  --azure-radiance: #1181f9;
+  --mariner: #2963c1;
+  --tuna: #35353a;
+  --cadet-blue: #b1b9c1;
+  --silver-tree: #61c093;
+  --malachite: #11f94b;
 }
 
 body {
-  background: #f6f9fc;
+  --bg: var(--shark);
+  --fg: var(--gallery);
+  --separator: var(--shark-dark);
+  --hard-separator: #333;
+  background: var(--bg);
+  color: var(--fg);
   font-weight: normal;
   font-style: normal;
   font-family: Lato, helvetica, arial, sans-serif;
@@ -30,10 +46,10 @@ body {
 }
 
 /* Headings */
-.h1 {font-size: 1.6rem;}
-.h2 {font-size: 1.3rem;}
-.h3 {font-size: 1.2rem;}
-.h4 {font-size: 1.1rem;}
+.h1 {font-size: 1.6rem; font-weight: 600;}
+.h2 {font-size: 1.3rem; font-weight: 600;}
+.h3 {font-size: 1.2rem; font-weight: 600;}
+.h4 {font-size: 1.1rem; font-weight: 600;}
 
 .text-s {font-size: 0.92rem;}
 
@@ -41,7 +57,7 @@ a,
 a:link,
 a:visited,
 .link {
-  color: #1ea7fd;
+  color: var(--azure-radiance);
   cursor: pointer;
   text-decoration: none;
 }
@@ -94,7 +110,7 @@ a.inverted:visited,
 }
 
 .input:focus {
-  box-shadow: #1ea7fd 0px 0px 0px 1px inset;
+  box-shadow: var(--azure-radiance) 0px 0px 0px 1px inset;
 }
 
 .error {

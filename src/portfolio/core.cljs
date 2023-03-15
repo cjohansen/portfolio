@@ -95,7 +95,7 @@
 
 (defn prepare-header [state _]
   (when-not (sidebar? state)
-    {:title (or (not-empty (:title state)) "Portfolio")
+    {:title (not-empty (:title state))
      :actions [[:assoc-in [:sidebar-status]
                 (if (small-screen? state)
                   :visible
@@ -103,9 +103,9 @@
 
 (defn prepare-sidebar [state location]
   (when (sidebar? state)
-    {:width 250
+    {:width 300
      :slide? (boolean (:sidebar-status state))
-     :title (or (not-empty (:title state)) "Portfolio")
+     :title (not-empty (:title state))
      :actions [[:assoc-in [:sidebar-status]
                 (if (small-screen? state)
                   :auto

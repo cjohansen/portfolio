@@ -9,9 +9,10 @@
                    (= align :right) (assoc :flex "1" :justify-content "flex-end"))}
    [:button.button.boldable
     {:title (or title text)
-     :style {:color (if menu "#1ea7fd" "#000")
+     :style {:color (if menu "#1ea7fd" "var(--fg)")
              :display "block"
-             :font-weight (when active? "bold")
+             :font-weight "bold"
+             :font-size 14
              :padding "10px 0"
              :width (when icon 20)}
      :on-click actions}

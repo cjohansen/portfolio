@@ -13,22 +13,14 @@
                  :right 0
                  :bottom 0}}
    (some-> data :sidebar Sidebar)
-   [:div {:style {:background "#e1e4ec"
-                  :display "flex"
+   [:div {:style {:display "flex"
                   :flex-direction "column"
                   :flex-grow 1}}
     (some-> data :header Header)
-    [:div {:style {:box-shadow "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"
-                   :border-radius 4
-                   :flex-grow 1
+    [:div {:style {:flex-grow 1
                    :display "flex"
                    :flex-direction "column"
-                   :overflow "hidden"
-                   :margin (if (:sidebar data)
-                             "10px 10px 10px 0"
-                             (if (:small? data)
-                               "10px 0 0"
-                               10))}}
+                   :overflow "hidden"}}
      (when (< 1 (or (some-> data :tab-bar :tabs count) 0))
        (TabBar (:tab-bar data)))
      (view/render-view (:view data))]]])

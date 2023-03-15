@@ -138,8 +138,9 @@
                          "100%")}}]])
 
 (d/defcomponent Toolbar [{:keys [buttons]}]
-  [:nav {:style {:background "#fff"
-                 :border-bottom "1px solid #e5e5e5"
+  [:nav {:style {:background "var(--bg)"
+                 :color "var(--fg)"
+                 :border-bottom "1px solid var(--separator)"
                  :display "flex"
                  :align-items "center"
                  :gap 20
@@ -205,7 +206,7 @@
           (interpose [:div {:style {(if (= :rows (:kind data))
                                       :border-top
                                       :border-left)
-                                    "5px solid #ddd"}}]))]
+                                    "3px solid var(--hard-separator)"}}]))]
     (let [{:keys [toolbar canvases]} data]
       [:div {:style {:flex-grow 1
                      :display "flex"
