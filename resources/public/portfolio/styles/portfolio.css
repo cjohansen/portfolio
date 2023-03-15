@@ -27,7 +27,7 @@ body {
 
 body {
   --bg: var(--shark);
-  --fg: var(--gallery);
+  --fg: var(--alto);
   --separator: var(--shark-dark);
   --hard-separator: #333;
   background: var(--bg);
