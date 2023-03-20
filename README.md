@@ -12,20 +12,30 @@ ClojureScript development process.
 
 ## Status
 
-Portfolio is currently a proof of concept under initial development. The basic
-API for creating scenes are crystalizing, but details about the Portfolio app,
-its plugins, etc, are still subject to change.
+Portfolio is stable and ready to use, but not yet feature complete. APIs
+documented in this document are final and will not change. APIs not explicitly
+documented in this document, especially those pertaining to extending and
+customizing the UI, may still be subject to change.
+
+## Sample
+
+![The Portfolio UI](./docs/sample.png)
+
+There is a [live sample](https://cjohansen.github.io/) to check out. The source
+code for the sample is [also available](https://github.com/cjohansen/sasha).
 
 ## Install
 
-Portfolio is under active initial development, so there's no official release
-yet. Stuff is added and refined on a ~daily basis, so just use the latest git
-sha:
+With tools.deps:
 
 ```clj
-no.cjohansen/portfolio
-{:git/url "https://github.com/cjohansen/portfolio"
- :sha "..."}
+no.cjohansen/portfolio {:mvn/version "2023.03.21"}
+```
+
+With Leiningen:
+
+```clj
+[no.cjohansen/portfolio "2022.03.21"]
 ```
 
 ## Usage
@@ -40,10 +50,10 @@ an entire page layout, is completely up to you. You define scenes with the
   [:button.button "I am a button"])
 ```
 
-At its very minimal, a scene is just a named instance of a component. Where you
+At its most minimal, a scene is just a named instance of a component. Where you
 require `defscene` from depends on your rendering library of choice. If you're
-using [reagent](https://github.com/reagent-project/reagent), you'll
-`(:require [portfolio.reagent :refer-macros [defscene]])`.
+using [reagent](https://github.com/reagent-project/reagent), you'll `(:require
+[portfolio.reagent :refer-macros [defscene]])`.
 
 Currently these adapters are supported:
 
@@ -67,7 +77,7 @@ also take additional key/value pairs:
   component)
 ```
 
-Scenes can also be functions:
+Scenes can be functions:
 
 ```clj
 (defscene name
@@ -150,7 +160,8 @@ You might want to add some CSS files to the canvas, which can be done with
   {:config {:css-paths ["/myapp/custom.css"]}})
 ```
 
-Add as many CSS files as you like.
+Add as many CSS files as you like. If you run Portfolio with figwheel-main, CSS
+files will automatically reloaded when changed.
 
 ### Custom Canvas HTML
 
@@ -171,7 +182,10 @@ an element with that id, it will be used instead, so be aware of that.
 ## Customizing the Portfolio UI
 
 The Portfolio UI is highly customizable: The default canvas tools are all
-optional, and their options can be configured to your liking.
+optional, and their options can be configured to your liking. While not yet
+finalized there are also APIs for you to create custom tools - locale selection,
+theme selectors, and whatever else your imagination can conjure. Documentation
+will be available when these APIs are considered stable.
 
 ### Background
 
@@ -206,6 +220,50 @@ To change the available options, use `:background/options`:
              :background/body-class "dark-mode"}}]
 
    :background/default-option-id :bleak-mode}})
+```
+
+### Viewport
+
+The viewport tool sets the dimensions of the viewport your scenes are rendered
+in, and can help with responsive design. The default options are auto and an
+iPhone-like size. You can provide your own options if you want:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+ {:config
+  {:viewport/options
+   [{:title "Auto"
+     :value {:viewport/width "100%"
+             :viewport/height "100%"}}
+    {:title "iPhone 12 / 13 Pro"
+     :value {:viewport/width 390
+             :viewport/height 844}}]}})
+```
+
+Options can use specific pixel dimensions, percentages, or a mix. You can have
+as many resolutions as you need. You can optionally control scene offset from
+the viewport by adding `:viewport/padding` to either a number, or a vector with
+four numbers (padding north, east, south, west).
+
+### Grid
+
+The grid tool displays a grid in the background of your scenes. The default is
+either no grid, or a 5 by 20 pixel grid. Change this as you see fit:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+ {:config
+  {:grid/options
+   [{:title "5 x 20px"
+     :value {:grid/offset 0
+             :grid/size 20
+             :grid/group-size 5}}
+    {:title "No grid"
+     :value {:grid/size 0}}]}})
 ```
 
 ## Try it out
@@ -244,4 +302,15 @@ define](https://clojurescript.org/reference/compiler-options#closure-defines) to
 
 ## Contributions
 
-- @rome-user added support for pure React components and Helix
+Yes please! Feel free to contribute more framework adapters, UI extensions or
+whatever. Please open an issue or a draft PR to discuss larger changes before
+pouring too much work into them, so we're sure we're one the same page.
+
+- @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
+
+## License
+
+Copyright © 2022-2023 Christian Johansen
+
+Distributed under the Eclipse Public License either version 1.0 or (at your
+option) any later version.

@@ -107,7 +107,7 @@
                         :value {:viewport/width "100%"
                                 :viewport/height "100%"}
                         :type :desktop}
-                       {:title "iPhone 12 / 13 Prop"
+                       {:title "iPhone 12 / 13 Pro"
                         :value {:viewport/width 390
                                 :viewport/height 844}
                         :type :mobile}])

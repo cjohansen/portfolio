@@ -1,17 +1,17 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        org.clojure/clojurescript {:mvn/version "1.11.60"}
-        cjohansen/dumdom {:mvn/version "2022.09.28"}
-        cljsjs/codemirror {:mvn/version "5.44.0-1"}
-        ring/ring {:mvn/version "1.9.6"}}
+ :deps {cjohansen/dumdom {:mvn/version "2022.09.28"}}
  :aliases
  {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src"]
-        :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.18"}
+        :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
+                     org.clojure/clojurescript {:mvn/version "1.11.60"}
+                     com.bhauman/figwheel-main {:mvn/version "0.2.18"}
                      cider/piggieback {:mvn/version "0.5.3"}
                      cjohansen/gadget-inspector {:mvn/version "0.2020.09.10"}
                      reagent/reagent {:mvn/version "1.1.1"}
+                     cljsjs/codemirror {:mvn/version "5.44.0-1"}
                      cljsjs/react {:mvn/version "17.0.2-0"}
                      cljsjs/react-dom {:mvn/version "17.0.2-0"}
+                     ring/ring {:mvn/version "1.9.6"}
                      rum/rum {:mvn/version "0.12.10"}
                      lilactown/helix {:mvn/version "0.1.9"}}
         :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}}}

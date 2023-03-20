@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>jar</packaging>
+  <groupId>portfolio</groupId>
+  <artifactId>portfolio</artifactId>
+  <version>2023.03.21</version>
+  <name>portfolio</name>
+  <dependencies>
+    <dependency>
+      <groupId>no.cjohansen</groupId>
+      <artifactId>dumdom</artifactId>
+      <version>2022.09.28</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+  </build>
+  <repositories>
+    <repository>
+      <id>clojars</id>
+      <url>https://repo.clojars.org/</url>
+    </repository>
+  </repositories>
+  <description>Visual REPL for UI component development</description>
+  <url>https://github.com/cjohansen/portfolio</url>
+  <licenses>
+    <license>
+      <name>EPL</name>
+      <url>https://opensource.org/licenses/EPL-2.0</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git://github.com/cjohansen/portfolio.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/cjohansen/portfolio.git</developerConnection>
+    <tag>v2023.03.21</tag>
+    <url>https://github.com/cjohansen/portfolio</url>
+  </scm>
+</project>
