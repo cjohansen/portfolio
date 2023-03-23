@@ -58,7 +58,7 @@ using [reagent](https://github.com/reagent-project/reagent), you'll `(:require
 Currently these adapters are supported:
 
 - [Reagent](https://github.com/reagent-project/reagent) - `portfolio.reagent`
-- [Rum](https://github.com/tonsky/rum) - `portfolio.rum`
+- [Rum](https://github.com/tonsky/rum) - `portfolio.rum` (React 18+ use `portfolio.react`)
 - [Dumdom](https://github.com/cjohansen/dumdom) - `portfolio.dumdom`
 - React (including [Helix](https://github.com/lilactown/helix)) - `portfolio.react`
 - DOM API - `portfolio.dom`
