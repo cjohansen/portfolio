@@ -1,6 +1,6 @@
 (ns portfolio.components.rum
   (:require [rum.core :as rum]
-            [portfolio.rum :refer-macros [defscene]]))
+            [portfolio.react :refer-macros [defscene]]))
 
 (rum/defc button [text]
   [:button.button text])

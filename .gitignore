@@ -2,3 +2,5 @@
 /.nrepl-port
 /resources/public/portfolio/js
 /portfolio.jar
+.cache
+.calva
