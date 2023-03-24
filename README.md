@@ -35,7 +35,7 @@ no.cjohansen/portfolio {:mvn/version "2023.03.21"}
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2022.03.21"]
+[no.cjohansen/portfolio "2023.03.21"]
 ```
 
 ## Usage
