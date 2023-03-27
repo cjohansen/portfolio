@@ -4,5 +4,5 @@
  :pretty-print true
  :source-map true
  :asset-path "/portfolio/js/dev"
- :output-to "resources/public/portfolio/js/app.js"
- :output-dir "resources/public/portfolio/js/dev"}
+ :output-to "dev-resources/public/portfolio/js/app.js"
+ :output-dir "dev-resources/public/portfolio/js/dev"}
