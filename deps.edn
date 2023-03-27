@@ -1,6 +1,5 @@
 {:paths ["src" "resources"]
- :deps {cjohansen/dumdom {:git/url "https://github.com/cjohansen/dumdom"
-                          :sha "ed9f3263e0c5eebd779dd9c85260897fa8a95c51"}}
+ :deps {cjohansen/dumdom {:mvn/version "2023.03.27"}}
  :aliases
  {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src"]
         :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
