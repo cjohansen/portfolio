@@ -193,6 +193,13 @@ This will serve files from `public` in your project (where presumably your
 index.html and CSS files are), and resources in `public` on the classpath (e.g.
 Portfolio's resources). Adjust as necessary.
 
+### shadow-cljs + separate dev server
+
+If you are using shadow-cljs to build the front-end and leiningen to run the dev 
+server separately you need to make sure that you add `classpath:public` to the 
+`:resource-paths` and the dependency to Portfolio to the `:dependencies` in 
+`project.clj`. This will then serve the necessary assets to make Portfolio work.
+
 ## Customizing the Portfolio UI
 
 The Portfolio UI is highly customizable: The default canvas tools are all
