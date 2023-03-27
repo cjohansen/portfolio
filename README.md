@@ -29,13 +29,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.03.21"}
+no.cjohansen/portfolio {:mvn/version "2023.03.27"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.03.21"]
+[no.cjohansen/portfolio "2023.03.27"]
 ```
 
 ## Usage
@@ -179,6 +179,20 @@ There are no requirements to how you format this file. Portfolio will add a div
 with id `"canvas"` to it, in which it will render the scene. If there already is
 an element with that id, it will be used instead, so be aware of that.
 
+## shadow-cljs
+
+To use Portfolio with shadow-cljs, you must ensure that Portfolio's resources
+are served by the development HTTP server. Include `"classpath:public"` in your
+`:dev-http` sources:
+
+```clj
+:dev-http {8080 ["public" "classpath:public"]}
+```
+
+This will serve files from `public` in your project (where presumably your
+index.html and CSS files are), and resources in `public` on the classpath (e.g.
+Portfolio's resources). Adjust as necessary.
+
 ## Customizing the Portfolio UI
 
 The Portfolio UI is highly customizable: The default canvas tools are all
@@ -307,6 +321,7 @@ whatever. Please open an issue or a draft PR to discuss larger changes before
 pouring too much work into them, so we're sure we're one the same page.
 
 - @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
+- @BorisKourt and @thheller helped with shadow-cljs support.
 
 ## License
 
