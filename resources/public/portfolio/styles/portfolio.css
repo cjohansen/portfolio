@@ -11,7 +11,7 @@
 
 html,
 body {
-  font-size: 16px;
+  font-size: 15px;
   --shark: #212227;
   --shark-dark: #26262a;
   --alto: #d5d5d5;
@@ -49,9 +49,9 @@ body {
 .h1 {font-size: 1.6rem; font-weight: 600;}
 .h2 {font-size: 1.3rem; font-weight: 600;}
 .h3 {font-size: 1.2rem; font-weight: 600;}
-.h4 {font-size: 1.1rem; font-weight: 600;}
+.h4 {font-size: 1.067rem; font-weight: 600;}
 
-.text-s {font-size: 0.92rem;}
+.text-s {font-size: 0.93rem;}
 
 a,
 a:link,
