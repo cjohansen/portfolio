@@ -8,7 +8,6 @@
             [portfolio.components.link]
             [portfolio.components.reagent]
             [portfolio.components.rum]
-            [portfolio.components.uix]
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
