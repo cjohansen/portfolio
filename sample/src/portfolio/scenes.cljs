@@ -4,6 +4,7 @@
             [portfolio.components.dom]
             [portfolio.components.heading]
             [portfolio.components.helix]
+            [portfolio.components.uix]
             [portfolio.components.html]
             [portfolio.components.link]
             [portfolio.components.reagent]
