@@ -1,6 +1,6 @@
 /.cpcache/
 /.nrepl-port
-/resources/public/portfolio/js
+/dev-resources/public/portfolio/js
 /portfolio.jar
 .cache
 .calva
