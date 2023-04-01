@@ -2,6 +2,7 @@
   (:require [clojure.walk :as walk]
             [portfolio.core :as portfolio]
             [portfolio.css :as css]
+            [portfolio.layout :as layout]
             [portfolio.router :as router]))
 
 (defn assoc-in*
@@ -60,8 +61,12 @@
 
 (defn go-to-location [state location]
   (let [current-scenes (portfolio/get-current-scenes state (:location state))
-        next-scenes (portfolio/get-current-scenes state location)]
-    {:assoc-in [[:location] location]
+        next-scenes (portfolio/get-current-scenes state location)
+        layout (layout/get-view-layout state location)
+        lp (layout/get-layout-path layout)]
+    {:assoc-in (cond-> [[:location] location
+                        (layout/get-current-layout-path) lp]
+                 (nil? (get-in state lp)) (into [lp layout]))
      :fns (concat
            (->> (filter :on-unmount current-scenes)
                 (map (fn [{:keys [on-unmount param id title]}]

@@ -24,7 +24,8 @@
           (not-empty (select-keys pane-options (keys value))))}))
 
 (defn prepare-tool-menu [tool state pane]
-  (let [{:keys [value current-value]} (get-current-value tool state pane)
+  (let [path [:panes (:pane-id pane) (:id tool) :value]
+        {:keys [value current-value]} (get-current-value tool state pane)
         custom-options (when (and current-value (not= current-value value))
                          [{:title (get-custom-tool-source-title (:config-source pane))
                            :value current-value
@@ -37,8 +38,8 @@
           :actions (when-not disabled?
                      (->> [[:dissoc-in (get-expand-path (:pane-id pane))]
                            (if selected?
-                             [:dissoc-in [(:id tool) (:pane-id pane) :value]]
-                             [:assoc-in [(:id tool) (:pane-id pane) :value] value])
+                             [:dissoc-in path]
+                             [:assoc-in path value])
                            (when (ifn? (:on-select tool))
                              [:fn/call (:on-select tool) value])]
                           (remove nil?)))}))}))

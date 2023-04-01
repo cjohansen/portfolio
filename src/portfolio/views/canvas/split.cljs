@@ -1,19 +1,29 @@
 (ns portfolio.views.canvas.split
   (:require [portfolio.components.canvas-toolbar-buttons :refer [Button]]
-            [portfolio.views.canvas.protocols :as protocols]
-            [portfolio.icons.rows :as rows]
             [portfolio.icons.columns :as columns]
-            [portfolio.icons.cross :as cross]))
+            [portfolio.icons.cross :as cross]
+            [portfolio.icons.rows :as rows]
+            [portfolio.layout :as layout]
+            [portfolio.views.canvas.protocols :as protocols]))
+
+(def complement-dir
+  {:cols :rows
+   :rows :cols})
 
 (defn split-layout [layout path dir]
-  (if (= 1 (count path))
+  (cond
+    (= 0 (count path))
+    {:kind dir
+     :xs [layout (layout/assign-pane-ids layout)]}
+
+    (= 1 (count path))
     (let [[x] path]
       (cond-> layout
         (= dir (:kind layout))
         (update :xs (fn [xs]
                       (vec (mapcat (fn [col i]
                                      (if (= i x)
-                                       [col col]
+                                       [col (layout/assign-pane-ids col)]
                                        [col]))
                                    xs (range)))))
 
@@ -22,19 +32,21 @@
                       (mapv (fn [col i]
                               (if (= i x)
                                 {:kind dir
-                                 :xs [col col]}
+                                 :xs [col (layout/assign-pane-ids col)]}
                                 col))
                             xs (range))))))
+
+    :else
     (update-in layout [:xs (first path)] split-layout (rest path) dir)))
 
 (defn split-layout-horizontally [layout path]
-  (split-layout layout path :rows))
+  (split-layout layout path :cols))
 
-(defn prepare-horizontal-split-button [tool state {:keys [pane-path layout-path layout]}]
+(defn prepare-horizontal-split-button [tool _state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon rows/icon
-     :actions [[:assoc-in layout-path
+     :icon columns/icon
+     :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-horizontally layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
 
@@ -49,13 +61,13 @@
     horizontal-impl))
 
 (defn split-layout-vertically [layout path]
-  (split-layout layout path :cols))
+  (split-layout layout path :rows))
 
 (defn prepare-vertical-split-button [tool state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon columns/icon
-     :actions [[:assoc-in layout-path
+     :icon rows/icon
+     :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-vertically layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
 
@@ -71,23 +83,26 @@
 
 (defn close-pane [layout path]
   (if (= 1 (count path))
-    (update layout :xs (fn [xs]
-                         (vec (concat
-                               (take (first path) xs)
-                               (drop (inc (first path)) xs)))))
+    (let [xs (vec (concat
+                   (take (first path) (:xs layout))
+                   (drop (inc (first path)) (:xs layout))))]
+      (if (= 1 (count xs))
+        (first xs)
+        (assoc layout :xs xs)))
     (update-in layout [:xs (first path)] close-pane (rest path))))
 
-(defn prepare-close-pane-button [tool state {:keys [pane-path layout-path layout]}]
-  (when (< 1 (->> layout
-                  (tree-seq coll? identity)
-                  (filter map?)
-                  (remove :kind)
-                  count))
+(defn prepare-close-pane-button [tool _state {:keys [pane-path layout-path layout] :as lol}]
+  (when (and (< 1 (->> layout
+                       (tree-seq coll? identity)
+                       (filter map?)
+                       (remove :kind)
+                       count))
+             (< 0 (count pane-path)))
     (with-meta
       {:title (:title tool)
        :icon cross/icon
        :align :right
-       :actions [[:assoc-in layout-path
+       :actions [[:assoc-in (into layout-path [:layout])
                   (close-pane layout pane-path)]]}
       {`protocols/render-toolbar-button #'Button})))
 

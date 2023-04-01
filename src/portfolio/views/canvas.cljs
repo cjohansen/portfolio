@@ -2,6 +2,7 @@
   (:require [portfolio.code :as code]
             [portfolio.components.canvas :refer [CanvasView]]
             [portfolio.core :as p]
+            [portfolio.layout :as layout]
             [portfolio.router :as router]
             [portfolio.view :as view]
             [portfolio.views.canvas.protocols :as canvas]))
@@ -12,44 +13,7 @@
 (extend-type cljs.core/PersistentArrayMap
   canvas/ICanvasToolValue
   (get-tool-value [tool state canvas-id]
-    (get-in state [(:id tool) canvas-id :value])))
-
-(defn gallery? [state location]
-  (or (contains? (:query-params location) :namespace)
-      (< 1 (count (:current-scenes state)))))
-
-(defn inflate-layout [layout]
-  (if (vector? layout)
-    (if (= 1 (count layout))
-      {:kind :cols
-       :xs (first layout)}
-      {:kind :rows
-       :xs (for [row layout]
-             {:kind :cols
-              :xs row})})
-    layout))
-
-(defn get-layout [state layout path]
-  {:layout (inflate-layout (or (get-in state [:layout path]) layout))
-   :source path})
-
-(defn get-current-layout [state location view]
-  (if (gallery? state location)
-    (get-layout
-     state
-     [[(merge {:viewport/height :auto} (:canvas/gallery-defaults state))]]
-     [::gallery-default])
-    (or (when-let [layout (-> state :current-scenes first :canvas/layout)]
-          (get-layout state layout [:scene (-> state :current-scenes first :id)]))
-        (when-let [layout (-> state :current-namespace :canvas/layout)]
-          (get-layout state layout [:namespace (-> state :current-namespace :namespace)]))
-        (when-let [layout (-> state :current-collection :canvas/layout)]
-          (get-layout state layout [:collection (-> state :current-collection :id)]))
-        (when-let [layout (:canvas/layout state)]
-          (get-layout state layout [:state-layout]))
-        (when-let [layout (:canvas/layout view)]
-          (get-layout state layout [:view (:id view)]))
-        (get-layout state [[{}]] [:layout/default]))))
+    (get-in state [:panes canvas-id (:id tool) :value])))
 
 (defn get-current-addon [location addons]
   (or (when-let [id (some-> location :query-params :addon keyword)]
@@ -97,7 +61,7 @@
   (let [f (-> canvas :scene :component-fn)
         canvas (assoc canvas :opt options)]
     (try
-      (cond-> canvas
+      (cond-> canvas ;; (assoc canvas :id (::layout/pane-id (:opt canvas)))
         (ifn? f) (assoc-in [:scene :component] (f options)))
       (catch :default e
         (assoc-in canvas
@@ -116,7 +80,7 @@
     {:kind (:kind opt)
      :xs (for [[i x] (map vector (range) (:xs opt))]
            (prepare-layout-xs state root-layout source view scenes (conj path i) x))}
-    (let [id (concat source path)
+    (let [id (::layout/pane-id opt)
           options (merge (get-tool-defaults (:tools view))
                          opt
                          (get-tool-values state id (:tools view)))]
@@ -140,7 +104,7 @@
       (and (ifn? (get (meta tool) `canvas/prepare-canvas))
            (ifn? (get (meta tool) `canvas/finalize-canvas)))))
 
-(defn prepare-layout [state location view {:keys [layout source]} scenes gallery?]
+(defn prepare-layout [state location view {:keys [layout source]} scenes]
   (let [scenes (for [scene scenes]
                  (let [tools (filter canvas-tool? (:tools view))]
                    (cond->
@@ -154,21 +118,22 @@
                      (seq tools)
                      (assoc :tools tools)
 
-                     gallery?
+                     (:gallery? layout)
                      (assoc :title (:title scene)
                             :url (p/get-scene-url location scene)
                             :description (:description scene)))))]
     (-> (prepare-layout-xs state layout source view scenes [] layout)
-        (assoc :id (if gallery? (:namespace (:current-namespace state)) :single-scene)))))
+        (assoc :id (if (:gallery? layout)
+                     (:namespace (:current-namespace state))
+                     :single-scene)))))
 
 (defn prepare-canvas-view [view state location]
-  (let [layout (get-current-layout state location view)
-        scenes (:current-scenes state)
-        multi? (gallery? state location)]
+  (let [layout (layout/get-current-layout state)
+        scenes (:current-scenes state)]
     (with-meta
       (if-let [problems (:problems view)]
         {:problems problems}
-        (assoc (prepare-layout state location view layout scenes multi?)
+        (assoc (prepare-layout state location view layout scenes)
                :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
                         (prepare-panel state location (first scenes) (:addons view)))))
       view-impl)))
@@ -186,7 +151,7 @@
        :title "Canvas"
        :tools (filter :id tools)
        :addons addons
-       :layout (or layout [[{}]])
+       :layout (or layout {})
        :problems (->> (remove :id tools)
                       (map describe-missing-tool-id)
                       seq)}
