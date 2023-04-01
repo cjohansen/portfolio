@@ -23,13 +23,19 @@
           {:title ns
            :namespace ns}))))
 
-(defn get-scene-collection [state scene]
-  (let [ns (get-scene-namespace state scene)]
-    (or (:collection ns) ::default)))
-
 (defn get-collection [state collection]
   (or (get-in state [:collections collection])
       {:id collection}))
+
+(defn get-scene-collection [state scene]
+  (let [ns (get-scene-namespace state scene)]
+    (get-collection state (or (:collection ns) ::default))))
+
+(defn get-sort-key [grouping]
+  [(:idx grouping 999999999)
+   (or (some-> grouping :title str/lower-case)
+       (some-> grouping :id name)
+       (some-> grouping :namespace name))])
 
 (defn get-current-view [state location]
   ;; TODO: Eventually support more views
@@ -55,14 +61,16 @@
 (defn prepare-scenes [state location scenes]
   (->> scenes
        (group-by (comp namespace :id))
-       (sort-by first)
-       (map (fn [[ns scenes]]
-              (let [expanded? (namespace-expanded? state ns scenes)
+       (map (fn [[_ xs]] [(get-scene-namespace state (first xs)) xs]))
+       (sort-by (comp get-sort-key first))
+       (map (fn [[ns-data scenes]]
+              (let [ns (:namespace ns-data)
+                    expanded? (namespace-expanded? state ns scenes)
                     selected? (namespace-selected? state ns scenes)
                     current-ns (get-in location [:query-params :namespace])
                     browsing? (= ns current-ns)]
                 (cond->
-                    {:title (:title (get-scene-namespace state (first scenes)))
+                    {:title (:title ns-data)
                      :expand-actions [[:assoc-in [:ui ns :expanded?] (not expanded?)]]
                      :selected? selected?}
 
@@ -90,7 +98,7 @@
     (= sidebar-status :visible)
     true
 
-    :default
+    :else
     (not (small-screen? state))))
 
 (defn prepare-header [state _]
@@ -113,11 +121,11 @@
      :lists (->> (:scenes state)
                  vals
                  (group-by #(get-scene-collection state %))
-                 (sort-by first)
+                 (sort-by (comp get-sort-key first))
                  (map (fn [[collection scenes]]
-                        {:title (or (:title (get-collection state collection))
-                                    (when-not (= ::default collection)
-                                      (some-> collection name)))
+                        {:title (or (:title collection)
+                                    (when-not (= ::default (:id collection))
+                                      (some-> (:id collection) name)))
                          :items (prepare-scenes state location (sort-by :title scenes))})))}))
 
 (defn prepare-view-option [current-view view]
