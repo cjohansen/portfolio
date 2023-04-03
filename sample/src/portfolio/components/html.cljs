@@ -1,12 +1,8 @@
 (ns portfolio.components.html
-  (:require [portfolio.html :refer-macros [defscene defns]]))
+  (:require [portfolio.html :as portfolio :refer-macros [defscene]]))
 
-(defns HTML
-  :canvas/layout
-  {:kind :rows
-   :xs [{:viewport/width 390
-         :viewport/height 500}
-        {}]})
+(portfolio/configure-scenes
+  {:title "HTML"})
 
 (defscene html-button
   :title "HTML string button"

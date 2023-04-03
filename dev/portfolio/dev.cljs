@@ -63,35 +63,6 @@
 
   )
 
-(comment
-  (data/register-namespace!
-   {:namespace "portfolio.components.button"
-    :collection :elements
-    :title "Button"})
-
-  (data/register-namespace!
-   {:namespace "portfolio.components.heading"
-    :collection :elements
-    :title "Heading"})
-
-  (data/register-namespace!
-   {:namespace "portfolio.components.link"
-    :collection :elements
-    :title "Link"})
-
-  (data/register-namespace!
-   {:namespace "portfolio.layouts.home-page"
-    :collection :layouts
-    :title "Home page"})
-
-  (data/register-collection!
-   {:id :elements
-    :title "Elements"})
-
-  (data/register-collection!
-   {:id :layouts
-    :title "Layouts"}))
-
 (inspector/inspect "Application data" ui/app)
 
 (comment

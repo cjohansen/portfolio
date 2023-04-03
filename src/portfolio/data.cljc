@@ -3,7 +3,6 @@
 
 (def scenes (atom {}))
 (def scene-order (atom 0))
-(def namespaces (atom {}))
 (def collections (atom {}))
 
 (defn get-deleted-scenes
@@ -60,12 +59,6 @@
       (eventually-purge-scenes)
       nil)))
 
-(defn register-namespace! [ns]
-  (if-not (:namespace ns)
-    (throw (ex-info "Cannot register namespace without :namespace" {:namespace ns}))
-    (swap! namespaces assoc (:namespace ns) ns)))
-
-(defn register-collection! [collection]
-  (if-not (:id collection)
-    (throw (ex-info "Cannot register collection without :id" {:id collection}))
-    (swap! collections assoc (:id collection) collection)))
+(defn register-collection! [id collection]
+  (assert (keyword? id) "register-collection! must be called with a keyword id as first argument")
+  (swap! collections assoc id (assoc collection :id id)))

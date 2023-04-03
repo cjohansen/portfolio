@@ -16,8 +16,8 @@
             [portfolio.ui :as ui]))
 
 (data/register-collection!
- {:id :portfolio.layouts
-  :title "Layouts, baby"
+ :portfolio.layouts
+ {:title "Layouts, baby"
   :idx 0})
 
 (def app

@@ -1,7 +1,5 @@
 (ns portfolio.components.box
-  (:require [portfolio.dumdom :refer-macros [defscene defns]]))
-
-(defns Box)
+  (:require [portfolio.dumdom :refer-macros [defscene]]))
 
 (defscene shadowed-box
   :icon :ui.icons/hamburger

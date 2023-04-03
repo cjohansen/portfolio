@@ -1,12 +1,13 @@
 (ns portfolio.rum
-  (:require [portfolio.scene :as scene]))
+  (:require [portfolio.core :as portfolio]))
 
 (defmacro defscene [id & opts]
-  (when (scene/portfolio-active?)
+  (when (portfolio/portfolio-active?)
     `(portfolio.data/register-scene!
       (portfolio.rum/create-scene
-       ~(scene/get-options-map id (:line &env) opts)))))
+       ~(portfolio/get-options-map id (:line &env) opts)))))
 
-(defmacro defns [title & opts]
-  `(portfolio.data/register-namespace!
-    ~(scene/get-namespace-options title opts)))
+(defmacro configure-scenes [opts]
+  (when (portfolio/portfolio-active?)
+    `(portfolio.data/register-collection!
+      ~@(portfolio/get-collection-options opts))))

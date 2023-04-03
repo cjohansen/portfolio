@@ -1,4 +1,4 @@
-(ns portfolio.scene
+(ns portfolio.core
   (:require [cljs.env :as env]))
 
 (defn portfolio-active? []
@@ -24,8 +24,5 @@
                                                                  (into ['& 'args]))
                                                             ~@(drop 1 rest))))))))
 
-(defn get-namespace-options [title opts]
-  (into {:namespace (str *ns*)
-         :title (str title)}
-        (->> (partition-all 2 opts)
-             (map vec))))
+(defn get-collection-options [opts]
+  [(keyword (str *ns*)) opts])
