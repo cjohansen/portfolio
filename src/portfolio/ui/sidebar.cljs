@@ -38,7 +38,7 @@
   (let [exp-path (get-expanded-path collection)
         expanded? (get-in state exp-path)]
     (cond-> {:title (:title collection)
-             :kind :togglable
+             :kind :package
              :context (get-context state path)
              :actions [[:go-to-location (assoc-in location [:query-params :id] (:id collection))]]
              :illustration (get-package-illustration expanded? collection)

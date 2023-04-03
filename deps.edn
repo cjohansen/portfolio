@@ -1,7 +1,7 @@
 {:paths ["src" "resources"]
  :deps {cjohansen/dumdom {:mvn/version "2023.03.27"}}
  :aliases
- {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src"]
+ {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src" "scenes/src"]
         :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
                      org.clojure/clojurescript {:mvn/version "1.11.60"}
                      com.bhauman/figwheel-main {:mvn/version "0.2.18"}

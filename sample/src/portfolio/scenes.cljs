@@ -15,11 +15,6 @@
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]))
 
-(data/register-collection!
- :portfolio.layouts
- {:title "Layouts, baby"
-  :idx 0})
-
 (def app
   (ui/start!
    {:on-render (fn [page-data]
