@@ -10,7 +10,7 @@
   "Finds scenes that have been deleted. All the scenes in the same namespace
   should have :idx 1 apart. If there are scenes in a namespace that are
   separated from the rest with :idx more than 1 apart, it means the other scenes
-  have been re-defined. "
+  have been re-defined."
   [scenes]
   (->> (vals scenes)
        (group-by (comp namespace :id))
@@ -49,11 +49,14 @@
       (swap! scenes assoc (:id scene)
              (cond-> (assoc scene
                             :line line
-                            :idx idx ;;(.indexOf @scene-order (:id scene))
+                            :idx idx
                             :updated-at #?(:cljs (.getTime (js/Date.))
                                            :clj (.toEpochMilli (java.time.Instant/now))))
                (empty? (:title scene))
-               (assoc :title (name (:id scene)))))
+               (assoc :title (name (:id scene)))
+
+               (nil? (:collection scene))
+               (assoc :collection (some-> scene :id namespace keyword))))
       (eventually-purge-scenes)
       nil)))
 

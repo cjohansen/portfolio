@@ -25,7 +25,7 @@
       (nil? el) nil
       (and (.-href el)
            (= "A" (.-tagName el))) el
-      :default (recur (.-parentNode el)))))
+      :else (recur (.-parentNode el)))))
 
 (defn- get-path [href]
   (when (not-empty href)
@@ -101,7 +101,7 @@
          (actions/execute-action!
           app
           (if (empty? (:query-params (router/get-current-location)))
-            [:go-to-location {:query-params {:scene (:id (first (sort-by :id (vals (:scenes @app)))))}}]
+            [:go-to-location {:query-params {:id (:id (first (sort-by :id (vals (:scenes @app)))))}}]
             [:go-to-current-location]))
          (swap! app assoc ::started? true)))))
   app)

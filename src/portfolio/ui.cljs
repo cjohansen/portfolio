@@ -1,7 +1,7 @@
 (ns portfolio.ui
   (:require [portfolio.actions :as actions]
             [portfolio.client :as client]
-            [portfolio.core :as portfolio]
+            [portfolio.collection :as collection]
             [portfolio.data :as data]
             [portfolio.homeless :as h]
             [portfolio.views.canvas :as canvas]
@@ -13,12 +13,13 @@
 
 (def app (atom nil))
 
+(defn get-collections [scenes collections]
+  (collection/get-default-organization (vals scenes) (vals collections)))
+
 (defn create-app [config canvas-tools extra-canvas-tools]
-  (-> (assoc config
-             :scenes (vals @data/scenes)
-             :namespaces (vals @data/namespaces)
-             :collections (vals @data/collections))
-      portfolio/init-state
+  (-> config
+      (assoc :scenes @data/scenes)
+      (assoc :collections (get-collections @data/scenes @data/collections))
       (assoc :views [(canvas/create-canvas
                       {:canvas/layout (:canvas/layout config)
                        :tools (into (or canvas-tools
@@ -35,9 +36,18 @@
 
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools]}]]
   (swap! app merge (create-app config canvas-tools extra-canvas-tools))
-  (add-watch data/scenes ::app (fn [_ _ _ scenes]
-                                 (swap! app assoc :scenes scenes)
-                                 (eventually-execute app [:go-to-current-location])))
-  (add-watch data/namespaces ::app (fn [_ _ _ namespaces] (swap! app assoc :namespaces namespaces)))
-  (add-watch data/collections ::app (fn [_ _ _ collections] (swap! app assoc :collections collections)))
+
+  (add-watch data/scenes ::app
+    (fn [_ _ _ scenes]
+      (swap! app (fn [state]
+                   (-> state
+                       (assoc :scenes scenes)
+                       (assoc :collections (get-collections scenes (:collections @app))))))
+      (eventually-execute app [:go-to-current-location])))
+
+  (add-watch data/collections ::app
+    (fn [_ _ _ collections]
+      (swap! app (fn [state]
+                   (assoc state :collections (get-collections (:scenes state) collections))))))
+
   (client/start-app app {:on-render on-render}))

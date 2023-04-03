@@ -1,9 +1,7 @@
-(ns portfolio.layout
-  (:require [portfolio.core :as portfolio]))
+(ns portfolio.layout)
 
-(defn gallery? [state location]
-  (or (contains? (:query-params location) :namespace)
-      (< 1 (count (:current-scenes state)))))
+(defn gallery? [selection]
+  (not= :scene (:kind selection)))
 
 (defn assign-pane-ids [layout]
   (if (:kind layout)
@@ -21,27 +19,24 @@
 (defn get-layout-path [layout]
   [:layout (:source layout)])
 
-(defn get-view-layout [state location]
-  (if (gallery? state location)
+(defn get-view-layout [state selection]
+  (if (gallery? selection)
     (-> (init-layout
          state
          (merge {:viewport/height :auto} (:canvas/gallery-defaults state))
          [::gallery-default])
         (assoc :gallery? true))
-    (let [scenes (portfolio/get-current-scenes state location)
-          ns (portfolio/get-scene-namespace state (first scenes))]
-      (or (when-let [scene (first (filter :canvas/layout scenes))]
-            (init-layout state (:canvas/layout scene) [:scene (:id scene)]))
-          (when-let [layout (:canvas/layout ns)]
-            (init-layout state layout [:namespace (:namespace ns)]))
-          (let [collection (portfolio/get-collection state (:collection ns))]
-            (when-let [layout (:canvas/layout collection)]
-              (init-layout state layout [:collection (:id collection)])))
-          (when-let [layout (:canvas/layout state)]
-            (init-layout state layout [:state-layout]))
-          (when-let [view (first (filter :canvas/layout (:views state)))]
-            (init-layout state (:canvas/layout view) [:view (:id view)]))
-          (init-layout state {} [:layout/default])))))
+    (or (when-let [scene (first (filter :canvas/layout (:scenes selection)))]
+          (init-layout state (:canvas/layout scene) [:scene (:id scene)]))
+        (when-let [collection (->> (reverse (:path selection))
+                                   (filter :canvas/layout)
+                                   first)]
+          (init-layout state (:canvas/layout collection) [:collection (:id collection)]))
+        (when-let [layout (:canvas/layout state)]
+          (init-layout state layout [:state-layout]))
+        (when-let [view (first (filter :canvas/layout (:views state)))]
+          (init-layout state (:canvas/layout view) [:view (:id view)]))
+        (init-layout state {} [:layout/default]))))
 
 (defn get-current-layout [state]
   (get-in state (get-in state (get-current-layout-path))))

@@ -1,9 +1,11 @@
 (ns portfolio.actions
   (:require [clojure.walk :as walk]
-            [portfolio.core :as portfolio]
+            [portfolio.collection :as collection]
             [portfolio.css :as css]
             [portfolio.layout :as layout]
-            [portfolio.router :as router]))
+            [portfolio.router :as router]
+            [portfolio.routes :as routes]
+            [portfolio.sidebar :as sidebar]))
 
 (defn assoc-in*
   "Takes a map and pairs of path value to assoc-in to the map. Makes `assoc-in`
@@ -49,38 +51,42 @@
 (defn atom? [x]
   (satisfies? cljs.core/IWatchable x))
 
-(defn get-page-title [location]
-  (let [params (:query-params location)
-        scene (when (:scene params) (keyword (:scene params)))]
-    (cond
-      scene
-      (str "Scene: " (name scene) " (" (namespace scene) ") - Portfolio")
-
-      (:namespace params)
-      (str "Namespace: " (:namespace params) " - Portfolio"))))
+(defn get-page-title [state selection]
+  (let [suffix (when (:title state) (str " - " (:title state)))]
+    (if (:target selection)
+      (case (:kind selection)
+        :scene (str "Scene: " (:title (:target selection)) suffix)
+        :collection (str "Collection: " (:title (:target selection)) suffix))
+      (str "No scenes found" suffix))))
 
 (defn go-to-location [state location]
-  (let [current-scenes (portfolio/get-current-scenes state (:location state))
-        next-scenes (portfolio/get-current-scenes state location)
-        layout (layout/get-view-layout state location)
-        lp (layout/get-layout-path layout)]
+  (let [id (routes/get-id (:location state))
+        current-scenes (collection/get-active-scenes state id)
+        selection (collection/get-selection state id)
+        layout (layout/get-view-layout state selection)
+        lp (layout/get-layout-path layout)
+        expansions (->> (:path selection)
+                        (map sidebar/get-expanded-path)
+                        (remove #(get-in state %))
+                        (mapcat (fn [path] [path true])))]
     {:assoc-in (cond-> [[:location] location
                         (layout/get-current-layout-path) lp]
-                 (nil? (get-in state lp)) (into [lp layout]))
+                 (nil? (get-in state lp)) (into [lp layout])
+                 (seq expansions) (into expansions))
      :fns (concat
            (->> (filter :on-unmount current-scenes)
                 (map (fn [{:keys [on-unmount param id title]}]
                        [:on-unmount (or id title) on-unmount param])))
-           (->> (filter :on-mount next-scenes)
+           (->> (filter :on-mount (:scenes selection))
                 (map (fn [{:keys [on-mount param id title]}]
                        [:on-mount (or id title) on-mount param]))))
      :release (->> (map :param current-scenes)
                    (filter atom?)
                    (map (fn [ref] [ref ::portfolio])))
-     :subscribe (->> (map (juxt :param identity) next-scenes)
+     :subscribe (->> (map (juxt :param identity) (:scenes selection))
                      (filter (comp atom? first))
                      (map (fn [[ref scene]] [ref ::portfolio scene])))
-     :set-page-title (get-page-title location)
+     :set-page-title (get-page-title state selection)
      :update-window-location (router/get-url location)}))
 
 (defn remove-scene-param
@@ -137,7 +143,7 @@
   (doseq [[k t f & args] (:fns res)]
     (println (str "Calling " k " on " t " with") (pr-str args))
     (apply f args))
-  (doseq [[ref k scene] (:subscribe res)]
+  (doseq [[ref k _scene] (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
     (add-watch ref k (fn [_ _ _ _]
                        (swap! app update :heartbeat (fnil inc 0)))))
@@ -228,7 +234,7 @@
                  (= :event.target/number-value ax)
                  (some-> e .-target .-value parse-int)
 
-                 :default ax))
+                 :else ax))
              action))))
        x))
    data))

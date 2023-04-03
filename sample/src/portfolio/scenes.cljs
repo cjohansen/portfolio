@@ -1,5 +1,6 @@
 (ns portfolio.scenes
-  (:require [portfolio.components.box]
+  (:require [gadget.inspector :as inspector]
+            [portfolio.components.box]
             [portfolio.components.button]
             [portfolio.components.dom]
             [portfolio.components.heading]
@@ -8,22 +9,30 @@
             [portfolio.components.link]
             [portfolio.components.reagent]
             [portfolio.components.rum]
+            [portfolio.data :as data]
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]))
 
+(data/register-collection!
+ {:id :portfolio.layouts
+  :title "Layouts, baby"
+  :idx 0})
+
 (def app
   (ui/start!
-   {:config
+   {:on-render (fn [page-data]
+                 (inspector/inspect "Page data" page-data))
+    :config
     {:css-paths ["/portfolio/demo.css"]
      #_#_:canvas/gallery-defaults {:viewport/width 390
                                    :viewport/height 400}
 
-     :viewport/defaults {#_#_:viewport/padding [16]
+     :viewport/defaults {:viewport/padding [16]
                          #_#_#_#_:viewport/width 390
                          :viewport/height 400}
- #_#_    :canvas/layout {:kind :cols
+     #_#_:canvas/layout {:kind :cols
                      :xs [{:viewport/width 390
                            :viewport/height "100%"}
                           {:kind :rows

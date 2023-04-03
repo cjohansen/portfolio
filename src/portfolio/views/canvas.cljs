@@ -1,9 +1,8 @@
 (ns portfolio.views.canvas
   (:require [portfolio.code :as code]
             [portfolio.components.canvas :refer [CanvasView]]
-            [portfolio.core :as p]
             [portfolio.layout :as layout]
-            [portfolio.router :as router]
+            [portfolio.routes :as routes]
             [portfolio.view :as view]
             [portfolio.views.canvas.protocols :as canvas]))
 
@@ -31,9 +30,7 @@
                (assoc :selected? true)
 
                (not= current-addon addon)
-               (assoc :url (-> location
-                               (assoc-in [:query-params :addon] (:id addon))
-                               router/get-url))))
+               (assoc :url (routes/get-addon-url location addon))))
      :minimized? minimized?
      :button (if minimized?
                {:text "Maximize"
@@ -120,7 +117,7 @@
 
                      (:gallery? layout)
                      (assoc :title (:title scene)
-                            :url (p/get-scene-url location scene)
+                            :url (routes/get-scene-url location scene)
                             :description (:description scene)))))]
     (-> (prepare-layout-xs state layout source view scenes [] layout)
         (assoc :id (if (:gallery? layout)
