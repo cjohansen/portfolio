@@ -62,7 +62,7 @@
 (defn go-to-location [state location]
   (let [id (routes/get-id (:location state))
         current-scenes (collection/get-selected-scenes state id)
-        selection (collection/get-selection state id)
+        selection (collection/get-selection state (routes/get-id location))
         layout (layout/get-view-layout state selection)
         lp (layout/get-layout-path layout)
         expansions (->> (:path selection)

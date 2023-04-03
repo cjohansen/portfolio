@@ -130,7 +130,9 @@
      :kind (if scene :scene :collection)
      :path (get-collection-path state id)
      :target (or scene
-                 (first (filter (comp #{id} :id) (:collections state))))}))
+                 (->> (vals (:collections state))
+                      (filter (comp #{id} :id))
+                      first))}))
 
 (defn get-sort-key [collection]
   [(:idx collection 999999999)
