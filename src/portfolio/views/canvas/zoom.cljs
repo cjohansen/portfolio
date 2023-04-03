@@ -36,8 +36,8 @@
                   (< 1 level)
                   (< level 1))
        :actions [[:assoc-in
-                  [(:id tool) pane-id :value :zoom/level]
-                  (+ increment level)]]}
+                  (addons/get-options-path pane tool)
+                  {:zoom/level (+ increment level)}]]}
       {`protocols/render-toolbar-button #'Button})))
 
 (def impl
@@ -47,7 +47,8 @@
 
 (defn create-zoom-in-tool [config]
   (with-meta
-    {:id :canvas/zoom
+    {:id :canvas/zoom-in
+     :group-id :canvas/zoom
      :title "Zoom in"
      :icon :ui.icons/magnifying-glass-plus
      :zoom-increment (or (:zoom-increment config) 0.25)}
@@ -55,7 +56,8 @@
 
 (defn create-zoom-out-tool [config]
   (with-meta
-    {:id :canvas/zoom
+    {:id :canvas/zoom-out
+     :group-id :canvas/zoom
      :title "Zoom out"
      :icon :ui.icons/magnifying-glass-minus
      :zoom-increment (or (:zoom-increment config) -0.25)}
@@ -64,11 +66,12 @@
 (defn create-reset-zoom-tool [config]
   (addons/create-action-button
    {:id :canvas/zoom-reset
+    :group-id :canvas/zoom
     :title "Reset zoom"
     :icon :ui.icons/arrow-counter-clockwise
     :prepare-canvas #'reset-canvas-zoom
-    :get-actions (fn [_ _ {:keys [pane-id]}]
-                   [[:dissoc-in [:canvas/zoom pane-id :value :zoom/level]]])
+    :get-actions (fn [tool _ pane]
+                   [[:dissoc-in (addons/get-options-path pane tool)]])
     :show? (fn [_ _ {:keys [pane-options]}]
              (and (:zoom/level pane-options)
                   (not= 1 (:zoom/level pane-options))))}))

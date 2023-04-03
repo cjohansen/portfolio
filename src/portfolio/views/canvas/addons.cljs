@@ -5,6 +5,9 @@
 (defn get-expand-path [vid]
   [:canvas/tools vid :expanded])
 
+(defn get-options-path [pane tool]
+  [:panes (:pane-id pane) (or (:group-id tool) (:id tool)) :value])
+
 (defn get-custom-tool-source-title [[source]]
   (case source
     :scene "Scene config"
@@ -24,7 +27,7 @@
           (not-empty (select-keys pane-options (keys value))))}))
 
 (defn prepare-tool-menu [tool state pane]
-  (let [path [:panes (:pane-id pane) (:id tool) :value]
+  (let [path (get-options-path pane tool)
         {:keys [value current-value]} (get-current-value tool state pane)
         custom-options (when (and current-value (not= current-value value))
                          [{:title (get-custom-tool-source-title (:config-source pane))
