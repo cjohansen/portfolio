@@ -1,15 +1,15 @@
 (ns portfolio.ui
-  (:require [portfolio.actions :as actions]
-            [portfolio.client :as client]
-            [portfolio.collection :as collection]
-            [portfolio.data :as data]
+  (:require [portfolio.data :as data]
             [portfolio.homeless :as h]
-            [portfolio.views.canvas :as canvas]
-            [portfolio.views.canvas.background :as canvas-bg]
-            [portfolio.views.canvas.grid :as canvas-grid]
-            [portfolio.views.canvas.split :as split]
-            [portfolio.views.canvas.viewport :as canvas-vp]
-            [portfolio.views.canvas.zoom :as canvas-zoom]))
+            [portfolio.ui.actions :as actions]
+            [portfolio.ui.canvas :as canvas]
+            [portfolio.ui.canvas.background :as canvas-bg]
+            [portfolio.ui.canvas.grid :as canvas-grid]
+            [portfolio.ui.canvas.split :as split]
+            [portfolio.ui.canvas.viewport :as canvas-vp]
+            [portfolio.ui.canvas.zoom :as canvas-zoom]
+            [portfolio.ui.client :as client]
+            [portfolio.ui.collection :as collection]))
 
 (def app (atom nil))
 

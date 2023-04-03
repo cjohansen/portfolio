@@ -1,6 +1,6 @@
 (ns portfolio.views.canvas.split-test
-  (:require [portfolio.views.canvas.split :as sut]
-            [clojure.test :refer [deftest is testing]]))
+  (:require [clojure.test :refer [deftest is testing]]
+            [portfolio.ui.canvas.split :as sut]))
 
 (deftest split-layout-horizontally--test
   (is (= (sut/split-layout-horizontally

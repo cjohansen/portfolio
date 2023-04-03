@@ -1,6 +1,6 @@
 (ns portfolio.collection-test
-  (:require [portfolio.collection :as sut]
-            [clojure.test :refer [deftest is testing]]))
+  (:require [clojure.test :refer [deftest is testing]]
+            [portfolio.ui.collection :as sut]))
 
 (deftest get-paths--test
   (testing "Discards shared prefix, but prefers 2 as min length"
@@ -191,9 +191,9 @@
             :sasha.components.button-scenes
             :sasha.components.button-scenes/default]))))
 
-(deftest get-active-scenes--test
-  (testing "Returns currently active scene, given its id"
-    (is (= (->> (sut/get-active-scenes
+(deftest get-selected-scenes--test
+  (testing "Returns currently selected scene, given its id"
+    (is (= (->> (sut/get-selected-scenes
                  {:scenes
                   {:sasha.components.button-scenes/default
                    {:id :sasha.components.button-scenes/default
@@ -202,8 +202,8 @@
                 (map :id))
            [:sasha.components.button-scenes/default])))
 
-  (testing "Returns currently active scenes, given a collection id"
-    (is (= (->> (sut/get-active-scenes
+  (testing "Returns currently selected scenes, given a collection id"
+    (is (= (->> (sut/get-selected-scenes
                  {:scenes
                   {:sasha.components.button-scenes/default
                    {:id :sasha.components.button-scenes/default
@@ -227,8 +227,8 @@
                 (map :id))
            [:sasha.components.button-scenes/default])))
 
-  (testing "Returns all active scenes under parent collection"
-    (is (= (->> (sut/get-active-scenes
+  (testing "Returns all selected scenes under parent collection"
+    (is (= (->> (sut/get-selected-scenes
                  {:scenes
                   {:sasha.components.button-scenes/default
                    {:id :sasha.components.button-scenes/default

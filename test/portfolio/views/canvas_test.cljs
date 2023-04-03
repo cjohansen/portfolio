@@ -1,6 +1,6 @@
 (ns portfolio.views.canvas-test
-  (:require [portfolio.views.canvas :as sut]
-            [clojure.test :refer [deftest is testing]]))
+  (:require [clojure.test :refer [deftest is testing]]
+            [portfolio.ui.canvas :as sut]))
 
 (deftest inflate-layout--test
   (is (= (sut/inflate-layout [[{}]])
