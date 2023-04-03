@@ -54,24 +54,24 @@
     :illustration {:icon :ui.icons/folder-open}
     :kind :folder
     :items
-    [{:title "Components"
+    [{:title "Process samples"
       :kind :folder
       :context [:folder]
       :illustration {:icon :ui.icons/folder-open}
-      :items [{:title "Some scenes"
+      :items [{:title "UI Malpractice: Don'ts"
                :kind :package
                :context [:folder :folder]
                :illustration package-illustration
                :toggle {:icon :ui.icons/caret-right
                         :actions []}
-               :items [{:title "A scene"
-                        :context [:folder :folder :package]
-                        :illustration {:icon :ui.icons/bookmark
-                                       :color "var(--silver-tree)"}}
-                       {:title "Another scene"
+               :items [{:title "Poor legibility"
                         :context [:folder :folder :package]
                         :selected? true
-                        :illustration {:icon :ui.icons/bookmark}}]}]}]}))
+                        :illustration {:icon :ui.icons/bookmark}}
+                       {:title "Poor spacing"
+                        :context [:folder :folder :package]
+                        :illustration {:icon :ui.icons/bookmark
+                                       :color "var(--silver-tree)"}}]}]}]}))
 
 (defscene nested-package
   (Package
