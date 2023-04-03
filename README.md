@@ -459,6 +459,7 @@ pouring too much work into them, so we're sure we're one the same page.
 
 - @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
 - @BorisKourt and @thheller helped with shadow-cljs support.
+- @brandonstubbs React 18-related features.
 
 ## License
 
