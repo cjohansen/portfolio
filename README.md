@@ -64,7 +64,7 @@ Currently these adapters are supported:
   - Older versions of React - `portfolio.rum`
   - React versions 18+ - `portfolio.react-18`
 - [Dumdom](https://github.com/cjohansen/dumdom) - `portfolio.dumdom`
-- React (including [Helix](https://github.com/lilactown/helix))
+- React (including [Helix](https://github.com/lilactown/helix), [UIx<sup>2</sup>](https://github.com/pitch-io/uix))
   - Older versions of React - `portfolio.react`
   - React versions 18+ - `portfolio.react-18`
 - DOM API - `portfolio.dom`
@@ -201,9 +201,9 @@ Portfolio's resources). Adjust as necessary.
 
 ### shadow-cljs + separate dev server
 
-If you are using shadow-cljs to build the front-end and leiningen to run the dev 
-server separately you need to make sure that you add `classpath:public` to the 
-`:resource-paths` and the dependency to Portfolio to the `:dependencies` in 
+If you are using shadow-cljs to build the front-end and leiningen to run the dev
+server separately you need to make sure that you add `classpath:public` to the
+`:resource-paths` and the dependency to Portfolio to the `:dependencies` in
 `project.clj`. This will then serve the necessary assets to make Portfolio work.
 
 ## Customizing the Portfolio UI
