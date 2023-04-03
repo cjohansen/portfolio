@@ -307,13 +307,13 @@ The default "packages" correspond to the namespaces where your scenes are
 defined. If you drop a bunch of `defscene`s into `ui.components.button-scenes`,
 then `ui.components.button-scenes` will be used as a "package", and it's name
 will be `"Button scenes"`. If you don't like this, call
-`portfolio.<adapter>/configure-collection` from the same namespace:
+`portfolio.<adapter>/configure-scenes` from the same namespace:
 
 ```clj
 (ns ui.components.button-scenes
   (:require '[portfolio.reagent :as portfolio]))
 
-(portfolio/configure-collection
+(portfolio/configure-scenes
   {:title "Button"})
 ```
 
@@ -344,7 +344,7 @@ Folders are collections like packages. If you have scenes in
 `ui.components.button-scenes`, Portfolio creates a "package" for
 `ui.components.button-scenes`, and a "folder" for `ui.components`. If you
 already have a `ui.components` namespace in your project, you can call
-`portfolio/configure-collection` as above to customize it. If you don't, you can
+`portfolio/configure-scenes` as above to customize it. If you don't, you can
 somewhat more manually configure the collection in any namespace of your liking
 (e.g. the one where you start the Portfolio UI):
 
