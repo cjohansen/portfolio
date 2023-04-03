@@ -152,6 +152,7 @@
       (println "Updating browser URL to" url)
       (.pushState js/history false false url)))
   (when-let [title (:set-page-title res)]
+    (println (str "Set page title to '" title "'"))
     (set! js/document.title title))
   (when (or (:dissoc-in res) (:assoc-in res))
     (when (:assoc-in res)
