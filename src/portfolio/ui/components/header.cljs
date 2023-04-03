@@ -1,6 +1,6 @@
 (ns portfolio.ui.components.header
   (:require [dumdom.core :as d]
-            [portfolio.icons :as icons]))
+            [portfolio.ui.icons :as icons]))
 
 (d/defcomponent Header [{:keys [title actions]}]
   [:div {:style {:display "flex"

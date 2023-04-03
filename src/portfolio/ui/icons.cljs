@@ -1,4 +1,4 @@
-(ns portfolio.icons
+(ns portfolio.ui.icons
   (:require [portfolio.ui.icons.arrow-counter-clockwise :as arrow-counter-clockwise]
             [portfolio.ui.icons.bookmark :as bookmark]
             [portfolio.ui.icons.caret-double-left :as caret-double-left]
