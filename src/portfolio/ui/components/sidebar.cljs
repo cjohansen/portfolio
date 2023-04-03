@@ -4,21 +4,22 @@
 
 (declare render-menu)
 
-(defn render-items [items]
-  (when (seq items)
-    [:ul
-     (for [item items]
-       [:li (render-menu item)])]))
+(defn render-items
+  ([items] (render-items nil items))
+  ([attrs items]
+   (when (seq items)
+     [:ul attrs
+      (for [item items]
+        [:li (render-menu item)])])))
 
 (d/defcomponent Folder [{:keys [title illustration actions items]}]
-  [:div {:style {:margin-bottom 20}}
+  [:div {:style {}}
    [:h2.h4
     {:on-click actions
      :style {:background "var(--tuna)"
              :border-top "1px solid var(--shark-dark)"
              :border-bottom "1px solid var(--shark-dark)"
              :padding "16px 8px"
-             :margin "8px 0"
              :display "flex"
              :align-items "center"
              :cursor (when actions "pointer")
@@ -29,7 +30,7 @@
        {:color (:color illustration)
         :size 24}))
     title]
-   (render-items items)])
+   (render-items {:style {:margin "8px 0 24px"}} items)])
 
 (d/defcomponent Togglable [{:keys [title illustration actions toggle items]}]
   [:div
