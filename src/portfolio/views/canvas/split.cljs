@@ -1,8 +1,5 @@
 (ns portfolio.views.canvas.split
   (:require [portfolio.components.canvas-toolbar-buttons :refer [Button]]
-            [portfolio.icons.columns :as columns]
-            [portfolio.icons.cross :as cross]
-            [portfolio.icons.rows :as rows]
             [portfolio.layout :as layout]
             [portfolio.views.canvas.protocols :as protocols]))
 
@@ -45,7 +42,7 @@
 (defn prepare-horizontal-split-button [tool _state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon columns/icon
+     :icon :ui.icons/columns
      :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-horizontally layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
@@ -66,7 +63,7 @@
 (defn prepare-vertical-split-button [tool state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon rows/icon
+     :icon :ui.icons/rows
      :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-vertically layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
@@ -100,7 +97,7 @@
              (< 0 (count pane-path)))
     (with-meta
       {:title (:title tool)
-       :icon cross/icon
+       :icon :ui.icons/cross
        :align :right
        :actions [[:assoc-in (into layout-path [:layout])
                   (close-pane layout pane-path)]]}

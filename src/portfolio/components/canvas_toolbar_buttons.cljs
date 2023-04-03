@@ -1,6 +1,7 @@
 (ns portfolio.components.canvas-toolbar-buttons
   (:require [dumdom.core :as d]
             [portfolio.components.popup-menu :refer [PopupMenu]]
+            [portfolio.icons :as icons]
             [portfolio.views.canvas.protocols :as protocols]))
 
 (d/defcomponent MenuButton [{:keys [text icon title align menu active? actions]}]
@@ -17,8 +18,7 @@
              :width (when icon 20)}
      :on-click actions}
     (when icon
-      [:span {:style {:display "block"}}
-       icon])
+      (icons/render-icon icon {:size 20}))
     text]
    (some-> menu PopupMenu)])
 
