@@ -70,15 +70,15 @@
       (doseq [tool tools]
         (canvas/prepare-canvas tool el opt))
       (adapter/render-component scene canvas)
-      (js/setTimeout
-       #(try
-          (doseq [tool tools]
-            (canvas/finalize-canvas tool el opt))
-          (catch :default e
-            (render-error el iframe scene e)))
-       50)
       (catch :default e
-        (render-error el iframe scene e)))))
+        (render-error el iframe scene e)))
+    (js/setTimeout
+     #(try
+        (doseq [tool tools]
+          (canvas/finalize-canvas tool el opt))
+        (catch :default e
+          (render-error el iframe scene e)))
+     50)))
 
 (defn on-mounted [el f]
   (if (some-> el .-contentDocument (.getElementById "canvas"))
