@@ -16,7 +16,16 @@
   {`adapter/render-component
    (fn [{:keys [component]} el]
      (assert (some? el) "Asked to render component into null container.")
+     (when-let [f (some-> el .-unmount)]
+       (when-not (= "react18" (.-unmountLib el))
+         (f)))
      (let [root (get-root el)]
+       (set! (.-unmount el) (fn []
+                              (.unmount root)
+                              (set! (.-reactRoot el) nil)
+                              (set! (.-innerHTML el) "")
+                              (set! (.-unmount el) nil)))
+       (set! (.-unmountLib el) "react18")
        (.render root component)))})
 
 (defn create-scene [scene]

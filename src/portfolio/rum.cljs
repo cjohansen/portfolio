@@ -9,6 +9,8 @@
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
+     (when-let [f (some-> el .-unmount)]
+       (f))
      (if el
        (rum/mount component el)
        (js/console.error "Asked to render Rum component without an element")))})

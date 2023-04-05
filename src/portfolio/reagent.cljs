@@ -9,6 +9,8 @@
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
+     (when-let [f (some-> el .-unmount)]
+       (f))
      (if el
        (rd/render (if (fn? component)
                     [component]

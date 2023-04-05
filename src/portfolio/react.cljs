@@ -11,6 +11,8 @@
   {`adapter/render-component
    (fn [{:keys [component]} el]
      (assert (some? el) "Asked to render component into null container.")
+     (when-let [f (some-> el .-unmount)]
+       (f))
      (react-dom/render component el))})
 
 (defn create-scene [scene]

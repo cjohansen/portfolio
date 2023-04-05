@@ -14,11 +14,20 @@
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
-     (if el
-       (rdc/render (get-root el) (if (fn? component)
-                                   [component]
-                                   component))
-       (js/console.error "Asked to render Reagent component without an element")))})
+     (assert (some? el) "Asked to render Reagent component without an element")
+     (when-let [f (some-> el .-unmount)]
+       (when-not (= "react18" (.-unmountLib el))
+         (f)))
+     (let [root (get-root el)]
+       (set! (.-unmount el) (fn []
+                              (.unmount root)
+                              (set! (.-reactRoot el) nil)
+                              (set! (.-innerHTML el) "")
+                              (set! (.-unmount el) nil)))
+       (set! (.-unmountLib el) "react18")
+       (rdc/render root (if (fn? component)
+                          [component]
+                          component))))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))

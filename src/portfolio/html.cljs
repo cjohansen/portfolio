@@ -8,6 +8,8 @@
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
+     (when-let [f (some-> el .-unmount)]
+       (f))
      (.forEach
       (js/Object.keys (.-dataset el))
       (fn [k]
