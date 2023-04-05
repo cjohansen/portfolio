@@ -10,7 +10,6 @@
             [portfolio.components.link]
             [portfolio.components.reagent]
             [portfolio.components.rum]
-            [portfolio.data :as data]
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
