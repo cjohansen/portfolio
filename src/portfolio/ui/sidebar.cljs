@@ -22,11 +22,22 @@
 
 (declare prepare-collections)
 
-(defn get-package-illustration [expanded? collection]
+(defn get-in-parents [state m k]
+  (loop [m m]
+    (or (get m k)
+        (if-let [id (:collection m)]
+          (recur (get-in state [:collections id]))
+          (get state k)))))
+
+(defn get-package-illustration [state expanded? collection]
   {:icon (or (if expanded?
                (:expanded-icon collection)
                (:collapsed-icon collection))
              (:icon collection)
+             (if expanded?
+               (get-in-parents state collection :default-package-expanded-icon)
+               (get-in-parents state collection :default-package-collapsed-icon))
+             (get-in-parents state collection :default-package-icon)
              :ui.icons/cube)
    :color (or (if expanded?
                 (:expanded-icon-color collection)
@@ -41,7 +52,7 @@
              :kind :package
              :context (get-context state path)
              :actions [[:go-to-location (assoc-in location [:query-params :id] (:id collection))]]
-             :illustration (get-package-illustration expanded? collection)
+             :illustration (get-package-illustration state expanded? collection)
              :toggle {:icon (if expanded?
                               :ui.icons/caret-down
                               :ui.icons/caret-right)
@@ -52,11 +63,15 @@
       (= (:id collection) (routes/get-id location))
       (assoc :selected? true))))
 
-(defn get-folder-illustration [expanded? collection]
+(defn get-folder-illustration [state expanded? collection]
   {:icon (or (if expanded?
                (:expanded-icon collection)
                (:collapsed-icon collection))
              (:icon collection)
+             (if expanded?
+               (get-in-parents state collection :default-folder-expanded-icon)
+               (get-in-parents state collection :default-folder-collapsed-icon))
+             (get-in-parents state collection :default-folder-icon)
              (if expanded?
                :ui.icons/folder-open
                :ui.icons/folder))
@@ -74,14 +89,17 @@
              :kind :folder
              :context (get-context state path)
              :actions [[:assoc-in exp-path (not expanded?)]]
-             :illustration (get-folder-illustration expanded? collection)}
+             :illustration (get-folder-illustration state expanded? collection)}
       expanded?
       (assoc :items (prepare-collections state location (conj path (:id collection)))))))
 
-(defn get-scene-illustration [selected? scene]
+(defn get-scene-illustration [state selected? scene]
   {:icon (or (when selected?
                (:selected-icon scene))
              (:icon scene)
+             (when selected?
+               (get-in-parents state scene :default-scene-selected-icon))
+             (get-in-parents state scene :default-scene-icon)
              :ui.icons/bookmark)
    :color (or (when selected?
                 (:selected-icon-color scene))
@@ -93,7 +111,7 @@
   (let [selected? (= (:id scene) (routes/get-id location))]
     (cond-> {:title (:title scene)
              :kind :item
-             :illustration (get-scene-illustration selected? scene)
+             :illustration (get-scene-illustration state selected? scene)
              :context (get-context state path)
              :url (routes/get-scene-url location scene)}
       selected? (assoc :selected? true))))
