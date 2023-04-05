@@ -23,6 +23,11 @@ body {
   --cadet-blue: #b1b9c1;
   --silver-tree: #61c093;
   --malachite: #11f94b;
+
+  /* Theming */
+
+  --gallery-bg: var(--gallery);
+  --gallery-fg: var(--shark);
 }
 
 body {

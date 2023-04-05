@@ -223,7 +223,8 @@
 (d/defcomponent CanvasView
   :keyfn :id
   [data]
-  [:div {:style {:background "#eee"
+  [:div {:style {:background "var(--gallery-bg)"
+                 :color "var(--gallery-fg)"
                  :flex-grow 1
                  :display "flex"
                  :flex-direction "column"
