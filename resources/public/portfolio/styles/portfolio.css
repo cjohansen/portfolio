@@ -31,6 +31,14 @@ body {
   --gallery-fg: var(--shark);
   --code-bg: #f8f8f8;
   --code-fg: #000;
+  --highlight-color: var(--azure-radiance);
+  --highlight-bg: var(--mariner);
+  --folder-bg: var(--tuna);
+  --folder-border: var(--shark-dark);
+  --folder-icon-color: var(--cadet-blue);
+  --package-selected-fg: #ffffff;
+  --sidebar-unit-fg: #ffffff;
+  --sidebar-unit-icon-color: var(--silver-tree);
 }
 
 body {

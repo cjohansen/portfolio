@@ -7,7 +7,7 @@
 
 (def package-illustration
   {:icon :ui.icons/package
-   :color "var(--azure-radiance)"})
+   :color "var(--highlight-color)"})
 
 (defscene folder-title
   (Folder
@@ -36,7 +36,7 @@
     :items [{:title "A scene"
              :context [:package]
              :illustration {:icon :ui.icons/bookmark
-                            :color "var(--silver-tree)"}}]}))
+                            :color "var(--sidebar-unit-icon-color)"}}]}))
 
 (defscene selected-package
   (Package
@@ -48,7 +48,7 @@
     :items [{:title "A scene"
              :context [:package]
              :illustration {:icon :ui.icons/bookmark
-                            :color "var(--silver-tree)"}}]}))
+                            :color "var(--sidebar-unit-icon-color)"}}]}))
 
 (defscene open-folder
   (Folder
@@ -64,7 +64,7 @@
              :items [{:title "A scene"
                       :context [:folder :package]
                       :illustration {:icon :ui.icons/bookmark
-                                     :color "var(--silver-tree)"}}]}]}))
+                                     :color "var(--sidebar-unit-icon-color)"}}]}]}))
 
 (defscene nested-folder
   (Folder
@@ -89,7 +89,7 @@
                        {:title "Poor spacing"
                         :context [:folder :folder :package]
                         :illustration {:icon :ui.icons/bookmark
-                                       :color "var(--silver-tree)"}}]}]}]}))
+                                       :color "var(--sidebar-unit-icon-color)"}}]}]}]}))
 
 (defscene nested-package
   (Package
@@ -107,7 +107,7 @@
       :items [{:title "A scene"
                :context [:package :package]
                :illustration {:icon :ui.icons/bookmark
-                              :color "var(--silver-tree)"}}]}]}))
+                              :color "var(--sidebar-unit-icon-color)"}}]}]}))
 
 (defscene folder-in-package
   (Package
@@ -123,4 +123,4 @@
       :items [{:title "A scene"
                :context [:package :folder]
                :illustration {:icon :ui.icons/bookmark
-                              :color "var(--silver-tree)"}}]}]}))
+                              :color "var(--sidebar-unit-icon-color)"}}]}]}))

@@ -30,9 +30,9 @@
     [:div {:style {}}
      [:h2.h4
       {:on-click actions
-       :style {:background "var(--tuna)"
-               :border-top "1px solid var(--shark-dark)"
-               :border-bottom "1px solid var(--shark-dark)"
+       :style {:background "var(--folder-bg)"
+               :border-top "1px solid var(--folder-border)"
+               :border-bottom "1px solid var(--folder-border)"
                :padding (str "16px 8px 16px " left-padding "px")
                :display "flex"
                :align-items "center"
@@ -48,7 +48,7 @@
 
 (d/defcomponent Package [{:keys [title illustration actions toggle items context selected?]}]
   [:div
-   [:div {:style {:background (when selected? "var(--mariner)")
+   [:div {:style {:background (when selected? "var(--highlight-bg)")
                   :display "flex"
                   :align-items "center"
                   :border-radius 4
@@ -68,7 +68,7 @@
        (:icon illustration)
        {:size 16
         :color (if selected?
-                 "#ffffff"
+                 "var(--package-selected-fg)"
                  (:color illustration))
         :style {:margin-right 8}}))
     [:span {:on-click actions
@@ -80,7 +80,7 @@
 
 (d/defcomponent Unit [{:keys [title url selected? illustration context]}]
   (let [left-padding (get-context-offset context :unit)]
-    [:li.text-s {:style {:background (when selected? "var(--mariner)")
+    [:li.text-s {:style {:background (when selected? "var(--highlight-bg)")
                          :font-weight (when selected? 600)
                          :display "flex"
                          :align-items "center"
@@ -96,7 +96,7 @@
      (if selected?
        [:strong title]
        [:a {:style {:display "block"
-                    :color "#fff"}
+                    :color "var(--sidebar-unit-fg)"}
             :href url} title])]))
 
 (defn render-menu [props]

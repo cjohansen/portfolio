@@ -8,8 +8,8 @@
       (if selected?
         [:span {:style {:padding "10px 20px"
                         :display "inline-block"
-                        :border-bottom "2px solid var(--azure-radiance)"
-                        :color "var(--azure-radiance)"}}
+                        :border-bottom "2px solid var(--highlight-color)"
+                        :color "var(--highlight-color)"}}
          title]
         [:a {:style {:padding "10px 20px"
                      :color "#fff"}

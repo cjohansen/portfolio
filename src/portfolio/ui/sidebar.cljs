@@ -32,7 +32,7 @@
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
               (:icon-color collection)
-              "var(--azure-radiance)")})
+              "var(--highlight-color)")})
 
 (defn prepare-package [state location collection path]
   (let [exp-path (get-expanded-path collection)
@@ -64,7 +64,7 @@
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
               (:icon-color collection)
-              "var(--cadet-blue)")})
+              "var(--folder-icon-color)")})
 
 (defn prepare-folder [state location collection path]
   (let [exp-path (get-expanded-path collection)
@@ -87,7 +87,7 @@
                 (:selected-icon-color scene))
               (:icon-color scene)
               (when-not selected?
-                "var(--silver-tree)"))})
+                "var(--sidebar-unit-icon-color)"))})
 
 (defn prepare-scene [state location scene path]
   (let [selected? (= (:id scene) (routes/get-id location))]
