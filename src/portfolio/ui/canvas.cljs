@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas
-  (:require [portfolio.ui.canvas.protocols :as canvas]
+  (:require [markdown.core :as md]
+            [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.code :as code]
             [portfolio.ui.components.canvas :refer [CanvasView]]
             [portfolio.ui.layout :as layout]
@@ -115,24 +116,31 @@
                      (seq tools)
                      (assoc :tools tools)
 
+                     (:docs scene)
+                     (assoc :title (:title scene)
+                            :description (md/md->html (:docs scene)))
+
                      (:gallery? layout)
                      (assoc :title (:title scene)
-                            :url (routes/get-scene-url location scene)
-                            :description (:description scene)))))]
+                            :url (routes/get-scene-url location scene)))))]
     (-> (prepare-layout-xs state layout source view scenes [] layout)
         (assoc :id (if (:gallery? layout)
-                     (:namespace (:current-namespace state))
+                     (routes/get-id location)
                      :single-scene)))))
 
 (defn prepare-canvas-view [view state location]
   (let [layout (layout/get-current-layout state)
-        scenes (:current-scenes state)]
+        {:keys [scenes kind target]} (:current-selection state)]
     (with-meta
-      (if-let [problems (:problems view)]
-        {:problems problems}
-        (assoc (prepare-layout state location view layout scenes)
-               :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
-                        (prepare-panel state location (first scenes) (:addons view)))))
+      (cond-> (if-let [problems (:problems view)]
+                {:problems problems}
+                (assoc (prepare-layout state location view layout scenes)
+                       :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
+                                (prepare-panel state location (first scenes) (:addons view)))))
+        (and (:docs target) (= :collection kind))
+        (assoc
+         :title (:title target)
+         :description (md/md->html (:docs target))))
       view-impl)))
 
 (def data-impl

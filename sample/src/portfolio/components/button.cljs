@@ -1,5 +1,5 @@
 (ns portfolio.components.button
-  (:require [portfolio.dumdom :refer-macros [defscene]]
+  (:require [portfolio.dumdom :as portfolio :refer-macros [defscene]]
             [dumdom.core :as d]))
 
 (d/defcomponent Bomb [_]
@@ -14,7 +14,17 @@
          (shuffle-text ref (next texts)))))
    3000))
 
+(portfolio/configure-scenes
+ "Some collection docs"
+ {:title "Button"})
+
 (defscene default
+  "This is the button, it is **really** quite nice.
+   You can invoke it with `(Button {:text \"Lul\"})`, e.g.:
+
+```clojure
+(Button {:text \"Hello\"})
+```"
   :title "Button!"
   [:button.button "I am a button"])
 

@@ -16,6 +16,7 @@ body {
   --shark-dark: #26262a;
   --alto: #d5d5d5;
   --gallery: #eee;
+  --white: #fff;
   --picton-blue: #4090e4;
   --azure-radiance: #1181f9;
   --mariner: #2963c1;
@@ -28,6 +29,8 @@ body {
 
   --gallery-bg: var(--gallery);
   --gallery-fg: var(--shark);
+  --code-bg: #f8f8f8;
+  --code-fg: #000;
 }
 
 body {
@@ -51,12 +54,30 @@ body {
 }
 
 /* Headings */
-.h1 {font-size: 1.6rem; font-weight: 600;}
-.h2 {font-size: 1.3rem; font-weight: 600;}
-.h3 {font-size: 1.2rem; font-weight: 600;}
-.h4 {font-size: 1.067rem; font-weight: 600;}
+.h1, .md h1 {font-size: 1.6rem; font-weight: 600;}
+.h2, .md h2 {font-size: 1.3rem; font-weight: 600;}
+.h3, .md h3 {font-size: 1.2rem; font-weight: 600;}
+.h4, .md h4 {font-size: 1.067rem; font-weight: 600;}
 
 .text-s {font-size: 0.93rem;}
+
+strong {font-weight: 700;}
+
+code {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
+  padding: 3px 4px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+pre[class*=language-] {
+  background: var(--code-bg);
+  padding: 12px;
+  border-radius: 4px;
+}
 
 a,
 a:link,
@@ -122,6 +143,13 @@ a.inverted:visited,
   color: #fd1e37;
 }
 
-.mod {margin: 20px 0;}
+.mod,
+.md h1,
+.md h2,
+.md h3,
+.md h4,
+.md h5,
+.md h6,
+.md p {margin: 20px 0;}
 
 .vs-s .mod {margin: 10px 0}

@@ -4,6 +4,7 @@
             [portfolio.adapter :as adapter]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.code :refer [Code]]
+            [portfolio.ui.components.markdown :refer [Markdown]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
             [portfolio.ui.components.triangle :refer [TriangleButton]]
             [portfolio.ui.view :as view]))
@@ -169,12 +170,15 @@
   [{:keys [title url description]}]
   [:div {:style {:margin 20}}
    [:h2.h3 {:style {:margin "0 0 10px"}}
-    [:a {:href url} title]]
+    (if url
+      [:a {:href url} title]
+      title)]
    (when-not (empty? description)
-     [:p description])])
+     (Markdown {:markdown description
+                :tag :p}))])
 
 (defn render-canvas [data]
-  (->> [(when (:title data)
+  (->> [(when (not-empty (select-keys data [:title :description]))
           (CanvasHeader data))
         (when (:scene data)
           (if (:component (:scene data))
@@ -208,7 +212,7 @@
                                       :border-top
                                       :border-left)
                                     "3px solid var(--hard-separator)"}}]))]
-    (let [{:keys [toolbar canvases]} data]
+    (let [{:keys [toolbar canvases title description]} data]
       [:div {:style {:flex-grow 1
                      :display "flex"
                      :flex-direction "column"
@@ -216,6 +220,12 @@
        (some-> toolbar Toolbar)
        [:div {:style {:overflow "scroll"
                       :flex-grow "1"}}
+        (when (or title description)
+          [:div {:style {:margin 20}}
+           (when title
+             [:h1.h1 title])
+           (when description
+             (Markdown {:markdown description}))])
         (->> canvases
              (interpose {:kind :separator})
              (mapcat render-canvas))]])))

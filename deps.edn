@@ -1,5 +1,6 @@
 {:paths ["src" "resources"]
- :deps {cjohansen/dumdom {:mvn/version "2023.03.27"}}
+ :deps {cjohansen/dumdom {:mvn/version "2023.03.27"}
+        markdown-clj/markdown-clj {:mvn/version "1.11.4"}}
  :aliases
  {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src" "scenes/src"]
         :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}

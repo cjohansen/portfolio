@@ -12,6 +12,11 @@
       <artifactId>dumdom</artifactId>
       <version>2023.03.27</version>
     </dependency>
+    <dependency>
+      <groupId>markdown-clj</groupId>
+      <artifactId>markdown-clj</artifactId>
+      <version>1.11.4</version>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

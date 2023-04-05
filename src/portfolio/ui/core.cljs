@@ -24,11 +24,14 @@
     (assoc :selected? true)))
 
 (defn prepare-data [state location]
-  (let [selection (collection/get-selection state (routes/get-id location))
-        current-scenes (scene/prepare-scenes state (:scenes selection))
+  (let [selection (-> (collection/get-selection state (routes/get-id location))
+                      (update :scenes #(scene/prepare-scenes state %)))
         current-view (get-current-view state location)]
     {:header (prepare-header state location)
      :sidebar (sidebar/prepare-sidebar state location)
      :small? (screen/small-screen? state)
      :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
-     :view (view/prepare-data current-view (assoc state :current-scenes current-scenes) location)}))
+     :view (view/prepare-data
+            current-view
+            (assoc state :current-selection selection)
+            location)}))
