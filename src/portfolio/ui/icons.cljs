@@ -7,6 +7,8 @@
             [portfolio.ui.icons.columns :as columns]
             [portfolio.ui.icons.cross :as cross]
             [portfolio.ui.icons.cube :as cube]
+            [portfolio.ui.icons.device-mobile :as device-mobile]
+            [portfolio.ui.icons.devices :as devices]
             [portfolio.ui.icons.folder :as folder]
             [portfolio.ui.icons.folder-open :as folder-open]
             [portfolio.ui.icons.hamburger :as hamburger]
@@ -33,6 +35,8 @@
      :ui.icons/columns columns/icon
      :ui.icons/cross cross/icon
      :ui.icons/cube cube/icon
+     :ui.icons/device-mobile device-mobile/icon
+     :ui.icons/devices devices/icon
      :ui.icons/folder folder/icon
      :ui.icons/folder-open folder-open/icon
      :ui.icons/hamburger hamburger/icon
