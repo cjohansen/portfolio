@@ -83,20 +83,32 @@ also take additional key/value pairs:
   component)
 ```
 
-Scenes can be functions:
+Scenes can take arguments and have function bodies:
 
 ```clj
 (defscene name
   ;; key/value pairs
+  :param {:title "Your component data here"}
   [param portfolio-opts]
   (render-component param))
 ```
 
-By using the latter form, you allow Portfolio to know about the component's
-arguments. This enables you to use `tap>` and Portfolio's UI to interact with
-your component, or bind the scene to an atom to trigger interactions. It also
-allows you to use portfolio's layout options (background, viewport size, etc) to
-render the component.
+Scenes can also use existing functions to render:
+
+```clj
+(defn render-button [data]
+  [:button.button (:text data)])
+
+(defscene reusable-fn
+  :param {:text "Click the button!"}
+  render-button)
+```
+
+By using `:param` and either a function body or an existing function, you allow
+Portfolio to know about the component's arguments. This enables you to use
+`tap>` and Portfolio's UI to interact with your component, or bind the scene to
+an atom for stateful scenes. It also enables you to inspect portfolio's layout
+options (background, viewport size, etc) to render the component.
 
 Here's an example of passing an atom to your scene:
 
@@ -109,8 +121,11 @@ Here's an example of passing an atom to your scene:
 
 As you can see - if you pass an atom as `:param`, an atom is what is passed to
 your component function. If you just want a map, that can also benefit from this
-indirection, because it allows you to use Portfolio's UI to tinker with the
-parameter:
+indirection, because it allows you to programmatically access component data.
+The uses for this are countless, some suggestions include:
+
+- Using Portfolio's UI to tinker with the parameter
+- Power a search that finds scenes based on data
 
 ```clj
 (defscene name
@@ -338,6 +353,8 @@ What keys can you stick in this map? Well, the following (more on icons below):
 - `:collapsed-icon-color` - A more specific color for collapsed packages.
 - `:kind` - One of `:folder` or `:package`. Dictates the rendering style.
   Namespaces default to `:package`.
+
+#### Scene and collection icons
 
 You might be wondering - "what's an icon, anyway?". Good question. An icon is
 either hiccup for an SVG element, or one of the keywords in

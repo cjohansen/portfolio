@@ -31,15 +31,19 @@
 ;; (defscene deleted
 ;;   [:button.button "BOINK"])
 
-(defscene aggressive
-  :title "Aggressive button"
-  [:button.button "I am a damn button!"])
-
 (defscene parameterized
   :title "Parameterized button"
   :param {:text "Hello, clicky!"}
   [{:keys [text]}]
   [:button.button text])
+
+(defn render-button [data]
+  [:button.button (:text data)])
+
+(defscene reusable-fn
+  :title "Reusable render function"
+  :param {:text "I am a damn button!"}
+  render-button)
 
 (defscene stateful
   :title "Stateful button"

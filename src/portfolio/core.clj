@@ -1,6 +1,5 @@
 (ns portfolio.core
-  (:require [cljs.env :as env]
-            [clojure.walk :as walk]))
+  (:require [cljs.env :as env]))
 
 (defn portfolio-active? []
   (if-let [options (and cljs.env/*compiler*
@@ -11,21 +10,33 @@
       :else true)
     true))
 
+(defn function-like? [f]
+  (or (symbol? f)
+      (and (list? f) (= 'var (first f)))))
+
 (defn get-options-map [id line syms]
   (let [docs (when (string? (first syms)) (first syms))
         pairs (partition-all 2 (drop (if docs 1 0) syms))
-        rest (apply concat (drop-while (comp keyword? first) pairs))]
+        rest (apply concat (drop-while (comp keyword? first) pairs))
+        fn-like? (function-like? (first rest))]
     (->> pairs
          (take-while (comp keyword? first))
          (map vec)
          (into (cond-> {:id (keyword (str *ns*) (str id))
                         :line line
-                        :docs docs}
-                 (= 1 (count rest)) (assoc :component-fn `(fn [& _#] ~(first rest)))
-                 (< 1 (count rest)) (assoc :component-fn `(fn ~(cond-> (first rest)
-                                                                 (< (count (first rest)) 2)
-                                                                 (into ['& 'args]))
-                                                            ~@(drop 1 rest))))))))
+                        :docs docs
+                        :stuff (str (type (first rest)))}
+                 (and (= 1 (count rest)) fn-like?)
+                 (assoc :component-fn (first rest))
+
+                 (and (= 1 (count rest)) (not fn-like?))
+                 (assoc :component-fn `(fn [& _#]
+                                         ~(first rest)))
+                 (< 1 (count rest))
+                 (assoc :component-fn `(fn ~(cond-> (first rest)
+                                              (< (count (first rest)) 2)
+                                              (into ['& 'args]))
+                                         ~@(drop 1 rest))))))))
 
 (defn get-collection-options [syms]
   (let [docs (when (string? (first syms)) (first syms))
