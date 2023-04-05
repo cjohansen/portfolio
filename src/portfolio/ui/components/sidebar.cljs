@@ -12,11 +12,21 @@
       (for [item items]
         [:li (render-menu item)])])))
 
-(defn get-context-offset [context]
-  (* (count (filter #{:folder :package} context)) 24))
+(defn get-context-offset [context kind]
+  (->> (concat context [kind])
+       (partition 2 1)
+       (map (fn [pair]
+              (case pair
+                [:folder :folder] 24
+                [:folder :package] 0
+                [:package :folder] 24
+                [:package :package] 24
+                [:folder :unit] 32
+                [:package :unit] 48)))
+       (reduce + 0)))
 
 (d/defcomponent Folder [{:keys [title illustration actions items context]}]
-  (let [left-padding (+ 8 (get-context-offset context))]
+  (let [left-padding (+ 8 (get-context-offset context :folder))]
     [:div {:style {}}
      [:h2.h4
       {:on-click actions
@@ -40,7 +50,7 @@
   [:div
    [:div {:style {:display "flex"
                   :align-items "center"
-                  :padding-left (+ 8 (get-context-offset context))}}
+                  :padding-left (+ 8 (get-context-offset context :package))}}
     (when (:icon toggle)
       (icons/render-icon
        (:icon toggle)
@@ -61,8 +71,7 @@
    (render-items items)])
 
 (d/defcomponent Unit [{:keys [title url selected? illustration context]}]
-  (let [left-padding (+ (get-context-offset context)
-                        (if (= :package (last context)) 24 0))]
+  (let [left-padding (get-context-offset context :unit)]
     [:li.text-s {:style {:background (when selected? "var(--mariner)")
                          :font-weight (when selected? 600)
                          :display "flex"

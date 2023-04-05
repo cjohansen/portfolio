@@ -90,3 +90,19 @@
                :context [:package :package]
                :illustration {:icon :ui.icons/bookmark
                               :color "var(--silver-tree)"}}]}]}))
+
+(defscene folder-in-package
+  (Package
+   {:title "UI Kit"
+    :illustration package-illustration
+    :kind :package
+    :toggle {:icon :ui.icons/caret-right}
+    :items
+    [{:title "A folder"
+      :kind :folder
+      :context [:package]
+      :illustration {:icon :ui.icons/folder-open}
+      :items [{:title "A scene"
+               :context [:package :folder]
+               :illustration {:icon :ui.icons/bookmark
+                              :color "var(--silver-tree)"}}]}]}))
