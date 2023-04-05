@@ -67,6 +67,11 @@ body {
 .h3, .md h3 {font-size: 1.2rem; font-weight: 600;}
 .h4, .md h4 {font-size: 1.067rem; font-weight: 600;}
 
+.h1 a, .md h1 a,
+.h2 a, .md h2 a,
+.h3 a, .md h3 a,
+.h4 a, .md h4 a {font-weight: 400;}
+
 .text-s {font-size: 0.93rem;}
 
 strong {font-weight: 700;}
