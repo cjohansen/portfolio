@@ -1,4 +1,4 @@
-(ns portfolio.ui.icons.package
+(ns portfolio.ui.icons.package-icon
   (:require [portfolio.ui.icon :refer-macros [deficon]]))
 
 (deficon icon

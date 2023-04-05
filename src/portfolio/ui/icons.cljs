@@ -14,7 +14,7 @@
             [portfolio.ui.icons.hamburger :as hamburger]
             [portfolio.ui.icons.magnifying-glass-minus :as magnifying-glass-minus]
             [portfolio.ui.icons.magnifying-glass-plus :as magnifying-glass-plus]
-            [portfolio.ui.icons.package :as package]
+            [portfolio.ui.icons.package-icon :as package]
             [portfolio.ui.icons.rows :as rows]))
 
 (defn render-icon [icon & [{:keys [size color style on-click]}]]
