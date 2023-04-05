@@ -182,7 +182,7 @@
             (ComponentError (:scene data))))
         (when (= :separator (:kind data))
           [:div {:key "separator"
-                 :style {:height 20}}])]
+                 :style {:margin "30px 0 20px"}}])]
        (remove nil?)))
 
 (d/defcomponent Problem [{:keys [title text code]}]

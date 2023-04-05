@@ -25,7 +25,7 @@
          state
          (merge {:viewport/height :auto} (:canvas/gallery-defaults state))
          [::gallery-default])
-        (assoc :gallery? true))
+        (assoc-in [:layout :gallery?] true))
     (or (when-let [scene (first (filter :canvas/layout (:scenes selection)))]
           (init-layout state (:canvas/layout scene) [:scene (:id scene)]))
         (when-let [collection (->> (reverse (:path selection))
