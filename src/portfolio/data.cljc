@@ -46,7 +46,7 @@
     (throw (ex-info "Cannot register scene without :id" {:scene scene}))
     (let [{:keys [idx line]} (get-scene-context (get-in @scenes [(:id scene)]) scene)]
       (swap! scenes assoc (:id scene)
-             (cond-> (assoc scene
+             (cond-> (assoc (dissoc scene :param)
                             :line line
                             :idx idx
                             :updated-at #?(:cljs (.getTime (js/Date.))
@@ -55,7 +55,10 @@
                (assoc :title (name (:id scene)))
 
                (nil? (:collection scene))
-               (assoc :collection (some-> scene :id namespace keyword))))
+               (assoc :collection (some-> scene :id namespace keyword))
+
+               (:param scene)
+               (assoc :params [(:param scene)])))
       (eventually-purge-scenes)
       nil)))
 

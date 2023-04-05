@@ -56,7 +56,7 @@
             "by clicking it in this panel."]}))
 
 (defn prepare-panel-content [panel state scene]
-  (when (:param scene)
+  (when (:params scene)
     (with-meta
       (let [overrides (scene/get-param-overrides state scene)]
         (prepare-taps scene overrides (:taps state)))

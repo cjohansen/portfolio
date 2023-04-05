@@ -20,7 +20,7 @@
          :value v
          :actions [[:set-scene-param (:id scene) k :event.target/number-value]]}
 
-        :default
+        :else
         {:kind :text
          :value v
          :actions [[:set-scene-param (:id scene) k :event.target/value]]})))
@@ -36,9 +36,10 @@
         (assoc :clear-actions [[:remove-scene-param (:id scene) k]])))))
 
 (defn prepare-panel-content [_panel state scene]
-  (when (:param scene)
+  (when (:params scene)
     (with-meta
-      (let [param (scene/get-param state scene)
+      (let [params (scene/get-params state scene)
+            param (first params) ;; TODO: FIX!
             param (if (satisfies? cljs.core/IWatchable param) @param param)
             overrides (scene/get-param-overrides state scene)]
         {:param (prepare-param scene overrides param)})

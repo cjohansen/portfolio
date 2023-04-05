@@ -5,6 +5,7 @@
             [portfolio.ui.layout :as layout]
             [portfolio.ui.router :as router]
             [portfolio.ui.routes :as routes]
+            [portfolio.ui.scene :as scene]
             [portfolio.ui.sidebar :as sidebar]))
 
 (defn assoc-in*
@@ -75,17 +76,13 @@
                  (seq expansions) (into expansions))
      :fns (concat
            (->> (filter :on-unmount current-scenes)
-                (map (fn [{:keys [on-unmount param id title]}]
-                       [:on-unmount (or id title) on-unmount param])))
+                (map (fn [{:keys [on-unmount params id title]}]
+                       (into [:on-unmount (or id title) on-unmount] params))))
            (->> (filter :on-mount (:scenes selection))
-                (map (fn [{:keys [on-mount param id title]}]
-                       [:on-mount (or id title) on-mount param]))))
-     :release (->> (map :param current-scenes)
-                   (filter atom?)
-                   (map (fn [ref] [ref ::portfolio])))
-     :subscribe (->> (map (juxt :param identity) (:scenes selection))
-                     (filter (comp atom? first))
-                     (map (fn [[ref scene]] [ref ::portfolio scene])))
+                (map (fn [{:keys [on-mount params id title]}]
+                       (into [:on-mount (or id title) on-mount] params)))))
+     :release (mapcat scene/get-scene-atoms current-scenes)
+     :subscribe (mapcat scene/get-scene-atoms (:scenes selection))
      :set-page-title (get-page-title state selection)
      :update-window-location (router/get-url location)}))
 
@@ -137,16 +134,17 @@
 (declare execute-action!)
 
 (defn process-action-result! [app res]
-  (doseq [[ref k] (:release res)]
+  (doseq [ref (:release res)]
     (println "Stop watching atom" (pr-str ref))
-    (remove-watch ref k))
+    (remove-watch ref ::portfolio))
   (doseq [[k t f & args] (:fns res)]
     (println (str "Calling " k " on " t " with") (pr-str args))
     (apply f args))
-  (doseq [[ref k _scene] (:subscribe res)]
+  (doseq [ref (:subscribe res)]
     (println "Start watching atom" (pr-str ref))
-    (add-watch ref k (fn [_ _ _ _]
-                       (swap! app update :heartbeat (fnil inc 0)))))
+    (add-watch ref ::portfolio
+      (fn [_ _ _ _]
+        (swap! app update :heartbeat (fnil inc 0)))))
   (when-let [url (:update-window-location res)]
     (when-not (= url (router/get-current-url))
       (println "Updating browser URL to" url)

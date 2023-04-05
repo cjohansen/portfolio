@@ -18,17 +18,18 @@
 (defn get-iframe-body [canvas-el]
   (some-> canvas-el get-iframe-document .-body))
 
-(d/defcomponent ComponentError [{:keys [component-param error] :as lol}]
+(d/defcomponent ComponentError [{:keys [component-params error] :as lol}]
   [:div {:style {:background "#fff"
                  :width "100%"
                  :height "100%"
                  :padding 20}}
    [:h1.h1.error (:title error)]
    [:p.mod (:message error)]
-   (when component-param
+   (when component-params
      [:div.vs-s.mod
-      [:h2.h3.mod "Component param"]
-      [:p.mod (Code {:code component-param})]])
+      [:h2.h3.mod "Component params"]
+      (for [param component-params]
+        [:p.mod (Code {:code param})])])
    (when-let [data (:ex-data error)]
      [:div.vs-s.mod
       [:h2.h3.mod "ex-data"]
@@ -51,7 +52,7 @@
     (set! (.. iframe -style -display) "none")
     (d/render
      (ComponentError
-      {:component-param (:component-param scene)
+      {:component-params (:component-params scene)
        :error {:title "Failed to mount component"
                :message (.-message e)
                :stack (.-stack e)
