@@ -14,7 +14,9 @@
 (def app (atom nil))
 
 (defn get-collections [scenes collections]
-  (collection/get-default-organization (vals scenes) (vals collections)))
+  (->> (collection/get-default-organization (vals scenes) (vals collections))
+       (map (juxt :id identity))
+       (into {})))
 
 (defn create-app [config canvas-tools extra-canvas-tools]
   (-> config

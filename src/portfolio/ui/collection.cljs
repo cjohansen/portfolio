@@ -7,69 +7,34 @@
 (defn ns->path [ns]
   (str/split ns #"\."))
 
-(defn get-paths
-  "Returns a list of unique paths represented by the namespaces. Discards
-  namespace prefixes shared by all namespaces, and turns the remaining part
-  of the namespace into a list:
-
-  ```clj
-  (get-paths [\"ui.components.button\"
-              \"ui.components.matrix\"
-              \"ui.components.pill\"])
-  ;;=> ((\"button\") (\"matrix\") (\"pill\"))
-  ```
-
-  ```clj
-  (get-paths [\"ui.components.button\"
-              \"ui.components.pill\"
-              \"ui.icons\"])
-  ;;=> ((\"components\" \"button\") (\"components\" \"pill\") (\"icons\"))
-  "
-  [namespaces]
-  (let [paths (map ns->path namespaces)]
-    (loop [candidates (drop-last 1 (first paths))
-           paths paths
-           prefix []]
-      (if (and (seq candidates)
-               (every? (comp #{(first candidates)} first) paths)
-               (every? #(< 2 (count %)) paths))
-        (recur (next candidates) (map #(drop 1 %) paths) (conj prefix (ffirst paths)))
-        (cond-> {:paths paths}
-          (seq prefix) (assoc :prefix (str/join "." prefix)))))))
+(defn path->id [path]
+  (keyword (str/join "." path)))
 
 (defn get-collection-title [s]
-  (some-> (name s)
+  (some-> (if (keyword? s)
+            (name s)
+            s)
+          (str/split #"\.")
+          last
           (str/replace #"-" " ")
           str/capitalize))
 
-(defn make-collection [prefix path]
-  {:id (keyword (str prefix "." (str/join "." path)))
-   :title (get-collection-title (last path))})
-
-(defn suggest-collections [scenes]
-  (let [{:keys [paths prefix]} (get-paths (map (comp namespace :id) scenes))]
-    (->> paths
-         (group-by first)
-         (mapcat
-          (fn [[coll xs]]
-            (let [parent (-> (make-collection prefix [coll])
-                             (assoc :kind :folder))]
-              (conj
-               (for [coll xs]
-                 (-> (make-collection prefix coll)
-                     (assoc :collection (:id parent))
-                     (assoc :kind :package)))
-               parent)))))))
-
-(defn merge-collections [collections defaults]
-  (->> (for [k (concat (keys defaults) (keys collections))]
-         [k (merge (get defaults k) (get collections k))])
-       (into {})))
+(defn suggest-packages [scenes]
+  (->> scenes
+       (map #(or (some-> % :collection name) (namespace (:id %))))
+       (map ns->path)
+       (map (fn [path]
+              (let [id (path->id path)]
+                (cond-> {:id id
+                         :title (get-collection-title (last path))
+                         :kind :package}
+                  (< 1 (count path))
+                  (assoc :collection (path->id (drop-last 1 path)))))))))
 
 (defn ensure-defaults [collection scenes]
   (cond-> collection
     (empty? (:title collection))
-    (assoc :title (get-collection-title (last (str/split (name (:id collection)) #"\."))))
+    (assoc :title (get-collection-title (:id collection)))
 
     (nil? (:kind collection))
     (assoc :kind (if (some (comp #{(:id collection)} :collection) scenes)
@@ -77,22 +42,24 @@
                    :folder))))
 
 (defn get-default-organization [scenes collections]
-  (let [collections (merge
-                     (->> (keep :collection scenes)
-                          (map (fn [id]
-                                 [id {:id id}]))
-                          (into {}))
-                     (->> collections
-                          (map (juxt :id identity))
-                          (into {})))
-        defaults (->> scenes
-                      suggest-collections
-                      (map (juxt :id identity))
-                      (into {}))]
-    (->> (for [k (concat (keys defaults) (keys collections))]
-           [k (-> (merge (get defaults k) (get collections k))
-                  (ensure-defaults scenes))])
-         (into {}))))
+  (let [existing (into {} (map (juxt :id identity) collections))
+        packages (suggest-packages scenes)
+        folders (->> (keep :collection packages)
+                     set
+                     (map (fn [id]
+                            {:id id
+                             :title (get-collection-title id)
+                             :kind :folder})))
+        configured-folders (->> packages
+                                (keep :collection)
+                                (filter existing))
+        folder-n (count (set (concat (map :id folders) configured-folders)))]
+    (->> (if (or (< 1 folder-n) (seq configured-folders))
+           (concat packages folders)
+           (map #(dissoc % :collection) packages))
+         (map #(merge % (get existing (:id %))))
+         (map #(ensure-defaults % scenes))
+         set)))
 
 (defn get-collection-path [{:keys [scenes collections]} id]
   (let [target (or (first (filter (comp #{id} :id) (vals scenes)))
