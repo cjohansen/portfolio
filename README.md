@@ -141,6 +141,12 @@ Currently supported key/value pairs:
   function is passed the component arguments.
 - `:on-unmount` - A function called when the scene is removed from the DOM. The
   function is passed the component arguments.
+- `:collection` - What collection the scene belongs to. See
+  [Organizing scenes](#organizing-scenes).
+- `:icon` - An icon to display instead of the default bookmark ([about icons](#scene-and-collection-icons)).
+- `:selected-icon` - Specific icon to display when the scene is selected.
+- `:icon-color` - The color of the scene icon.
+- `:selected-icon-color` - Specific icon color for when the scene is selected.
 
 ### Starting the Portfolio UI
 
