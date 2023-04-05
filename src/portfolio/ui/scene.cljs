@@ -1,5 +1,6 @@
 (ns portfolio.ui.scene
-  (:require [portfolio.ui.code :as code]))
+  (:require [portfolio.ui.code :as code]
+            [portfolio.ui.collection :as collection]))
 
 (defn get-param-overrides [state scene]
   (get-in state [:ui (:id scene) :overrides]))
@@ -23,3 +24,17 @@
   (->> scenes
        (prep-scene-fns state)
        (sort-by :idx)))
+
+(defn get-scene-illustration [state scene selected?]
+  {:icon (or (when selected?
+               (:selected-icon scene))
+             (:icon scene)
+             (when selected?
+               (collection/get-in-parents state scene :default-scene-selected-icon))
+             (collection/get-in-parents state scene :default-scene-icon)
+             :ui.icons/bookmark)
+   :color (or (when selected?
+                (:selected-icon-color scene))
+              (:icon-color scene)
+              (when-not selected?
+                "var(--sidebar-unit-icon-color)"))})

@@ -105,3 +105,48 @@
   [(:idx collection 999999999)
    (or (some-> collection :title str/lower-case)
        (some-> collection :id name))])
+
+(defn get-in-parents
+  "Look for key `k` in map `m`. If not present, traverse collection hierarchy via
+  `:collection` and look in the parent collection. If the key is not found in
+  any parent, finally try the `state`."
+  [state m k]
+  (loop [m m]
+    (or (get m k)
+        (if-let [id (:collection m)]
+          (recur (get-in state [:collections id]))
+          (get state k)))))
+
+(defn get-folder-illustration [state collection expanded?]
+  {:icon (or (if expanded?
+               (:expanded-icon collection)
+               (:collapsed-icon collection))
+             (:icon collection)
+             (if expanded?
+               (get-in-parents state collection :default-folder-expanded-icon)
+               (get-in-parents state collection :default-folder-collapsed-icon))
+             (get-in-parents state collection :default-folder-icon)
+             (if expanded?
+               :ui.icons/folder-open
+               :ui.icons/folder))
+   :color (or (if expanded?
+                (:expanded-icon-color collection)
+                (:collapsed-icon-color collection))
+              (:icon-color collection)
+              "var(--folder-icon-color)")})
+
+(defn get-package-illustration [state collection expanded?]
+  {:icon (or (if expanded?
+               (:expanded-icon collection)
+               (:collapsed-icon collection))
+             (:icon collection)
+             (if expanded?
+               (get-in-parents state collection :default-package-expanded-icon)
+               (get-in-parents state collection :default-package-collapsed-icon))
+             (get-in-parents state collection :default-package-icon)
+             :ui.icons/cube)
+   :color (or (if expanded?
+                (:expanded-icon-color collection)
+                (:collapsed-icon-color collection))
+              (:icon-color collection)
+              "var(--highlight-color)")})
