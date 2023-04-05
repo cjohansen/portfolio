@@ -14,18 +14,36 @@
    {:title "Layouts"
     :illustration {:icon :ui.icons/folder}}))
 
-(defscene package-title
-  (Package
-   {:title "Some package"
-    :illustration package-illustration
-    :toggle {:icon :ui.icons/caret-down
-             :actions []}}))
+(defscene package-list
+  [:div
+   (Package
+    {:title "Some package"
+     :illustration package-illustration
+     :toggle {:icon :ui.icons/caret-right
+              :actions []}})
+   (Package
+    {:title "Another package"
+     :illustration package-illustration
+     :toggle {:icon :ui.icons/caret-right
+              :actions []}})])
 
 (defscene open-package
   (Package
    {:title "Some scenes"
     :illustration package-illustration
-    :toggle {:icon :ui.icons/caret-right
+    :toggle {:icon :ui.icons/caret-down
+             :actions []}
+    :items [{:title "A scene"
+             :context [:package]
+             :illustration {:icon :ui.icons/bookmark
+                            :color "var(--silver-tree)"}}]}))
+
+(defscene selected-package
+  (Package
+   {:title "Some scenes"
+    :selected? true
+    :illustration package-illustration
+    :toggle {:icon :ui.icons/caret-down
              :actions []}
     :items [{:title "A scene"
              :context [:package]
@@ -41,7 +59,7 @@
              :kind :package
              :illustration package-illustration
              :context [:folder]
-             :toggle {:icon :ui.icons/caret-right
+             :toggle {:icon :ui.icons/caret-down
                       :actions []}
              :items [{:title "A scene"
                       :context [:folder :package]
@@ -62,7 +80,7 @@
                :kind :package
                :context [:folder :folder]
                :illustration package-illustration
-               :toggle {:icon :ui.icons/caret-right
+               :toggle {:icon :ui.icons/caret-down
                         :actions []}
                :items [{:title "Poor legibility"
                         :context [:folder :folder :package]
@@ -78,13 +96,13 @@
    {:title "UI Kit"
     :illustration package-illustration
     :kind :package
-    :toggle {:icon :ui.icons/caret-right}
+    :toggle {:icon :ui.icons/caret-down}
     :items
     [{:title "Some scenes"
       :kind :package
       :context [:package]
       :illustration package-illustration
-      :toggle {:icon :ui.icons/caret-right
+      :toggle {:icon :ui.icons/caret-down
                :actions []}
       :items [{:title "A scene"
                :context [:package :package]
@@ -96,7 +114,7 @@
    {:title "UI Kit"
     :illustration package-illustration
     :kind :package
-    :toggle {:icon :ui.icons/caret-right}
+    :toggle {:icon :ui.icons/caret-down}
     :items
     [{:title "A folder"
       :kind :folder

@@ -47,7 +47,10 @@
                               :ui.icons/caret-right)
                       :actions [[:assoc-in exp-path (not expanded?)]]}}
       expanded?
-      (assoc :items (prepare-collections state location (conj path (:id collection)))))))
+      (assoc :items (prepare-collections state location (conj path (:id collection))))
+
+      (= (:id collection) (routes/get-id location))
+      (assoc :selected? true))))
 
 (defn get-folder-illustration [expanded? collection]
   {:icon (or (if expanded?

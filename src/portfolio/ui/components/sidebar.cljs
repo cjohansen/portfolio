@@ -46,11 +46,17 @@
       title]
      (render-items {:style {:margin "8px 0 24px"}} items)]))
 
-(d/defcomponent Package [{:keys [title illustration actions toggle items context]}]
+(d/defcomponent Package [{:keys [title illustration actions toggle items context selected?]}]
   [:div
-   [:div {:style {:display "flex"
+   [:div {:style {:background (when selected? "var(--mariner)")
+                  :display "flex"
                   :align-items "center"
-                  :padding-left (+ 8 (get-context-offset context :package))}}
+                  :border-radius 4
+                  :font-weight (when selected? "bold")
+                  :padding-left (+ (if selected? 4 8)
+                                   (get-context-offset context :package))
+                  :margin (when selected?
+                            "0 4px")}}
     (when (:icon toggle)
       (icons/render-icon
        (:icon toggle)
@@ -61,7 +67,9 @@
       (icons/render-icon
        (:icon illustration)
        {:size 16
-        :color (:color illustration)
+        :color (if selected?
+                 "#ffffff"
+                 (:color illustration))
         :style {:margin-right 8}}))
     [:span {:on-click actions
             :style {:cursor (when actions "pointer")
