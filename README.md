@@ -29,13 +29,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.04.03.1"}
+no.cjohansen/portfolio {:mvn/version "2023.04.05"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.04.03.1"]
+[no.cjohansen/portfolio "2023.04.05"]
 ```
 
 ## Usage
@@ -218,9 +218,10 @@ will be available when these APIs are considered stable.
 
 The background tool sets a background color for your scene, and adds a class
 name to the `body` element, to help your CSS choose between dark mode and light
-mode. See [./src/portfolio/views/canvas/background.cljs](background.cljs) for
-specifics about the default options. To default Portfolio to use dark mode for
-scenes, specify `:background/default-option-id` when calling `ui/start!`:
+mode. See
+[`portfolio.ui.canvas.background`](./src/portfolio/ui/canvas/background.cljs)
+for specifics about the default options. To default Portfolio to use dark mode
+for scenes, specify `:background/default-option-id` when calling `ui/start!`:
 
 ```clj
 (require '[portfolio.ui :as ui])
@@ -295,17 +296,17 @@ either no grid, or a 5 by 20 pixel grid. Change this as you see fit:
 
 ## Organizing scenes
 
-By default Portfolio tries to organize your scenes into folders and packages. It
-uses the namespaces of your scenes to do this and attempts to humanize the
-resulting names. You can easily provide custom names, icons, colors, and sort
-orders for scenes, packages, and folders - or you can completely customize your
+By default, Portfolio tries to organize your scenes into folders and packages.
+It uses the namespaces of your scenes to do this, and attempts to humanize the
+resulting names. You can easily provide custom names, icons, colors and sort
+orders for scenes, packages and folders - or you can completely customize your
 scene organization if your want.
 
 ### Customizing packages / namespaces
 
 The default "packages" correspond to the namespaces where your scenes are
 defined. If you drop a bunch of `defscene`s into `ui.components.button-scenes`,
-then `ui.components.button-scenes` will be used as a "package", and it's name
+then `ui.components.button-scenes` will be used as a "package", and its name
 will be `"Button scenes"`. If you don't like this, call
 `portfolio.<adapter>/configure-scenes` from the same namespace:
 
@@ -328,7 +329,7 @@ What keys can you stick in this map? Well, the following (more on icons below):
   `:icon`, if both are set)
 - `:icon-color` - The icon color. Duh.
 - `:expanded-icon-color` - A more specific color for expanded packages.
-- `:collapsed-icon-color` - A more specific color for expanded packages.
+- `:collapsed-icon-color` - A more specific color for collapsed packages.
 - `:kind` - One of `:folder` or `:package`. Dictates the rendering style.
   Namespaces default to `:package`.
 
@@ -460,6 +461,12 @@ pouring too much work into them, so we're sure we're one the same page.
 - @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
 - @BorisKourt and @thheller helped with shadow-cljs support.
 - @brandonstubbs React 18-related features.
+
+## Changelog
+
+### 2023.04.05
+
+Added [new APIs for organizing scenes](#organizing-scenes) in the sidebar.
 
 ## License
 
