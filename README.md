@@ -173,7 +173,7 @@ You might want to add some CSS files to the canvas, which can be done with
 ```
 
 Add as many CSS files as you like. If you run Portfolio with figwheel-main, CSS
-files will automatically reloaded when changed.
+files will automatically reload when changed.
 
 ### Custom Canvas HTML
 
