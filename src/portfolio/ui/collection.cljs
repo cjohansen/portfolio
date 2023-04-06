@@ -127,8 +127,8 @@
                (get-in-parents state collection :default-folder-collapsed-icon))
              (get-in-parents state collection :default-folder-icon)
              (if expanded?
-               :ui.icons/folder-open
-               :ui.icons/folder))
+               :portfolio.ui.icons/folder-open
+               :portfolio.ui.icons/folder))
    :color (or (if expanded?
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
@@ -144,7 +144,7 @@
                (get-in-parents state collection :default-package-expanded-icon)
                (get-in-parents state collection :default-package-collapsed-icon))
              (get-in-parents state collection :default-package-icon)
-             :ui.icons/cube)
+             :portfolio.ui.icons/cube)
    :color (or (if expanded?
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
@@ -158,7 +158,7 @@
              (when selected?
                (get-in-parents state scene :default-scene-selected-icon))
              (get-in-parents state scene :default-scene-icon)
-             :ui.icons/bookmark)
+             :portfolio.ui.icons/bookmark)
    :color (or (when selected?
                 (:selected-icon-color scene))
               (:icon-color scene)

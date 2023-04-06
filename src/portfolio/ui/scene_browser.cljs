@@ -20,8 +20,8 @@
              :actions [[:go-to-location (assoc-in location [:query-params :id] (:id collection))]]
              :illustration (collection/get-package-illustration state collection expanded?)
              :toggle {:icon (if expanded?
-                              :ui.icons/caret-down
-                              :ui.icons/caret-right)
+                              :portfolio.ui.icons/caret-down
+                              :portfolio.ui.icons/caret-right)
                       :actions [[:assoc-in exp-path (not expanded?)]]}}
       expanded?
       (assoc :items (prepare-collections state location (conj path (:id collection))))

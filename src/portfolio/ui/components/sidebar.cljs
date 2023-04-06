@@ -11,7 +11,7 @@
          :mounted-style {:width width}
          :leaving-style {:width 0}}
    (icons/render-icon
-    :ui.icons/caret-double-left
+    :portfolio.ui.icons/caret-double-left
     {:size 16
      :on-click actions
      :style {:margin "16px 8px"}})

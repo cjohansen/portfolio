@@ -47,7 +47,7 @@
                text))
            (interpose
             (icons/render-icon
-             :ui.icons/caret-right
+             :portfolio.ui.icons/caret-right
              {:size 16})))]]
     (render-action right-action)]
    (when menu

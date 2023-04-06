@@ -52,7 +52,7 @@
     {:id :canvas/zoom-in
      :group-id :canvas/zoom
      :title "Zoom in"
-     :icon :ui.icons/magnifying-glass-plus
+     :icon :portfolio.ui.icons/magnifying-glass-plus
      :zoom-increment (or (:zoom-increment config) 0.25)}
     impl))
 
@@ -61,7 +61,7 @@
     {:id :canvas/zoom-out
      :group-id :canvas/zoom
      :title "Zoom out"
-     :icon :ui.icons/magnifying-glass-minus
+     :icon :portfolio.ui.icons/magnifying-glass-minus
      :zoom-increment (or (:zoom-increment config) -0.25)}
     impl))
 
@@ -70,7 +70,7 @@
    {:id :canvas/zoom-reset
     :group-id :canvas/zoom
     :title "Reset zoom"
-    :icon :ui.icons/arrow-counter-clockwise
+    :icon :portfolio.ui.icons/arrow-counter-clockwise
     :prepare-canvas #'reset-canvas-zoom
     :get-actions (fn [tool _ pane]
                    [[:dissoc-in (addons/get-options-path pane tool)]])

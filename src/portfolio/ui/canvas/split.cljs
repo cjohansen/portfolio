@@ -42,7 +42,7 @@
 (defn prepare-horizontal-split-button [tool _state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon :ui.icons/columns
+     :icon :portfolio.ui.icons/columns
      :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-horizontally layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
@@ -63,7 +63,7 @@
 (defn prepare-vertical-split-button [tool state {:keys [pane-path layout-path layout]}]
   (with-meta
     {:title (:title tool)
-     :icon :ui.icons/rows
+     :icon :portfolio.ui.icons/rows
      :actions [[:assoc-in (into layout-path [:layout])
                 (split-layout-vertically layout pane-path)]]}
     {`protocols/render-toolbar-button #'Button}))
@@ -97,7 +97,7 @@
              (< 0 (count pane-path)))
     (with-meta
       {:title (:title tool)
-       :icon :ui.icons/cross
+       :icon :portfolio.ui.icons/cross
        :align :right
        :actions [[:assoc-in (into layout-path [:layout])
                   (close-pane layout pane-path)]]}

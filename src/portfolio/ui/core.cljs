@@ -38,14 +38,14 @@
                     (not= current item)
                     (assoc :url (routes/get-url location item)))))
        :left-action (when-not (screen/small-screen? state)
-                      {:icon :ui.icons/caret-double-right
+                      {:icon :portfolio.ui.icons/caret-double-right
                        :actions [[:assoc-in [:sidebar-status]
                                   (if (screen/small-screen? state)
                                     :visible
                                     :auto)]]})
        :right-action {:icon (if (:header-menu-expanded? state)
-                              :ui.icons/caret-up
-                              :ui.icons/caret-down)
+                              :portfolio.ui.icons/caret-up
+                              :portfolio.ui.icons/caret-down)
                       :actions [[:assoc-in [:header-menu-expanded?]
                                  (not (:header-menu-expanded? state))]]}
        :menu (when (:header-menu-expanded? state)
