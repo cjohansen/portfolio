@@ -4,18 +4,23 @@
             [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.popup-menu :refer [PopupMenu]]))
 
-(d/defcomponent MenuButton [{:keys [text icon title align menu active? actions]}]
-  [:span {:style (cond-> {:display "flex"
-                          :position "relative"}
-                   (= align :right) (assoc :flex "1" :justify-content "flex-end"))}
+(d/defcomponent MenuButton [{:keys [text icon title menu active? actions]}]
+  [:span.canvas-menu-button
+   {:style {:display "flex"
+            :position "relative"}}
    [:button.button.boldable
     {:title (or title text)
      :style {:color (if menu "#1ea7fd" "var(--fg)")
              :display "block"
              :font-weight "bold"
              :font-size 14
-             :padding "10px 0"
-             :width (when icon 20)}
+             :padding (if icon 6 "6px 12px")
+             :width (when icon 32)
+             :height 32
+             :background (if menu
+                           "var(--toolbar-button-active)"
+                           "var(--toolbar-button)")
+             }
      :on-click actions}
     (when icon
       (icons/render-icon icon {:size 20}))
@@ -25,8 +30,9 @@
 (def Button MenuButton)
 
 (d/defcomponent ButtonGroup [{:keys [buttons]}]
-  [:div {:style {:display "flex"
-                 :flex-direction "row"
-                 :gap 10}}
+  [:div.canvas-button-group
+   {:style {:display "flex"
+            :flex-direction "row"
+            :gap 1}}
    (for [button buttons]
      (protocols/render-toolbar-button button))])

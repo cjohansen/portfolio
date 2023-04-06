@@ -144,13 +144,21 @@
                  :color "var(--fg)"
                  :border-bottom "1px solid var(--separator)"
                  :display "flex"
-                 :align-items "center"
-                 :gap 20
+                 :gap 10
+                 :justify-content "space-between"
                  :min-height 48
                  :padding-left 20
                  :padding-right 20}}
-   (for [tool buttons]
-     (canvas/render-toolbar-button tool))])
+   [:div {:style {:display "flex"
+                  :align-items "center"
+                  :gap 10}}
+    (for [tool (remove (comp #{:right} :align) buttons)]
+      (canvas/render-toolbar-button tool))]
+   [:div {:style {:display "flex"
+                  :align-items "center"
+                  :gap 10}}
+    (for [tool (filter (comp #{:right} :align) buttons)]
+      (canvas/render-toolbar-button tool))]])
 
 (d/defcomponent CanvasPanel [data]
   [:div {:style {:border-top "1px solid #ccc"
