@@ -1,6 +1,7 @@
 (ns portfolio.ui.icons
   (:require [portfolio.ui.icons.arrow-counter-clockwise :as arrow-counter-clockwise]
             [portfolio.ui.icons.bookmark :as bookmark]
+            [portfolio.ui.icons.browsers :as browsers]
             [portfolio.ui.icons.caret-double-left :as caret-double-left]
             [portfolio.ui.icons.caret-double-right :as caret-double-right]
             [portfolio.ui.icons.caret-down :as caret-down]
@@ -13,10 +14,13 @@
             [portfolio.ui.icons.devices :as devices]
             [portfolio.ui.icons.folder :as folder]
             [portfolio.ui.icons.folder-open :as folder-open]
+            [portfolio.ui.icons.grid-four :as grid-four]
             [portfolio.ui.icons.hamburger :as hamburger]
+            [portfolio.ui.icons.list-plus :as list-plus]
             [portfolio.ui.icons.magnifying-glass-minus :as magnifying-glass-minus]
             [portfolio.ui.icons.magnifying-glass-plus :as magnifying-glass-plus]
             [portfolio.ui.icons.package-icon :as package]
+            [portfolio.ui.icons.palette :as palette]
             [portfolio.ui.icons.rows :as rows]))
 
 (defn render-icon [icon & [{:keys [size color style on-click]}]]
@@ -31,6 +35,7 @@
    (case icon
      ::arrow-counter-clockwise arrow-counter-clockwise/icon
      ::bookmark bookmark/icon
+     ::browsers browsers/icon
      ::caret-double-left caret-double-left/icon
      ::caret-double-right caret-double-right/icon
      ::caret-down caret-down/icon
@@ -44,7 +49,10 @@
      ::folder folder/icon
      ::folder-open folder-open/icon
      ::hamburger hamburger/icon
+     ::grid-four grid-four/icon
+     ::list-plus list-plus/icon
      ::magnifying-glass-plus magnifying-glass-plus/icon
      ::magnifying-glass-minus magnifying-glass-minus/icon
      ::package package/icon
+     ::palette palette/icon
      ::rows rows/icon)])
