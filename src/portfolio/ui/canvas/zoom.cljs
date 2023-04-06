@@ -87,8 +87,8 @@
 (defn create-zoom-tool [config]
   (with-meta
     {:id :canvas/zoom
-     :buttons [(create-zoom-in-tool config)
-               (create-zoom-out-tool config)
+     :buttons [(create-zoom-out-tool config)
+               (create-zoom-in-tool config)
                (create-reset-zoom-tool config)]}
     {`protocols/prepare-canvas (fn [_ el opt] (zoom el opt))
      `protocols/finalize-canvas (fn [_ _ _])
