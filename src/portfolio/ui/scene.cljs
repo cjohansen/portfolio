@@ -23,34 +23,17 @@
     :else
     (:params scene)))
 
-(defn prep-scene-fns [state scenes]
-  (for [scene scenes]
-    (let [params (get-params state scene)]
-      (cond-> (assoc scene :component-params (map code/code-str params))
-        (:component scene)
-        (assoc :component-fn #(:component scene))
+(defn prep-scene-fn [state scene]
+  (let [params (get-params state scene)]
+    (cond-> (assoc scene :component-params (map code/code-str params))
+      (:component scene)
+      (assoc :component-fn #(:component scene))
 
-        (:component-fn scene)
-        (assoc :component-fn #(apply (:component-fn scene) (concat params [%])))))))
+      (:component-fn scene)
+      (assoc :component-fn #(apply (:component-fn scene) (concat params [%]))))))
 
-(defn prepare-scenes [state scenes]
-  (->> scenes
-       (prep-scene-fns state)
-       (sort-by :idx)))
-
-(defn get-scene-illustration [state scene selected?]
-  {:icon (or (when selected?
-               (:selected-icon scene))
-             (:icon scene)
-             (when selected?
-               (collection/get-in-parents state scene :default-scene-selected-icon))
-             (collection/get-in-parents state scene :default-scene-icon)
-             :ui.icons/bookmark)
-   :color (or (when selected?
-                (:selected-icon-color scene))
-              (:icon-color scene)
-              (when-not selected?
-                "var(--sidebar-unit-icon-color)"))})
+(defn sort-key [scene]
+  [(:line scene) (:idx scene)])
 
 (defn get-scene-atoms [{:keys [params]}]
   (->> (if (map? params) (vals params) params)

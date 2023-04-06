@@ -2,8 +2,10 @@
   (:require [portfolio.ui.icons.arrow-counter-clockwise :as arrow-counter-clockwise]
             [portfolio.ui.icons.bookmark :as bookmark]
             [portfolio.ui.icons.caret-double-left :as caret-double-left]
+            [portfolio.ui.icons.caret-double-right :as caret-double-right]
             [portfolio.ui.icons.caret-down :as caret-down]
             [portfolio.ui.icons.caret-right :as caret-right]
+            [portfolio.ui.icons.caret-up :as caret-up]
             [portfolio.ui.icons.columns :as columns]
             [portfolio.ui.icons.cross :as cross]
             [portfolio.ui.icons.cube :as cube]
@@ -30,8 +32,10 @@
      :ui.icons/arrow-counter-clockwise arrow-counter-clockwise/icon
      :ui.icons/bookmark bookmark/icon
      :ui.icons/caret-double-left caret-double-left/icon
+     :ui.icons/caret-double-right caret-double-right/icon
      :ui.icons/caret-down caret-down/icon
      :ui.icons/caret-right caret-right/icon
+     :ui.icons/caret-up caret-up/icon
      :ui.icons/columns columns/icon
      :ui.icons/cross cross/icon
      :ui.icons/cube cube/icon

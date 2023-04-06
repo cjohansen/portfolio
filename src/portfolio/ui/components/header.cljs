@@ -1,22 +1,47 @@
 (ns portfolio.ui.components.header
   (:require [dumdom.core :as d]
+            [portfolio.ui.components.browser :as browser]
             [portfolio.ui.icons :as icons]))
 
-(d/defcomponent Header [{:keys [title actions]}]
-  [:div {:style {:display "flex"
-                 :flex-shrink "0"
-                 :padding "0 20px"
-                 :transition "height 0.25s ease"
-                 :height 0
-                 :overflow "hidden"
-                 :align-items "center"}
-         :mounted-style {:height 35}
-         :leaving-style {:height 0}}
-   (icons/render-icon
-    :ui.icons/hamburger
-    {:size 24
-     :on-click actions
-     :style {:margin-top 10}})
-   [:h1.h2 {:style {:margin-top 10
-                    :margin-right 10}}
-    title]])
+(defn render-action [action]
+  (when (:icon action)
+    (icons/render-icon
+     (:icon action)
+     {:size 16
+      :on-click (:actions action)})))
+
+(d/defcomponent Header [{:keys [illustration title left-action right-action menu]}]
+  [:div
+   [:div {:style {:display "flex"
+                  :gap 20
+                  :flex-shrink "0"
+                  :transition "height 0.25s ease"
+                  :height 0
+                  :overflow "hidden"
+                  :align-items "center"
+                  :padding 20
+                  :border-bottom "1px solid var(--header-border)"}
+          :mounted-style {:height 56}
+          :leaving-style {:height 0}}
+    (render-action left-action)
+    [:div {:style {:display "flex" :gap 10}}
+     (when illustration
+       (icons/render-icon
+        (:icon illustration)
+        {:size 24
+         :color (:color illustration)}))
+     [:h1.h3 {:style {:display "flex"
+                      :align-items "center"
+                      :gap 8}}
+      (->> (for [{:keys [text url]} title]
+             (if url
+               [:a {:style {:color "var(--subdued-link)"}
+                    :href url} text]
+               text))
+           (interpose
+            (icons/render-icon
+             :ui.icons/caret-right
+             {:size 16})))]]
+    (render-action right-action)]
+   (when-let [items (:items menu)]
+     (browser/render-items items))])

@@ -6,7 +6,7 @@
             [portfolio.ui.router :as router]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
-            [portfolio.ui.sidebar :as sidebar]))
+            [portfolio.ui.scene-browser :as scene-browser]))
 
 (defn assoc-in*
   "Takes a map and pairs of path value to assoc-in to the map. Makes `assoc-in`
@@ -67,7 +67,7 @@
         layout (layout/get-view-layout state selection)
         lp (layout/get-layout-path layout)
         expansions (->> (:path selection)
-                        (map sidebar/get-expanded-path)
+                        (map scene-browser/get-expanded-path)
                         (remove #(get-in state %))
                         (mapcat (fn [path] [path true])))]
     {:assoc-in (cond-> [[:location] location

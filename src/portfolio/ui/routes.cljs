@@ -1,6 +1,11 @@
 (ns portfolio.ui.routes
   (:require [portfolio.ui.router :as router]))
 
+(defn get-url [location item]
+  (-> location
+      (assoc :query-params {:id (:id item)})
+      router/get-url))
+
 (defn get-scene-url [location scene]
   (-> location
       (assoc :query-params {:id (:id scene)})

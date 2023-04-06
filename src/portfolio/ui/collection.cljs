@@ -150,3 +150,23 @@
                 (:collapsed-icon-color collection))
               (:icon-color collection)
               "var(--highlight-color)")})
+
+(defn get-scene-illustration [state scene selected?]
+  {:icon (or (when selected?
+               (:selected-icon scene))
+             (:icon scene)
+             (when selected?
+               (get-in-parents state scene :default-scene-selected-icon))
+             (get-in-parents state scene :default-scene-icon)
+             :ui.icons/bookmark)
+   :color (or (when selected?
+                (:selected-icon-color scene))
+              (:icon-color scene)
+              (when-not selected?
+                "var(--browser-unit-icon-color)"))})
+
+(defn get-illustration [item state & [current?]]
+  (case (:kind item)
+    :folder (get-folder-illustration state item current?)
+    :package (get-package-illustration state item current?)
+    (get-scene-illustration state item current?)))

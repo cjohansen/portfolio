@@ -5,6 +5,7 @@
             [portfolio.ui.components.canvas :refer [CanvasView]]
             [portfolio.ui.layout :as layout]
             [portfolio.ui.routes :as routes]
+            [portfolio.ui.scene :as scene]
             [portfolio.ui.view :as view]))
 
 (def view-impl
@@ -103,10 +104,10 @@
            (ifn? (get (meta tool) `canvas/finalize-canvas)))))
 
 (defn prepare-layout [state location view {:keys [layout source]} scenes]
-  (let [scenes (for [scene scenes]
+  (let [scenes (for [scene (sort-by scene/sort-key scenes)]
                  (let [tools (filter canvas-tool? (:tools view))]
                    (cond->
-                       {:scene scene}
+                       {:scene (scene/prep-scene-fn state scene)}
                      (seq (:css-paths state))
                      (assoc :css-paths (:css-paths state))
 

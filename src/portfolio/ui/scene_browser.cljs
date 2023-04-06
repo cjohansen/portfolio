@@ -1,22 +1,10 @@
-(ns portfolio.ui.sidebar
+(ns portfolio.ui.scene-browser
   (:require [portfolio.ui.collection :as collection]
             [portfolio.ui.routes :as routes]
-            [portfolio.ui.scene :as scene]
-            [portfolio.ui.screen :as screen]))
+            [portfolio.ui.scene :as scene]))
 
 (defn get-expanded-path [collection]
   [:ui (:id collection) :expanded?])
-
-(defn sidebar? [{:keys [sidebar-status] :as state}]
-  (cond
-    (= sidebar-status :hidden)
-    false
-
-    (= sidebar-status :visible)
-    true
-
-    :else
-    (not (screen/small-screen? state))))
 
 (defn get-context [{:keys [collections]} path]
   (map (comp :kind collections) path))
@@ -57,31 +45,21 @@
   (let [selected? (= (:id scene) (routes/get-id location))]
     (cond-> {:title (:title scene)
              :kind :item
-             :illustration (scene/get-scene-illustration state scene selected?)
+             :illustration (collection/get-scene-illustration state scene selected?)
              :context (get-context state path)
              :url (routes/get-scene-url location scene)}
       selected? (assoc :selected? true))))
 
-(defn prepare-collections [state location parent-ids]
-  (for [item (concat
-              (->> (vals (:collections state))
-                   (filter (collection/by-parent-id (last parent-ids)))
-                   (sort-by collection/get-sort-key))
-              (->> (vals (:scenes state))
-                   (filter (collection/by-parent-id (last parent-ids)))
-                   (sort-by (juxt :line :idx))))]
-    (case (:kind item)
-      :package (prepare-package state location item parent-ids)
-      :folder (prepare-folder state location item parent-ids)
-      (prepare-scene state location item parent-ids))))
-
-(defn prepare-sidebar [state location]
-  (when (sidebar? state)
-    {:width 360
-     :slide? (boolean (:sidebar-status state))
-     :title (not-empty (:title state))
-     :actions [[:assoc-in [:sidebar-status]
-                (if (screen/small-screen? state)
-                  :auto
-                  :hidden)]]
-     :items (prepare-collections state location [])}))
+(defn prepare-collections [state location & [parent-ids]]
+  (let [parent-ids (or parent-ids [])]
+    (for [item (concat
+                (->> (vals (:collections state))
+                     (filter (collection/by-parent-id (last parent-ids)))
+                     (sort-by collection/get-sort-key))
+                (->> (vals (:scenes state))
+                     (filter (collection/by-parent-id (last parent-ids)))
+                     (sort-by scene/sort-key)))]
+      (case (:kind item)
+        :package (prepare-package state location item parent-ids)
+        :folder (prepare-folder state location item parent-ids)
+        (prepare-scene state location item parent-ids)))))

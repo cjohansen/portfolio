@@ -27,6 +27,7 @@ body {
 
   /* Theming */
 
+  --header-border: #111;
   --gallery-bg: var(--gallery);
   --gallery-fg: var(--shark);
   --code-bg: #f8f8f8;
@@ -37,8 +38,9 @@ body {
   --folder-border: var(--shark-dark);
   --folder-icon-color: var(--cadet-blue);
   --package-selected-fg: #ffffff;
-  --sidebar-unit-fg: #ffffff;
-  --sidebar-unit-icon-color: var(--silver-tree);
+  --browser-unit-fg: #ffffff;
+  --browser-unit-icon-color: var(--silver-tree);
+  --subdued-link: var(--cadet-blue);
 }
 
 body {
@@ -62,14 +64,11 @@ body {
 }
 
 /* Headings */
-.h1, .md h1 {font-size: 1.6rem; font-weight: 600;}
-.h2, .md h2 {font-size: 1.3rem; font-weight: 600;}
-.h3, .md h3 {font-size: 1.2rem; font-weight: 600;}
+.h1, .md h1 {font-size: 1.6rem; font-weight: 400;}
+.h2, .md h2 {font-size: 1.3rem; font-weight: 400;}
+.h3, .md h3 {font-size: 1.2rem; font-weight: 400;}
 .h4, .md h4 {font-size: 1.067rem; font-weight: 600;}
 
-.h1 a, .md h1 a,
-.h2 a, .md h2 a,
-.h3 a, .md h3 a,
 .h4 a, .md h4 a {font-weight: 400;}
 
 .text-s {font-size: 0.93rem;}

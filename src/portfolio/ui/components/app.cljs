@@ -14,14 +14,14 @@
                  :bottom 0}}
    (some-> data :sidebar Sidebar)
    [:div {:style {:display "flex"
-                  :background "var(--gallery-bg)"
-                  :color "var(--gallery-fg)"
                   :flex-direction "column"
                   :flex-grow 1
                   :position "relative"
                   :overflow "scroll"}}
     (some-> data :header Header)
     [:div {:style {:flex-grow 1
+                   :background "var(--gallery-bg)"
+                   :color "var(--gallery-fg)"
                    :display "flex"
                    :flex-direction "column"}}
      (when (< 1 (or (some-> data :tab-bar :tabs count) 0))

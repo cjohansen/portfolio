@@ -1,9 +1,9 @@
 (ns mirror.scenes
   (:require [gadget.inspector :as inspector]
-            [mirror.ui.components.sidebar-scenes]
+            [mirror.ui.components.browser-scenes]
             [portfolio.ui :as ui]))
 
-::mirror.ui.components.sidebar-scenes/keep
+::mirror.ui.components.browser-scenes/keep
 
 (def app
   (ui/start!
