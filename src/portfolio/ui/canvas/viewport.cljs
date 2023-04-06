@@ -101,6 +101,7 @@
   (addons/create-toolbar-menu-button
    {:id :canvas/viewport
     :title "Viewport"
+    :icon :portfolio.ui.icons/browsers
     :default-value (update (:viewport/defaults config) :viewport/padding get-padding)
     :options (->> (or (:viewport/options config)
                       [{:title "Auto"

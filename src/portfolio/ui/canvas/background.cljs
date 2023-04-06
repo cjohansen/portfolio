@@ -26,6 +26,7 @@
     (addons/create-toolbar-menu-button
      {:id :canvas/background
       :title "Background"
+      :icon :portfolio.ui.icons/palette
       :options (or (:background/options config) options)
       :default-value (->> (or (when-let [id (:background/default-option-id config)]
                                 (filter (comp #{id} :id) options))

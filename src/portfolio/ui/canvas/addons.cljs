@@ -47,14 +47,21 @@
                              [:fn/call (:on-select tool) value])]
                           (remove nil?)))}))}))
 
+(defn get-tool-title [state pane tool]
+  (or (when (ifn? (:prepare-title tool))
+        (let [f (:prepare-title tool)]
+          (f (:current-value (get-current-value tool state pane)))))
+      (:title tool)))
+
 (defn prepare-toolbar-menu-button [tool state pane]
   (let [expand-path (get-expand-path (:pane-id pane))
         expanded? (= (:id tool) (get-in state expand-path))]
     (with-meta
-      {:text (or (when (ifn? (:prepare-title tool))
-                   (let [f (:prepare-title tool)]
-                     (f (:current-value (get-current-value tool state pane)))))
-                 (:title tool))
+      {:text (when-not (:icon tool)
+               (get-tool-title state pane tool))
+       :icon (:icon tool)
+       :title (when (:icon tool)
+                (get-tool-title state pane tool))
        :actions (if expanded?
                   [[:dissoc-in expand-path]]
                   [[:assoc-in expand-path (:id tool)]])
