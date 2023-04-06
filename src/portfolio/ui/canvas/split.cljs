@@ -1,6 +1,6 @@
 (ns portfolio.ui.canvas.split
   (:require [portfolio.ui.canvas.protocols :as protocols]
-            [portfolio.ui.components.canvas-toolbar-buttons :refer [Button]]
+            [portfolio.ui.components.canvas-toolbar-buttons :refer [Button ButtonGroup]]
             [portfolio.ui.layout :as layout]))
 
 (def complement-dir
@@ -77,6 +77,19 @@
     {:id :canvas/split-vertically
      :title "Split vertically"}
     vertical-impl))
+
+(defn prepare-button-group [tool state opt]
+  (with-meta
+    {:buttons (->> (:buttons tool)
+                   (keep #(protocols/prepare-toolbar-button % state opt)))}
+    {`protocols/render-toolbar-button #'ButtonGroup}))
+
+(defn create-split-tool [config]
+  (with-meta
+    {:id :canvas/split
+     :buttons [(create-split-horizontally-tool config)
+               (create-split-vertically-tool config)]}
+    {`protocols/prepare-toolbar-button #'prepare-button-group}))
 
 (defn close-pane [layout path]
   (if (= 1 (count path))

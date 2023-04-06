@@ -29,8 +29,7 @@
                                          (canvas-vp/create-viewport-tool config)
                                          (canvas-grid/create-grid-tool config)
                                          (canvas-zoom/create-zoom-tool config)
-                                         (split/create-split-horizontally-tool config)
-                                         (split/create-split-vertically-tool config)
+                                         (split/create-split-tool config)
                                          (split/create-close-tool config)])
                                     extra-canvas-tools)})])))
 
