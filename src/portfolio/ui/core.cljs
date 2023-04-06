@@ -1,9 +1,10 @@
 (ns portfolio.ui.core
-  (:require [portfolio.ui.collection :as collection]
+  (:require [clojure.walk :as walk]
+            [portfolio.ui.collection :as collection]
             [portfolio.ui.routes :as routes]
+            [portfolio.ui.scene-browser :as scene-browser]
             [portfolio.ui.screen :as screen]
-            [portfolio.ui.view :as view]
-            [portfolio.ui.scene-browser :as scene-browser]))
+            [portfolio.ui.view :as view]))
 
 (defn sidebar? [{:keys [sidebar-status] :as state}]
   (cond
@@ -49,7 +50,12 @@
                       :actions [[:assoc-in [:header-menu-expanded?]
                                  (not (:header-menu-expanded? state))]]}
        :menu (when (:header-menu-expanded? state)
-               {:items (scene-browser/prepare-collections state location)})})))
+               {:items (->> (scene-browser/prepare-collections state location)
+                            (walk/postwalk
+                             (fn [x]
+                               (if (#{:item :package} (:kind x))
+                                 (update x :actions conj [:assoc-in [:header-menu-expanded?] false])
+                                 x))))})})))
 
 (defn get-current-view [state _location]
   ;; TODO: Eventually support more views
