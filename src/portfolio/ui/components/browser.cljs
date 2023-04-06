@@ -78,7 +78,7 @@
      title]]
    (render-items items)])
 
-(d/defcomponent Unit [{:keys [title url selected? illustration context]}]
+(d/defcomponent Unit [{:keys [title url actions selected? illustration context]}]
   (let [left-padding (get-context-offset context :unit)]
     [:li.text-s {:style {:background (when selected? "var(--highlight-bg)")
                          :font-weight (when selected? 600)
@@ -97,6 +97,7 @@
        [:strong title]
        [:a {:style {:display "block"
                     :color "var(--browser-unit-fg)"}
+            :on-click actions
             :href url} title])]))
 
 (defn render-menu [props]
