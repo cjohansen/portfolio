@@ -192,7 +192,7 @@
 
 (def available-actions
   #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
-    :remove-scene-param :set-scene-param :fn/call})
+    :remove-scene-param :set-scene-param :fn/call :event/prevent-default})
 
 (defn actions? [x]
   (and (sequential? x)
@@ -221,7 +221,12 @@
    (fn [x]
      (if (actions? x)
        (fn [e]
-         (doseq [action x]
+         (when (->> (tree-seq coll? identity x)
+                    (filter #{[:event/prevent-default]})
+                    seq)
+           (.preventDefault e)
+           (.stopPropagation e))
+         (doseq [action (remove #{[:event/prevent-default]} x)]
            (execute-action!
             app
             (walk/prewalk
