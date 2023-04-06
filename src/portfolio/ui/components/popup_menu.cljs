@@ -1,15 +1,24 @@
 (ns portfolio.ui.components.popup-menu
   (:require [dumdom.core :as d]))
 
+(defn get-scroll-left [el]
+  (loop [el el
+         scroll 0]
+    (if el
+      (recur (.-parentNode el) (+ scroll (or (.-scrollLeft el) 0)))
+      scroll)))
+
 (d/defcomponent PopupMenu
   :on-render (fn [el _]
-               (let [left (.. el getBoundingClientRect -left)
+               (let [left (- (.. el -parentNode -offsetLeft) (get-scroll-left el))
                      width (.. el -firstChild getBoundingClientRect -width)
                      button-width (.. el -parentNode getBoundingClientRect -width)]
-                 (when (< (- left (/ width 2)) 0)
-                   (set! (.. el -style -left) "0")
-                   (set! (.. el -firstChild -style -transform) nil)
-                   (set! (.. el -firstChild -firstChild -style -left) (str (/ button-width 2) "px")))))
+                 (cond
+                   (< (- left (/ width 2)) 0)
+                   (do
+                     (set! (.. el -style -left) "0")
+                     (set! (.. el -firstChild -style -transform) nil)
+                     (set! (.. el -firstChild -firstChild -style -left) (str (/ button-width 2) "px"))))))
   [{:keys [options]}]
   ;; First, position absolutely so that "50%" is taken as 50% of the containing
   ;; element
@@ -18,7 +27,7 @@
    ;; Then position fixed so element is not clipped by a container's overflow:
    ;; hidden
    [:div {:style
-          {:position "fixed"
+          {:position "absolute"
            :margin-top 40
            :background "#fff"
            :box-shadow "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"

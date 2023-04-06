@@ -205,9 +205,7 @@
   (if (#{:rows :cols} (:kind data))
     [:div {:style {:flex-grow 1
                    :display "flex"
-                   :flex-direction (direction (:kind data))
-                   :justify-content "space-evenly"
-                   :overflow "hidden"}}
+                   :flex-direction (direction (:kind data))}}
      (->> (map render-layout (:xs data))
           (interpose [:div {:style {(if (= :rows (:kind data))
                                       :border-top
@@ -216,8 +214,7 @@
     (let [{:keys [toolbar canvases title description]} data]
       [:div {:style {:flex-grow 1
                      :display "flex"
-                     :flex-direction "column"
-                     :overflow "hidden"}}
+                     :flex-direction "column"}}
        (some-> toolbar Toolbar)
        [:div {:style {:overflow "scroll"
                       :flex-grow "1"}}
@@ -234,12 +231,9 @@
 (d/defcomponent CanvasView
   :keyfn :id
   [data]
-  [:div {:style {:background "var(--gallery-bg)"
-                 :color "var(--gallery-fg)"
-                 :flex-grow 1
+  [:div {:style {:flex-grow 1
                  :display "flex"
-                 :flex-direction "column"
-                 :overflow "hidden"}}
+                 :flex-direction "column"}}
    (when-let [problems (:problems data)]
      [:div {:style {:overflow "scroll"}}
       (map Problem problems)])
