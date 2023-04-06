@@ -47,6 +47,8 @@
              :kind :item
              :illustration (collection/get-scene-illustration state scene selected?)
              :context (get-context state path)
+             :actions [[:event/prevent-default]
+                       [:go-to-location (routes/get-scene-location location scene)]]
              :url (routes/get-scene-url location scene)}
       selected? (assoc :selected? true))))
 

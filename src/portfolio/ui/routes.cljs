@@ -6,10 +6,11 @@
       (assoc :query-params {:id (:id item)})
       router/get-url))
 
+(defn get-scene-location [location scene]
+  (assoc location :query-params {:id (:id scene)}))
+
 (defn get-scene-url [location scene]
-  (-> location
-      (assoc :query-params {:id (:id scene)})
-      router/get-url))
+  (router/get-url (get-scene-location location scene)))
 
 (defn get-addon-url [location addon]
   (-> location
