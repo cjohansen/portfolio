@@ -5,6 +5,7 @@
             [portfolio.ui.canvas :as canvas]
             [portfolio.ui.canvas.background :as canvas-bg]
             [portfolio.ui.canvas.grid :as canvas-grid]
+            [portfolio.ui.canvas.selection :as selection]
             [portfolio.ui.canvas.split :as split]
             [portfolio.ui.canvas.viewport :as canvas-vp]
             [portfolio.ui.canvas.zoom :as canvas-zoom]
@@ -30,6 +31,7 @@
                                          (canvas-grid/create-grid-tool config)
                                          (canvas-zoom/create-zoom-tool config)
                                          (split/create-split-tool config)
+                                         (selection/create-selection-tool config)
                                          (split/create-close-tool config)])
                                     extra-canvas-tools)})])))
 
