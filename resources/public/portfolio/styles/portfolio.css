@@ -42,7 +42,7 @@ body {
   --browser-unit-icon-color: var(--silver-tree);
   --subdued-link: var(--cadet-blue);
   --toolbar-button: #333;
-  --toolbar-button-active: #2e2e2e;
+  --toolbar-button-active: #181818;
 }
 
 body {
@@ -69,9 +69,7 @@ body {
 .h1, .md h1 {font-size: 1.6rem; font-weight: 400;}
 .h2, .md h2 {font-size: 1.3rem; font-weight: 400;}
 .h3, .md h3 {font-size: 1.2rem; font-weight: 400;}
-.h4, .md h4 {font-size: 1.067rem; font-weight: 600;}
-
-.h4 a, .md h4 a {font-weight: 400;}
+.h4, .md h4 {font-size: 1.067rem; font-weight: 400;}
 
 .text-s {font-size: 0.93rem;}
 
