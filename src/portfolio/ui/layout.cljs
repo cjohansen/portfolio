@@ -36,7 +36,7 @@
           (init-layout state layout [:state-layout]))
         (when-let [view (first (filter :canvas/layout (:views state)))]
           (init-layout state (:canvas/layout view) [:view (:id view)]))
-        (init-layout state {} [:layout/default]))))
+        (init-layout state {} [::default]))))
 
 (defn get-current-layout [state]
   (get-in state (get-in state (get-current-layout-path))))

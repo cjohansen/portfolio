@@ -11,12 +11,11 @@
 (defn get-custom-tool-source-title [[source]]
   (case source
     :scene "Scene config"
-    :namespace "NS config"
     :collection "Collection config"
     :state-layout "Global config"
     :view "Canvas config"
-    :portfolio.views.canvas/gallery-default "Default config (gallery)"
-    :layout/default "Default config"))
+    :portfolio.ui.layout/gallery-default "Default config (gallery)"
+    :portfolio.ui.layout/default "Default config"))
 
 (defn get-current-value [tool state {:keys [pane-id pane-options]}]
   (let [selected-value (canvas/get-tool-value tool state pane-id)
