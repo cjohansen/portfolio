@@ -147,7 +147,7 @@
                      (routes/get-id location)
                      :single-scene)))))
 
-(defn prepare-canvas-view [view state location]
+(defn prepare-canvas-view [state location view]
   (let [layout (layout/get-current-layout state)
         {:keys [scenes kind target]} (:current-selection state)]
     (with-meta
@@ -162,8 +162,20 @@
          :description (md/md->html (:docs target))))
       view-impl)))
 
+(defn view-prepper? [tool]
+  (or (satisfies? canvas/ICanvasToolMiddleware tool)
+      (ifn? (get (meta tool) `canvas/prepare-view))))
+
+(defn prepare-view [view state location]
+  (let [f (->> (:tools view)
+               (filter view-prepper?)
+               (reduce (fn [f tool]
+                         (partial canvas/prepare-view tool f state location view))
+                       prepare-canvas-view))]
+    (f state location view)))
+
 (def data-impl
-  {`view/prepare-data #'prepare-canvas-view})
+  {`view/prepare-data #'prepare-view})
 
 (defn describe-missing-tool-id [tool]
   {:title "Badly configured canvas tool"
