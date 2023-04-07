@@ -5,7 +5,7 @@
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.code :refer [Code]]
             [portfolio.ui.components.markdown :refer [Markdown]]
-            [portfolio.ui.components.browser :as browser]
+            [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
             [portfolio.ui.components.triangle :refer [TriangleButton]]
@@ -229,8 +229,8 @@
                         (when (:items browser)
                           {:background "var(--bg)"
                            :color "var(--fg)"}))}
-    (when-let [items (:items browser)]
-      (browser/render-items items))
+    (when (:items browser)
+      (Browser browser))
     (when (or title description)
       [:div {:style {:margin 20}}
        (when title

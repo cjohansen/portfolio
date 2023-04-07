@@ -1,5 +1,6 @@
 (ns portfolio.ui.components.browser
   (:require [dumdom.core :as d]
+            [portfolio.ui.components.elastic-container :as ec]
             [portfolio.ui.icons :as icons]))
 
 (declare render-menu)
@@ -105,3 +106,9 @@
     :folder (Folder props)
     :package (Package props)
     (Unit props)))
+
+(d/defcomponent Browser
+  :will-enter (ec/enter)
+  :will-leave (ec/leave)
+  [{:keys [items]}]
+  (render-items items))

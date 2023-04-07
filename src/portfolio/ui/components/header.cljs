@@ -1,15 +1,8 @@
 (ns portfolio.ui.components.header
   (:require [dumdom.core :as d]
-            [portfolio.ui.components.browser :as browser]
-            [portfolio.ui.components.elastic-container :as ec]
+            [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.icons :as icons]))
-
-(d/defcomponent HeaderMenu
-  :will-enter (ec/enter)
-  :will-leave (ec/leave)
-  [{:keys [items]}]
-  (browser/render-items items))
 
 (d/defcomponent Header [{:keys [menu-bar left-action menu]}]
   [:div
@@ -31,4 +24,4 @@
         :on-click (:actions left-action)}))
     (MenuBar menu-bar)]
    (when menu
-     (HeaderMenu menu))])
+     (Browser menu))])
