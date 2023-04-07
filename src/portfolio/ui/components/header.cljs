@@ -2,14 +2,8 @@
   (:require [dumdom.core :as d]
             [portfolio.ui.components.browser :as browser]
             [portfolio.ui.components.elastic-container :as ec]
+            [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.icons :as icons]))
-
-(defn render-action [action]
-  (when (:icon action)
-    (icons/render-icon
-     (:icon action)
-     {:size 16
-      :on-click (:actions action)})))
 
 (d/defcomponent HeaderMenu
   :will-enter (ec/enter)
@@ -17,7 +11,7 @@
   [{:keys [items]}]
   (browser/render-items items))
 
-(d/defcomponent Header [{:keys [illustration title left-action right-action menu]}]
+(d/defcomponent Header [{:keys [menu-bar left-action menu]}]
   [:div
    [:div {:style {:display "flex"
                   :gap 20
@@ -30,25 +24,11 @@
                   :border-bottom "1px solid var(--header-border)"}
           :mounted-style {:height 56}
           :leaving-style {:height 0}}
-    (render-action left-action)
-    [:div {:style {:display "flex" :gap 10}}
-     (when illustration
-       (icons/render-icon
-        (:icon illustration)
-        {:size 24
-         :color (:color illustration)}))
-     [:h1.h3 {:style {:display "flex"
-                      :align-items "center"
-                      :gap 8}}
-      (->> (for [{:keys [text url]} title]
-             (if url
-               [:a {:style {:color "var(--subdued-link)"}
-                    :href url} text]
-               text))
-           (interpose
-            (icons/render-icon
-             :portfolio.ui.icons/caret-right
-             {:size 16})))]]
-    (render-action right-action)]
+    (when (:icon left-action)
+      (icons/render-icon
+       (:icon left-action)
+       {:size 16
+        :on-click (:actions left-action)}))
+    (MenuBar menu-bar)]
    (when menu
      (HeaderMenu menu))])

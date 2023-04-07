@@ -17,6 +17,20 @@
     :else
     (not (screen/small-screen? state))))
 
+(defn prepare-scene-browser [state location & [{:keys [select-actions]}]]
+  (->> {:path-ctx [:ui]
+        :location location
+        :select-actions (concat [[:event/prevent-default]
+                                 [::navigate-to ::scene-browser/target-id]]
+                                select-actions)
+        :current-id (routes/get-id location)}
+       (scene-browser/prepare-browser state)
+       (walk/postwalk
+        (fn [x]
+          (if (and (vector? x) (= ::navigate-to (first x)))
+            [:go-to-location (routes/get-location location {:id (second x)})]
+            x)))))
+
 (defn prepare-sidebar [state location]
   (when (sidebar? state)
     {:width 360
@@ -26,36 +40,29 @@
                 (if (screen/small-screen? state)
                   :auto
                   :hidden)]]
-     :items (scene-browser/prepare-collections state location)}))
+     :items (prepare-scene-browser state location)}))
 
 (defn prepare-header [state location]
   (when-not (sidebar? state)
-    (let [current (-> state :current-selection :target)]
-      {:illustration (some-> current (collection/get-illustration state))
-       :title (if (screen/small-screen? state)
-                [{:text (:title current)}]
-                (for [item (-> state :current-selection :path)]
-                  (cond-> {:text (:title item)}
-                    (not= current item)
-                    (assoc :url (routes/get-url location item)))))
-       :left-action (when-not (screen/small-screen? state)
-                      {:icon :portfolio.ui.icons/caret-double-right
-                       :actions [[:assoc-in [:sidebar-status]
-                                  (if (screen/small-screen? state)
-                                    :visible
-                                    :auto)]]})
-       :right-action {:icon (if (:header-menu-expanded? state)
-                              :portfolio.ui.icons/caret-up
-                              :portfolio.ui.icons/caret-down)
-                      :actions [[:assoc-in [:header-menu-expanded?]
-                                 (not (:header-menu-expanded? state))]]}
-       :menu (when (:header-menu-expanded? state)
-               {:items (->> (scene-browser/prepare-collections state location)
-                            (walk/postwalk
-                             (fn [x]
-                               (if (#{:item :package} (:kind x))
-                                 (update x :actions conj [:assoc-in [:header-menu-expanded?] false])
-                                 x))))})})))
+    {:left-action
+     (when-not (screen/small-screen? state)
+       {:icon :portfolio.ui.icons/caret-double-right
+        :actions [[:assoc-in [:sidebar-status]
+                   (if (screen/small-screen? state)
+                     :visible
+                     :auto)]]})
+
+     :menu-bar (collection/prepare-selection-menu-bar
+                state
+                (:current-selection state)
+                {:expand-path [:header-menu-expanded?]
+                 :location location
+                 :tight? (screen/small-screen? state)})
+
+     :menu
+     (when (:header-menu-expanded? state)
+       {:items (->> {:select-actions [[:assoc-in [:header-menu-expanded?] false]]}
+                    (prepare-scene-browser state location))})}))
 
 (defn get-current-view [state _location]
   ;; TODO: Eventually support more views

@@ -1,5 +1,6 @@
 (ns portfolio.ui.collection
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [portfolio.ui.routes :as routes]))
 
 (defn by-parent-id [parent-id]
   #(= parent-id (:collection %)))
@@ -170,3 +171,17 @@
     :folder (get-folder-illustration state item current?)
     :package (get-package-illustration state item current?)
     (get-scene-illustration state item current?)))
+
+(defn prepare-selection-menu-bar [state selection {:keys [expand-path location tight?]}]
+  {:title (if tight?
+            [{:text (:title (:target selection))}]
+            (for [item (:path selection)]
+              (cond-> {:text (:title item)}
+                (and (not= (:target selection) item) location)
+                (assoc :url (routes/get-url location item)))))
+
+   :action {:icon (if (get-in state expand-path)
+                    :portfolio.ui.icons/caret-up
+                    :portfolio.ui.icons/caret-down)
+            :actions [[:assoc-in expand-path (not (get-in state expand-path))]]}
+   :illustration (some-> (:target selection) (get-illustration state))})
