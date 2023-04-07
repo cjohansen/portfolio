@@ -38,5 +38,16 @@
           (init-layout state (:canvas/layout view) [:view (:id view)]))
         (init-layout state {} [::default]))))
 
+(defn get-layout [state path]
+  (get-in state path))
+
 (defn get-current-layout [state]
   (get-in state (get-in state (get-current-layout-path))))
+
+(defn get-panes [layout]
+  (if (#{:rows :cols} (:kind layout))
+    (mapcat get-panes (:xs layout))
+    [layout]))
+
+(defn get-layout-panes [{:keys [layout]}]
+  (get-panes layout))

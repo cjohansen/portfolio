@@ -3,6 +3,7 @@
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]
+            [portfolio.ui.layout :as layout]
             [portfolio.ui.scene-browser :as scene-browser]))
 
 (defn get-ctx [state view ctx id]
@@ -15,15 +16,16 @@
     {:id :canvas/selection}
     {`canvas/prepare-toolbar-button
      (fn [_tool state options]
-       (let [path [:panes (:pane-id options) :curate-selection?]
-             curating? (get-in state path)]
-         (with-meta
-           {:title "Select pane scene(s)"
-            :icon :portfolio.ui.icons/list-plus
-            :align :right
-            :selected? curating?
-            :actions [[:assoc-in path (not curating?)]]}
-           {`canvas/render-toolbar-button #'MenuButton})))
+       (when (< 1 (count (layout/get-layout-panes (layout/get-current-layout state))))
+         (let [path [:panes (:pane-id options) :curate-selection?]
+               curating? (get-in state path)]
+           (with-meta
+             {:title "Select pane scene(s)"
+              :icon :portfolio.ui.icons/list-plus
+              :align :right
+              :selected? curating?
+              :actions [[:assoc-in path (not curating?)]]}
+             {`canvas/render-toolbar-button #'MenuButton}))))
      `canvas/prepare-pane
      (fn [_ f state view ctx]
        (let [expand-path [:panes (:pane-id ctx) :menu-expanded?]
