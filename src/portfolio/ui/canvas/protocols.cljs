@@ -17,6 +17,10 @@
   :extend-via-metadata true
   (get-tool-value [self state canvas-id]))
 
+(defprotocol ICanvasToolPaneMiddleware
+  :extend-via-metadata true
+  (prepare-pane [self f state view ctx]))
+
 (defprotocol ICanvasPanelAddon
   :extend-via-metadata true
   (prepare-panel-content [panel state scene]))

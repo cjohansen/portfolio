@@ -74,57 +74,75 @@
   (or (satisfies? canvas/ICanvasToolbarButtonData tool)
       (ifn? (get (meta tool) `canvas/prepare-toolbar-button))))
 
-(defn prepare-layout-xs [state root-layout source view scenes path opt]
-  (if (#{:rows :cols} (:kind opt))
-    {:kind (:kind opt)
-     :xs (for [[i x] (map vector (range) (:xs opt))]
-           (prepare-layout-xs state root-layout source view scenes (conj path i) x))}
-    (let [id (::layout/pane-id opt)
-          options (merge (get-tool-defaults (:tools view))
-                         opt
-                         (get-tool-values state id (:tools view)))]
-      (when (seq scenes)
-        (let [buttons (->> (:tools view)
-                           (filter toolbar-button?)
-                           (keep #(canvas/prepare-toolbar-button
-                                   % state {:pane-id id
-                                            :pane-options options
-                                            :pane-path path
-                                            :layout-path [:layout source]
-                                            :layout root-layout
-                                            :config-source source})))]
-          (cond-> {:kind :pane
-                   :canvases (map (partial prepare-canvas options) scenes)}
-            (seq buttons)
-            (assoc :toolbar {:buttons buttons})))))))
+(defn prepare-pane [state view ctx]
+  (when-let [scenes (seq (:scenes ctx))]
+    (let [buttons (->> (:tools view)
+                       (filter toolbar-button?)
+                       (keep #(canvas/prepare-toolbar-button
+                               % state (dissoc ctx :scenes))))]
+      (cond-> {:kind :pane
+               :canvases (map (partial prepare-canvas (:pane-options ctx)) scenes)}
+        (seq buttons)
+        (assoc :toolbar {:buttons buttons})))))
 
 (defn canvas-tool? [tool]
   (or (satisfies? canvas/ICanvasTool tool)
       (and (ifn? (get (meta tool) `canvas/prepare-canvas))
            (ifn? (get (meta tool) `canvas/finalize-canvas)))))
 
+(defn pane-prepper? [tool]
+  (or (satisfies? canvas/ICanvasToolPaneMiddleware tool)
+      (ifn? (get (meta tool) `canvas/prepare-pane))))
+
+(defn prepare-scenes [state location view layout scenes]
+  (for [scene (sort-by scene/sort-key scenes)]
+    (let [tools (filter canvas-tool? (:tools view))]
+      (cond->
+          {:scene (scene/prep-scene-fn state scene)}
+        (seq (:css-paths state))
+        (assoc :css-paths (:css-paths state))
+
+        (:canvas-path state)
+        (assoc :canvas-path (:canvas-path state))
+
+        (seq tools)
+        (assoc :tools tools)
+
+        (:docs scene)
+        (assoc :title (:title scene)
+               :description (md/md->html (:docs scene)))
+
+        (:gallery? layout)
+        (assoc :title (:title scene)
+               :url (routes/get-scene-url location scene))))))
+
+(defn prepare-layout-pane [state view ctx]
+  (let [f (->> (:tools view)
+               (filter pane-prepper?)
+               (reduce (fn [f tool]
+                         (partial canvas/prepare-pane tool f))
+                       prepare-pane))]
+    (f state view ctx)))
+
+(defn prepare-layout-xs [state location root-layout source view scenes path opt]
+  (if (#{:rows :cols} (:kind opt))
+    {:kind (:kind opt)
+     :xs (for [[i x] (map vector (range) (:xs opt))]
+           (prepare-layout-xs state location root-layout source view scenes (conj path i) x))}
+    (->> {:pane-id (::layout/pane-id opt)
+          :pane-options (merge (get-tool-defaults (:tools view))
+                               opt
+                               (get-tool-values state (::layout/pane-id opt) (:tools view)))
+          :pane-path path
+          :layout-path [:layout source]
+          :layout root-layout
+          :config-source source
+          :scenes scenes}
+         (prepare-layout-pane state view))))
+
 (defn prepare-layout [state location view {:keys [layout source]} scenes]
-  (let [scenes (for [scene (sort-by scene/sort-key scenes)]
-                 (let [tools (filter canvas-tool? (:tools view))]
-                   (cond->
-                       {:scene (scene/prep-scene-fn state scene)}
-                     (seq (:css-paths state))
-                     (assoc :css-paths (:css-paths state))
-
-                     (:canvas-path state)
-                     (assoc :canvas-path (:canvas-path state))
-
-                     (seq tools)
-                     (assoc :tools tools)
-
-                     (:docs scene)
-                     (assoc :title (:title scene)
-                            :description (md/md->html (:docs scene)))
-
-                     (:gallery? layout)
-                     (assoc :title (:title scene)
-                            :url (routes/get-scene-url location scene)))))]
-    (-> (prepare-layout-xs state layout source view scenes [] layout)
+  (let [scenes (prepare-scenes state location view layout scenes)]
+    (-> (prepare-layout-xs state location layout source view scenes [] layout)
         (assoc :id (if (:gallery? layout)
                      (routes/get-id location)
                      :single-scene)))))
