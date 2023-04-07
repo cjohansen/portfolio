@@ -5,6 +5,8 @@
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.code :refer [Code]]
             [portfolio.ui.components.markdown :refer [Markdown]]
+            [portfolio.ui.components.browser :as browser]
+            [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
             [portfolio.ui.components.triangle :refer [TriangleButton]]
             [portfolio.ui.view :as view]))
@@ -209,6 +211,37 @@
   {:rows "column"
    :cols "row"})
 
+(d/defcomponent WrappedMenuBar [menu-bar]
+  [:div
+   {:style {:background "var(--bg)"
+            :color "var(--fg)"
+            :padding "10px 20px"}}
+   (MenuBar (assoc menu-bar :size :small))])
+
+(d/defcomponent Pane [{:keys [toolbar canvases title description menu-bar browser]}]
+  [:div {:style {:flex-grow 1
+                 :display "flex"
+                 :flex-direction "column"}}
+   (some-> toolbar Toolbar)
+   (some-> menu-bar WrappedMenuBar)
+   [:div {:style (merge {:flex-grow "1"
+                         :overflow "scroll"}
+                        (when (:items browser)
+                          {:background "var(--bg)"
+                           :color "var(--fg)"}))}
+    (when-let [items (:items browser)]
+      (browser/render-items items))
+    (when (or title description)
+      [:div {:style {:margin 20}}
+       (when title
+         [:h1.h1 title])
+       (when description
+         (Markdown {:markdown description}))])
+    (when (seq canvases)
+      (->> canvases
+           (interpose {:kind :separator})
+           (mapcat render-canvas)))]])
+
 (defn render-layout [data]
   (if (#{:rows :cols} (:kind data))
     [:div {:style {:flex-grow 1
@@ -219,22 +252,7 @@
                                       :border-top
                                       :border-left)
                                     "3px solid var(--hard-separator)"}}]))]
-    (let [{:keys [toolbar canvases title description]} data]
-      [:div {:style {:flex-grow 1
-                     :display "flex"
-                     :flex-direction "column"}}
-       (some-> toolbar Toolbar)
-       [:div {:style {:overflow "scroll"
-                      :flex-grow "1"}}
-        (when (or title description)
-          [:div {:style {:margin 20}}
-           (when title
-             [:h1.h1 title])
-           (when description
-             (Markdown {:markdown description}))])
-        (->> canvases
-             (interpose {:kind :separator})
-             (mapcat render-canvas))]])))
+    (Pane data)))
 
 (d/defcomponent CanvasView
   :keyfn :id
