@@ -12,6 +12,7 @@
             [portfolio.ui.icons.cube :as cube]
             [portfolio.ui.icons.device-mobile :as device-mobile]
             [portfolio.ui.icons.devices :as devices]
+            [portfolio.ui.icons.file-doc :as file-doc]
             [portfolio.ui.icons.folder :as folder]
             [portfolio.ui.icons.folder-open :as folder-open]
             [portfolio.ui.icons.grid-four :as grid-four]
@@ -46,6 +47,7 @@
      ::cube cube/icon
      ::device-mobile device-mobile/icon
      ::devices devices/icon
+     ::file-doc file-doc/icon
      ::folder folder/icon
      ::folder-open folder-open/icon
      ::hamburger hamburger/icon
