@@ -11,12 +11,18 @@
     id (assoc :scenes (->> (collection/get-selected-scenes state id)
                            (prepare-scenes state nil view nil)))))
 
+(defn get-expand-path [id]
+  [:panes id :menu-expanded?])
+
+(defn can-curate? [state]
+  (< 1 (count (layout/get-layout-panes (layout/get-current-layout state)))))
+
 (defn create-selection-tool [_config]
   (with-meta
     {:id :canvas/selection}
     {`canvas/prepare-toolbar-button
      (fn [_tool state options]
-       (when (< 1 (count (layout/get-layout-panes (layout/get-current-layout state))))
+       (when (can-curate? state)
          (let [path [:panes (:pane-id options) :curate-selection?]
                curating? (get-in state path)]
            (with-meta
@@ -24,15 +30,20 @@
               :icon :portfolio.ui.icons/list-plus
               :align :right
               :selected? curating?
-              :actions [[:assoc-in path (not curating?)]]}
+              :actions (cond-> [[:assoc-in path (not curating?)]]
+                         (not (contains? (get-in state [:panes (:pane-id options)]) :curate-selection?))
+                         (conj [:assoc-in (get-expand-path (:pane-id options)) true]))}
              {`canvas/render-toolbar-button #'MenuButton}))))
+
      `canvas/prepare-pane
      (fn [_ f state view ctx]
-       (let [expand-path [:panes (:pane-id ctx) :menu-expanded?]
-             curating? (get-in state [:panes (:pane-id ctx) :curate-selection?])
+       (let [expand-path (get-expand-path (:pane-id ctx))
+             curating? (when (can-curate? state)
+                         (get-in state [:panes (:pane-id ctx) :curate-selection?]))
              expanded? (and curating? (get-in state expand-path))
-             id (when curating? (get-in state [:panes (:pane-id ctx) :selection-id]))]
-         (cond-> (f state view (get-ctx state view ctx id))
+             id (when curating? (get-in state [:panes (:pane-id ctx) :selection-id]))
+             ctx (if curating? (get-ctx state view ctx id) ctx)]
+         (cond-> (f state view ctx)
            curating?
            (assoc :menu-bar (collection/prepare-selection-menu-bar
                              state
