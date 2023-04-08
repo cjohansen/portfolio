@@ -18,12 +18,15 @@
             [portfolio.ui.icons.git-diff :as git-diff]
             [portfolio.ui.icons.grid-four :as grid-four]
             [portfolio.ui.icons.hamburger :as hamburger]
+            [portfolio.ui.icons.hourglass-high :as hourglass-high]
             [portfolio.ui.icons.list-plus :as list-plus]
+            [portfolio.ui.icons.magnifying-glass :as magnifying-glass]
             [portfolio.ui.icons.magnifying-glass-minus :as magnifying-glass-minus]
             [portfolio.ui.icons.magnifying-glass-plus :as magnifying-glass-plus]
             [portfolio.ui.icons.package-icon :as package]
             [portfolio.ui.icons.palette :as palette]
-            [portfolio.ui.icons.rows :as rows]))
+            [portfolio.ui.icons.rows :as rows]
+            [portfolio.ui.icons.x :as x]))
 
 (defn render-icon [icon & [{:keys [size color style on-click]}]]
   [:span {:on-click on-click
@@ -52,11 +55,14 @@
      ::folder folder/icon
      ::folder-open folder-open/icon
      ::hamburger hamburger/icon
+     ::hourglass-high hourglass-high/icon
      ::git-diff git-diff/icon
      ::grid-four grid-four/icon
      ::list-plus list-plus/icon
+     ::magnifying-glass magnifying-glass/icon
      ::magnifying-glass-plus magnifying-glass-plus/icon
      ::magnifying-glass-minus magnifying-glass-minus/icon
      ::package package/icon
      ::palette palette/icon
-     ::rows rows/icon)])
+     ::rows rows/icon
+     ::x x/icon)])

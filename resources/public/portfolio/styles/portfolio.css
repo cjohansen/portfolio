@@ -14,6 +14,7 @@ body {
   font-size: 15px;
   --shark: #212227;
   --shark-dark: #26262a;
+  --cod-gray: #181818;
   --alto: #d5d5d5;
   --gallery: #eee;
   --white: #fff;
@@ -42,7 +43,13 @@ body {
   --browser-unit-icon-color: var(--silver-tree);
   --subdued-link: var(--cadet-blue);
   --toolbar-button: #333;
-  --toolbar-button-active: #181818;
+  --toolbar-button-active: var(--cod-gray);
+
+  --input-inactive-bg: #333;
+  --input-inactive-fg: #999;
+  --input-active-fg: var(--alto);
+  --input-focus-border: var(--alto);
+  --auto-complete-active-bg: var(--cod-gray);
 }
 
 body {
@@ -138,6 +145,11 @@ a.inverted:visited,
   cursor: pointer;
 }
 
+input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .input {
   padding: 6px 10px;
   transition: box-shadow 200ms ease-out 0s, opacity 200ms ease-out 0s;
@@ -190,4 +202,30 @@ a.inverted:visited,
 
 .dragging {
   cursor: grabbing;
+}
+
+.auto-completer {
+  color: var(--input-inactive-fg);
+}
+
+.auto-completer input {
+  background: var(--input-inactive-bg);
+  color: var(--input-inactive-fg);
+  border: 1px solid var(--input-inactive-bg);
+}
+
+.auto-completer:has(input:focus),
+.auto-completer.active {
+  color: var(--input-active-fg);
+}
+
+.auto-completer input:focus,
+.auto-completer.active input {
+  color: var(--input-active-fg);
+  outline: none;
+  border: 1px solid var(--input-focus-border);
+}
+
+.auto-completer .suggestions li:hover {
+  text-decoration: underline;
 }
