@@ -130,16 +130,19 @@
                (on-mounted (get-iframe el) #(render-scene el data)))
   [data]
   [:div {:style {:background "#fff"
+                 :display "flex"
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe.canvas
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
      :style {:border "none"
+             :flex-grow "1"
              :width (or (when (number? (:viewport/width (:opt data)))
                           (:viewport/width (:opt data)))
                         "100%")
              :height (or (when (number? (:viewport/height (:opt data)))
                            (:viewport/height (:opt data)))
-                         "100%")}}]])
+                         ;;"100%"
+                         )}}]])
 
 (d/defcomponent Toolbar [{:keys [buttons]}]
   [:nav {:style {:background "var(--bg)"
@@ -218,14 +221,115 @@
             :padding "10px 20px"}}
    (MenuBar (assoc menu-bar :size :small))])
 
-(d/defcomponent Pane [{:keys [toolbar canvases title description menu-bar browser]}]
-  [:div {:style {:flex-grow 1
-                 :display "flex"
-                 :flex-direction "column"}}
+(defn get-grid-styles [data]
+  (into {:position "absolute"
+         :overflow "scroll"}
+        (if (:height data)
+          {:left 0
+           :right 0
+           :top (:offset data)
+           :height (:height data)}
+          {:top 0
+           :bottom 0
+           :left (:offset data)
+           :width (:width data)})))
+
+(defn- touch-x [e]
+  (or (some-> e .-changedTouches (aget 0) .-screenX)
+      (.-screenX e)))
+
+(defn- touch-y [e]
+  (or (some-> e .-changedTouches (aget 0) .-screenY)
+      (.-screenY e)))
+
+(defn get-style-n [style prop]
+  (js/parseInt (.getPropertyValue style prop) 10))
+
+(defn get-dim [props el]
+  (let [style (js/window.getComputedStyle el)]
+    (if (= :horizontal (:kind props))
+      {:size (get-style-n style "height")
+       :offset (get-style-n style "top")}
+      {:size (get-style-n style "width")
+       :offset (get-style-n style "left")})))
+
+(defn set-size [props el size]
+  (if (= :horizontal (:kind props))
+    (set! (.. el -style -height) (str size "px"))
+    (set! (.. el -style -width) (str size "px"))))
+
+(defn set-offset [props el offset]
+  (if (= :horizontal (:kind props))
+    (set! (.. el -style -top) (str offset "px"))
+    (set! (.. el -style -left) (str offset "px"))))
+
+(defn get-neighbour [el]
+  (.-nextSibling el))
+
+(d/defcomponent Handle
+  :on-mount (fn [el props]
+              (let [state (atom {})
+                    f (if (= :horizontal (:kind props)) touch-y touch-x)
+                    container (.-parentNode el)]
+
+                (.addEventListener
+                 el "mousedown"
+                 (fn [e]
+                   (swap! state assoc
+                          :dragging? true
+                          :start (f e)
+                          :dim (get-dim props container)
+                          :neighbour-dim (get-dim props (get-neighbour container)))
+                   (.preventDefault e)
+                   (.add (.-classList el) "dragging")))
+
+                (.addEventListener
+                 js/document.body
+                 "mousemove"
+                 (fn [e]
+                   (let [{:keys [dragging? start dim neighbour-dim]} @state]
+                     (when dragging?
+                       (let [offset (- (f e) start)
+                             neighbour (get-neighbour container)]
+                         (set-size props container (+ (:size dim) offset))
+                         (set-offset props neighbour (+ (:offset neighbour-dim) offset))
+                         (set-size props neighbour (- (:size neighbour-dim) offset)))))))
+
+                (.addEventListener
+                 js/document.body
+                 "mouseup"
+                 (fn [_e]
+                   (when (:dragging? @state)
+                     (swap! state dissoc :dragging?)
+                     (.remove (.-classList el) "dragging"))))))
+  [{:keys [kind]}]
+  [:div.draggable {:style (if (= :horizontal kind)
+                            {:border-bottom "3px solid var(--hard-separator)"
+                             :padding-top 30
+                             :position "absolute"
+                             :bottom 0
+                             :left 0
+                             :right 0}
+                            {:position "absolute"
+                             :border-right "3px solid var(--hard-separator)"
+                             :padding-left 20
+                             :right 0
+                             :top 0
+                             :bottom 0})}])
+
+(d/defcomponent Pane
+  :keyfn :id
+  [{:keys [toolbar canvases title description menu-bar browser handle] :as data}]
+  [:div.pane
+   {:style (into (get-grid-styles data)
+                 {:display "flex"
+                  :flex-direction "column"})}
    (some-> toolbar Toolbar)
    (some-> menu-bar WrappedMenuBar)
    [:div {:style (merge {:flex-grow "1"
-                         :overflow "scroll"}
+                         :overflow "scroll"
+                         :display "flex"
+                         :flex-direction "column"}
                         (when (:items browser)
                           {:background "var(--bg)"
                            :color "var(--fg)"}))}
@@ -240,18 +344,15 @@
     (when (seq canvases)
       (->> canvases
            (interpose {:kind :separator})
-           (mapcat render-canvas)))]])
+           (mapcat render-canvas)))]
+   (some-> handle Handle)])
 
 (defn render-layout [data]
   (if (#{:rows :cols} (:kind data))
-    [:div {:style {:flex-grow 1
-                   :display "flex"
-                   :flex-direction (direction (:kind data))}}
-     (->> (map render-layout (:xs data))
-          (interpose [:div {:style {(if (= :rows (:kind data))
-                                      :border-top
-                                      :border-left)
-                                    "3px solid var(--hard-separator)"}}]))]
+    [:div {:style (get-grid-styles data)
+           :class (:kind data)}
+     (map render-layout (:xs data))
+     (some-> (:handle data) Handle)]
     (Pane data)))
 
 (d/defcomponent CanvasView
@@ -263,5 +364,7 @@
    (when-let [problems (:problems data)]
      [:div {:style {:overflow "scroll"}}
       (map Problem problems)])
-   (render-layout data)
+   [:div {:style {:flex-grow 1
+                  :position "relative"}}
+    (render-layout data)]
    (some-> data :panel CanvasPanel)])

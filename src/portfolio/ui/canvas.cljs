@@ -81,6 +81,7 @@
                        (keep #(canvas/prepare-toolbar-button
                                % state (dissoc ctx :scenes))))]
       (cond-> {:kind :pane
+               :id (:pane-id ctx)
                :canvases (map (partial prepare-canvas (:pane-options ctx)) scenes)}
         (seq buttons)
         (assoc :toolbar {:buttons buttons})))))
@@ -127,8 +128,23 @@
 (defn prepare-layout-xs [state location root-layout source view scenes path opt]
   (if (#{:rows :cols} (:kind opt))
     {:kind (:kind opt)
-     :xs (for [[i x] (map vector (range) (:xs opt))]
-           (prepare-layout-xs state location root-layout source view scenes (conj path i) x))}
+     :xs (let [n (count (:xs opt))]
+           (for [[i x] (map vector (range) (:xs opt))]
+             (-> (prepare-layout-xs state location root-layout source view scenes (conj path i) x)
+                 (assoc (if (= :rows (:kind opt))
+                          :height
+                          :width)
+                        (str "calc(100% / " n ")"))
+                 (assoc :offset (str "calc((100% / " n ") * " i ")"))
+                 ;; Using calc instead of calculating the value here means the
+                 ;; size won't be forcibly set unless the layout is different.
+                 ;; This allows us to have transient pane resize that isn't
+                 ;; represented in the store. Ideally we'll have the size in the
+                 ;; store eventually, but this gives us a nice POC for now.
+                 (assoc :handle (when (< i (dec n))
+                                  {:kind (if (= :rows (:kind opt))
+                                           :horizontal
+                                           :vertical)})))))}
     (->> {:pane-id (::layout/pane-id opt)
           :pane-options (merge (get-tool-defaults (:tools view))
                                opt
@@ -145,7 +161,8 @@
     (-> (prepare-layout-xs state location layout source view scenes [] layout)
         (assoc :id (if (:gallery? layout)
                      (routes/get-id location)
-                     :single-scene)))))
+                     :single-scene)
+               :height "100%"))))
 
 (defn prepare-canvas-view [state location view]
   (let [layout (layout/get-current-layout state)
