@@ -139,10 +139,8 @@
              :width (or (when (number? (:viewport/width (:opt data)))
                           (:viewport/width (:opt data)))
                         "100%")
-             :height (or (when (number? (:viewport/height (:opt data)))
-                           (:viewport/height (:opt data)))
-                         ;;"100%"
-                         )}}]])
+             :height (when (number? (:viewport/height (:opt data)))
+                       (:viewport/height (:opt data)))}}]])
 
 (d/defcomponent Toolbar [{:keys [buttons]}]
   [:nav {:style {:background "var(--bg)"
@@ -327,6 +325,7 @@
    [:div {:style (merge {:flex-grow "1"
                          :overflow "scroll"
                          :display "flex"
+                         :gap 20
                          :flex-direction "column"}
                         (when (:items browser)
                           {:background "var(--bg)"
