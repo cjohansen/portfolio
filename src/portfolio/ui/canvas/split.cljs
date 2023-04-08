@@ -1,7 +1,8 @@
 (ns portfolio.ui.canvas.split
   (:require [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [Button ButtonGroup]]
-            [portfolio.ui.layout :as layout]))
+            [portfolio.ui.layout :as layout]
+            [portfolio.ui.screen :as screen]))
 
 (def complement-dir
   {:cols :rows
@@ -39,13 +40,14 @@
 (defn split-layout-horizontally [layout path]
   (split-layout layout path :cols))
 
-(defn prepare-horizontal-split-button [tool _state {:keys [pane-path layout-path layout]}]
-  (with-meta
-    {:title (:title tool)
-     :icon :portfolio.ui.icons/columns
-     :actions [[:assoc-in (into layout-path [:layout])
-                (split-layout-horizontally layout pane-path)]]}
-    {`protocols/render-toolbar-button #'Button}))
+(defn prepare-horizontal-split-button [tool state {:keys [pane-path layout-path layout]}]
+  (when (or (not (:desktop-only? tool)) (not (screen/small-screen? state)))
+    (with-meta
+      {:title (:title tool)
+       :icon :portfolio.ui.icons/columns
+       :actions [[:assoc-in (into layout-path [:layout])
+                  (split-layout-horizontally layout pane-path)]]}
+      {`protocols/render-toolbar-button #'Button})))
 
 (def horizontal-impl
   {`protocols/prepare-canvas (fn [_ el opt])
@@ -54,19 +56,21 @@
 (defn create-split-horizontally-tool [config]
   (with-meta
     {:id :canvas/split-horizontally
-     :title "Split horizontally"}
+     :title "Split horizontally"
+     :desktop-only? (:canvas.split/desktop-only? config true)}
     horizontal-impl))
 
 (defn split-layout-vertically [layout path]
   (split-layout layout path :rows))
 
 (defn prepare-vertical-split-button [tool state {:keys [pane-path layout-path layout]}]
-  (with-meta
-    {:title (:title tool)
-     :icon :portfolio.ui.icons/rows
-     :actions [[:assoc-in (into layout-path [:layout])
-                (split-layout-vertically layout pane-path)]]}
-    {`protocols/render-toolbar-button #'Button}))
+  (when (or (not (:desktop-only? tool)) (not (screen/small-screen? state)))
+    (with-meta
+      {:title (:title tool)
+       :icon :portfolio.ui.icons/rows
+       :actions [[:assoc-in (into layout-path [:layout])
+                  (split-layout-vertically layout pane-path)]]}
+      {`protocols/render-toolbar-button #'Button})))
 
 (def vertical-impl
   {`protocols/prepare-canvas (fn [_ el opt])
@@ -75,7 +79,8 @@
 (defn create-split-vertically-tool [config]
   (with-meta
     {:id :canvas/split-vertically
-     :title "Split vertically"}
+     :title "Split vertically"
+     :desktop-only? (:canvas.split/desktop-only? config true)}
     vertical-impl))
 
 (defn prepare-button-group [tool state opt]

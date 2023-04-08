@@ -182,8 +182,9 @@
 (d/defcomponent CanvasHeader
   :keyfn :title
   [{:keys [title url description]}]
-  [:div {:style {:margin 20}}
-   [:h2.h3 {:style {:margin "0 0 10px"}}
+  [:div {:style {:margin "20px 20px 0"}}
+   [:h2.h3 {:style (when-not (empty? description)
+                     {:margin "0 0 10px"})}
     (if url
       [:a {:href url} title]
       title)]
@@ -197,10 +198,7 @@
         (when (:scene data)
           (if (:component (:scene data))
             (Canvas data)
-            (ComponentError (:scene data))))
-        (when (= :separator (:kind data))
-          [:div {:key "separator"
-                 :style {:margin "30px 0 20px"}}])]
+            (ComponentError (:scene data))))]
        (remove nil?)))
 
 (d/defcomponent Problem [{:keys [title text code]}]
@@ -336,7 +334,7 @@
     (when (:items browser)
       (Browser browser))
     (when (or title description)
-      [:div {:style {:margin 20}}
+      [:div {:style {:margin "20px 20px 0"}}
        (when title
          [:h1.h1 title])
        (when description
