@@ -4,9 +4,9 @@
             [portfolio.ui.actions :as actions]
             [portfolio.ui.canvas :as canvas]
             [portfolio.ui.canvas.background :as canvas-bg]
+            [portfolio.ui.canvas.compare :as compare]
             [portfolio.ui.canvas.docs :as docs]
             [portfolio.ui.canvas.grid :as canvas-grid]
-            [portfolio.ui.canvas.selection :as selection]
             [portfolio.ui.canvas.split :as split]
             [portfolio.ui.canvas.viewport :as canvas-vp]
             [portfolio.ui.canvas.zoom :as canvas-zoom]
@@ -33,7 +33,7 @@
                                          (canvas-zoom/create-zoom-tool config)
                                          (split/create-split-tool config)
                                          (docs/create-docs-tool config)
-                                         (selection/create-selection-tool config)
+                                         (compare/create-compare-tool config)
                                          (split/create-close-tool config)])
                                     extra-canvas-tools)})])))
 

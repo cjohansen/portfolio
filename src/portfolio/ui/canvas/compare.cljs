@@ -1,4 +1,4 @@
-(ns portfolio.ui.canvas.selection
+(ns portfolio.ui.canvas.compare
   (:require [portfolio.ui.canvas :refer [prepare-scenes]]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.collection :as collection]
@@ -17,7 +17,7 @@
 (defn can-curate? [state]
   (< 1 (count (layout/get-layout-panes (layout/get-current-layout state)))))
 
-(defn create-selection-tool [_config]
+(defn create-compare-tool [_config]
   (with-meta
     {:id :canvas/selection}
     {`canvas/prepare-toolbar-button
@@ -26,8 +26,8 @@
          (let [path [:panes (:pane-id options) :curate-selection?]
                curating? (get-in state path)]
            (with-meta
-             {:title "Select pane scene(s)"
-              :icon :portfolio.ui.icons/list-plus
+             {:title "Select pane scene(s) for comparison"
+              :icon :portfolio.ui.icons/git-diff
               :align :right
               :selected? curating?
               :actions (cond-> [[:assoc-in path (not curating?)]]

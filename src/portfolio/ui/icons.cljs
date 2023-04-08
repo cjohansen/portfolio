@@ -15,6 +15,7 @@
             [portfolio.ui.icons.file-doc :as file-doc]
             [portfolio.ui.icons.folder :as folder]
             [portfolio.ui.icons.folder-open :as folder-open]
+            [portfolio.ui.icons.git-diff :as git-diff]
             [portfolio.ui.icons.grid-four :as grid-four]
             [portfolio.ui.icons.hamburger :as hamburger]
             [portfolio.ui.icons.list-plus :as list-plus]
@@ -51,6 +52,7 @@
      ::folder folder/icon
      ::folder-open folder-open/icon
      ::hamburger hamburger/icon
+     ::git-diff git-diff/icon
      ::grid-four grid-four/icon
      ::list-plus list-plus/icon
      ::magnifying-glass-plus magnifying-glass-plus/icon
