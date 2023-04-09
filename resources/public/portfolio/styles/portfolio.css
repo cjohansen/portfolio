@@ -226,6 +226,9 @@ input {
   border: 1px solid var(--input-focus-border);
 }
 
+.auto-completer .suggestions {
+  color: var(--input-active-fg);
+}
 .auto-completer .suggestions li:hover {
   text-decoration: underline;
 }

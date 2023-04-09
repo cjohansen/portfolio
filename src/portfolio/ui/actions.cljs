@@ -6,7 +6,8 @@
             [portfolio.ui.router :as router]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
-            [portfolio.ui.scene-browser :as scene-browser]))
+            [portfolio.ui.scene-browser :as scene-browser]
+            [portfolio.ui.search.index :as index]))
 
 (defn assoc-in*
   "Takes a map and pairs of path value to assoc-in to the map. Makes `assoc-in`
@@ -131,6 +132,10 @@
                    (not (get-in state [:ui scene-id :original k]))
                    (into [[:assoc-in [:ui scene-id :original k] (k @param)]]))}))))
 
+(defn search [{:keys [index]} q]
+  (when index
+    {:assoc-in [[:search/suggestions] (index/search index q)]}))
+
 (declare execute-action!)
 
 (defn process-action-result! [app res]
@@ -187,12 +192,14 @@
                        :load-css-files paths
                        :replace-css-files paths})
      :remove-scene-param (apply remove-scene-param @app (rest action))
-     :set-scene-param (apply set-scene-param @app (rest action))))
+     :set-scene-param (apply set-scene-param @app (rest action))
+     :search (apply search @app (rest action))))
   app)
 
 (def available-actions
   #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
-    :remove-scene-param :set-scene-param :fn/call :event/prevent-default})
+    :remove-scene-param :set-scene-param :fn/call :event/prevent-default
+    :search})
 
 (defn actions? [x]
   (and (sequential? x)

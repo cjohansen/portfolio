@@ -102,6 +102,14 @@
                       (filter (comp #{id} :id))
                       first))}))
 
+(defn by-id [state id]
+  (or (->> (vals (:scenes state))
+           (filter (comp #{id} :id))
+           first)
+      (->> (vals (:collections state))
+           (filter (comp #{id} :id))
+           first)))
+
 (defn get-sort-key [collection]
   [(:idx collection 999999999)
    (or (some-> collection :title str/lower-case)

@@ -13,12 +13,16 @@
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
-            [portfolio.ui :as ui]))
+            [portfolio.ui :as ui]
+            [portfolio.ui.search.ngram-index :as ngram]))
 
-(def app
+(defonce app
   (ui/start!
    {:on-render (fn [page-data]
                  (inspector/inspect "Page data" page-data))
+
+    :index (ngram/create-index)
+
     :config
     {:css-paths ["/portfolio/demo.css"]
      #_#_:canvas/gallery-defaults {:viewport/width 390
@@ -28,13 +32,13 @@
                          #_#_#_#_:viewport/width 390
                          :viewport/height 400}
      #_#_:canvas/layout {:kind :cols
-                     :xs [{:viewport/width 390
-                           :viewport/height "100%"}
-                          {:kind :rows
-                           :xs [{:viewport/width 390
-                                 :viewport/height 400}
-                                {:viewport/width 390
-                                 :viewport/height 400}]}]}
+                         :xs [{:viewport/width 390
+                               :viewport/height "100%"}
+                              {:kind :rows
+                               :xs [{:viewport/width 390
+                                     :viewport/height 400}
+                                    {:viewport/width 390
+                                     :viewport/height 400}]}]}
 
      ;;:canvas/layout [[{:background/background-color "#ff3300 "}]]
 
@@ -57,6 +61,8 @@
 
      ;; :background/default-option-id :dark-mode
      }}))
+
+(swap! app update ::heartbeat (fnil inc 0))
 
 (comment
 

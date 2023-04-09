@@ -11,7 +11,8 @@
             [portfolio.ui.canvas.viewport :as canvas-vp]
             [portfolio.ui.canvas.zoom :as canvas-zoom]
             [portfolio.ui.client :as client]
-            [portfolio.ui.collection :as collection]))
+            [portfolio.ui.collection :as collection]
+            [portfolio.ui.search.index :as index]))
 
 (def app (atom nil))
 
@@ -39,8 +40,14 @@
 
 (def eventually-execute (h/debounce actions/execute-action! 250))
 
-(defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools]}]]
-  (swap! app merge (create-app config canvas-tools extra-canvas-tools))
+(defn index-content [app]
+  (let [{:keys [index scenes collections]} @app]
+    (when index
+      (doseq [doc (concat (vals scenes) (vals collections))]
+        (index/index-document index doc)))))
+
+(defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index]}]]
+  (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
 
   (add-watch data/scenes ::app
     (fn [_ _ _ scenes]
@@ -48,11 +55,14 @@
                    (-> state
                        (assoc :scenes scenes)
                        (assoc :collections (get-collections scenes (:collections @app))))))
+      (index-content app)
       (eventually-execute app [:go-to-current-location])))
 
   (add-watch data/collections ::app
     (fn [_ _ _ collections]
       (swap! app (fn [state]
-                   (assoc state :collections (get-collections (:scenes state) collections))))))
+                   (assoc state :collections (get-collections (:scenes @app) collections))))
+      (index-content app)))
 
+  (index-content app)
   (client/start-app app {:on-render on-render}))

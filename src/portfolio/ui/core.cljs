@@ -31,6 +31,24 @@
             [:go-to-location (routes/get-location location {:id (second x)})]
             x)))))
 
+(defn prepare-search [state location]
+  (let [q (not-empty (:search/query state))]
+    {:icon :portfolio.ui.icons/magnifying-glass
+     :placeholder "Search"
+     :text q
+     :on-input (->> [[:assoc-in [:search/query] :event.target/value]
+                     [:search :event.target/value]]
+                    (remove nil?))
+     :action (when q
+               {:icon :portfolio.ui.icons/x
+                :actions [[:assoc-in [:search/query] ""]
+                          [:assoc-in [:search/suggestions] nil]]})
+     :suggestions (for [{:keys [id]} (take 6 (:search/suggestions state))]
+                    (let [doc (collection/by-id state id)]
+                      {:title (:title doc)
+                       :illustration (collection/get-illustration doc state)
+                       :actions [[:go-to-location (routes/get-location location doc)]]}))}))
+
 (defn prepare-sidebar [state location]
   (when (sidebar? state)
     {:width 360
@@ -40,7 +58,9 @@
                 (if (screen/small-screen? state)
                   :auto
                   :hidden)]]
-     :items (prepare-scene-browser state location)}))
+     :items (prepare-scene-browser state location)
+     :search (when (:index state)
+               (prepare-search state location))}))
 
 (defn prepare-header [state location]
   (when-not (sidebar? state)

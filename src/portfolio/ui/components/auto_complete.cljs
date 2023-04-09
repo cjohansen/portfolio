@@ -35,21 +35,23 @@
                                                   :color (:color illustration)}))
        title])]])
 
-(d/defcomponent AutoCompleter [{:keys [text placeholder icon action suggestions]}]
+(d/defcomponent AutoCompleter [{:keys [text placeholder icon action on-input suggestions]}]
   [:div.auto-completer
    {:style {:padding 8
-            :background (when suggestions "var(--auto-complete-active-bg)")}}
+            :background (when (seq suggestions)
+                          "var(--auto-complete-active-bg)")}}
    [:div {:style {:position "relative"}}
     (when icon
       (render-icon {:icon icon :size 24}))
     [:input
      {:style {:padding-top 12
               :padding-bottom 12
-              :padding-left (when icon 48)
-              :padding-right (when action 48)
+              :padding-left (if icon 48 12)
+              :padding-right (if action 48 12)
               :border-radius 4
               :display "block"
               :width "100%"}
+      :on-input on-input
       :value text
       :placeholder placeholder}]
     (when action
@@ -58,6 +60,6 @@
         :size 16
         :actions (:actions action)
         :align :right}))]
-   (when suggestions
+   (when (seq suggestions)
      (Suggestions
       {:suggestions suggestions}))])
