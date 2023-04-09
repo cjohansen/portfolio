@@ -35,7 +35,7 @@
   (let [q (not-empty (:search/query state))]
     {:icon :portfolio.ui.icons/magnifying-glass
      :placeholder "Search"
-     :text q
+     :text (:search/query state)
      :on-input (->> [[:assoc-in [:search/query] :event.target/value]
                      [:search :event.target/value]]
                     (remove nil?))
