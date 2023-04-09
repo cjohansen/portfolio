@@ -14,14 +14,16 @@
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]
-            [portfolio.ui.search.ngram-index :as ngram]))
+            [portfolio.ui.search.memsearch-index :as memsearch]
+            [portfolio.ui.search.pliable-index :as pliable]))
 
 (defonce app
   (ui/start!
    {:on-render (fn [page-data]
                  (inspector/inspect "Page data" page-data))
 
-    :index (ngram/create-index)
+    :index (pliable/create-index)
+    ;;:index (memsearch/create-index)
 
     :config
     {:css-paths ["/portfolio/demo.css"]
