@@ -40,29 +40,46 @@
 
 (def eventually-execute (h/debounce actions/execute-action! 250))
 
-(defn index-content [app]
+(defn index-content [app & [{:keys [ids]}]]
   (let [{:keys [index scenes collections]} @app]
     (when index
-      (doseq [doc (concat (vals scenes) (vals collections))]
+      (doseq [doc (cond->> (concat (vals scenes) (vals collections))
+                    ids (filter (comp (set ids) :id)))]
+        (println "Index" (:id doc))
         (index/index-document index doc)))))
+
+(defn ->comparable [x]
+  (dissoc x :updated-at :line :idx :component :component-fn :on-mount :on-unmount))
+
+(defn get-diff-keys [m1 m2]
+  (->> m1
+       (filter (fn [[k v]]
+                 (not= (->comparable (m2 k))
+                       (->comparable v))))
+       (map first)))
 
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index]}]]
   (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
 
   (add-watch data/scenes ::app
-    (fn [_ _ _ scenes]
-      (swap! app (fn [state]
-                   (-> state
-                       (assoc :scenes scenes)
-                       (assoc :collections (get-collections scenes (:collections @app))))))
-      (index-content app)
+    (fn [_ _ old-scenes scenes]
+      (let [collections (get-collections scenes (:collections @app))
+            old-collections (get-collections old-scenes (:collections @app))]
+        (swap! app (fn [state]
+                     (-> state
+                         (assoc :scenes scenes)
+                         (assoc :collections collections))))
+        (index-content app {:ids (concat
+                                  (get-diff-keys scenes old-scenes)
+                                  (get-diff-keys collections old-collections))}))
       (eventually-execute app [:go-to-current-location])))
 
   (add-watch data/collections ::app
     (fn [_ _ _ collections]
-      (swap! app (fn [state]
-                   (assoc state :collections (get-collections (:scenes @app) collections))))
-      (index-content app)))
+      (let [old-collections (:collections @app)
+            collections (get-collections (:scenes @app) collections)]
+        (swap! app assoc :collections collections)
+        (index-content app {:ids (get-diff-keys old-collections collections)}))))
 
   (index-content app)
   (client/start-app app {:on-render on-render}))
