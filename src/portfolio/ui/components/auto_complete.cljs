@@ -6,12 +6,13 @@
 (defn render-icon [{:keys [icon size actions align]}]
   [:div {:on-click actions
          :style {:position "absolute"
-                 (or align :left) 12
+                 (or align :left) 8
                  :top 0
                  :bottom 0
                  :display "flex"
                  :align-items "center"
-                 :cursor (when actions "pointer")}}
+                 :cursor (when actions "pointer")
+                 :color "var(--folder-icon-color)"}}
    (icons/render-icon icon {:size size})])
 
 (d/defcomponent Suggestions
@@ -38,16 +39,18 @@
 (d/defcomponent AutoCompleter [{:keys [text placeholder icon action on-input suggestions]}]
   [:div.auto-completer
    {:style {:padding 8
-            :background (when (seq suggestions)
-                          "var(--auto-complete-active-bg)")}}
+            :background (if (seq suggestions)
+                          "var(--auto-complete-active-bg)"
+                          "var(--folder-bg)")}}
    [:div {:style {:position "relative"}}
     (when icon
       (render-icon {:icon icon :size 24}))
     [:input
-     {:style {:padding-top 12
+     {:style {:background "var(--input-inactive-bg)"
+              :padding-top 12
               :padding-bottom 12
-              :padding-left (if icon 48 12)
-              :padding-right (if action 48 12)
+              :padding-left (if icon 40 12)
+              :padding-right (if action 40 12)
               :border-radius 4
               :display "block"
               :width "100%"}

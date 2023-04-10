@@ -45,7 +45,7 @@ body {
   --toolbar-button: #333;
   --toolbar-button-active: var(--cod-gray);
 
-  --input-inactive-bg: #333;
+  --input-inactive-bg: var(--folder-bg);
   --input-inactive-fg: #999;
   --input-active-fg: var(--alto);
   --input-focus-border: var(--alto);
@@ -147,7 +147,8 @@ a.inverted:visited,
 
 input {
   font-family: inherit;
-  font-size: inherit;
+  font-size: 1.067rem;
+
 }
 
 .input {
@@ -209,7 +210,6 @@ input {
 }
 
 .auto-completer input {
-  background: var(--input-inactive-bg);
   color: var(--input-inactive-fg);
   border: 1px solid var(--input-inactive-bg);
 }
