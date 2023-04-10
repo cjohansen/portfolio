@@ -65,9 +65,11 @@
                            (assoc :collections collections))))
           (index-content
            app
-           {:ids (concat
-                  (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
-                  (search/get-diff-keys (->diffable collections) (->diffable old-collections)))}))
+           (let [ids (concat
+                      (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
+                      (search/get-diff-keys (->diffable collections) (->diffable old-collections)))]
+             (println "==> Scene update, ids: " ids)
+             {:ids ids})))
         (eventually-execute app [:go-to-current-location])))
 
     (add-watch data/collections ::app

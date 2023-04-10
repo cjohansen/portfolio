@@ -2,9 +2,18 @@
   (:require [portfolio.ui.search.index :as index]
             [portfolio.ui.search.pliable-index :as pliable]))
 
+(defn get-diffs [a b]
+  (->> (keys a)
+       (filter #(not= (a %) (b %)))))
+
 (defn get-diff-keys [m1 m2]
   (->> m1
-       (filter (fn [[k v]] (not= (m2 k) v)))
+       (filter (fn [[k v]]
+                 (if (not= (m2 k) v)
+                   (do
+                     (println "==> Diff keys" (get-diffs (m2 k) v))
+                     true)
+                   false)))
        (map first)))
 
 (defn get-diffables [f xs]
