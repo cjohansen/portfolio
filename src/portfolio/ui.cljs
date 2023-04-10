@@ -51,7 +51,7 @@
            (println "Index" (:id doc))
            (index/index index doc)))))))
 
-(defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data]}]]
+(defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data] :as opt}]]
   (when-not (client/started? app)
     (let [->diffable (partial search/get-diffables (or get-indexable-data search/get-indexable-data))]
       (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
@@ -64,11 +64,12 @@
                          (-> state
                              (assoc :scenes scenes)
                              (assoc :collections collections))))
-            (index-content
-             app
-             {:ids (concat
-                    (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
-                    (search/get-diff-keys (->diffable collections) (->diffable old-collections)))}))
+            (when (:reindex? opt true)
+              (index-content
+               app
+               {:ids (concat
+                      (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
+                      (search/get-diff-keys (->diffable collections) (->diffable old-collections)))})))
           (eventually-execute app [:go-to-current-location])))
 
       (add-watch data/collections ::app
@@ -76,7 +77,8 @@
           (let [old-collections (:collections @app)
                 collections (get-collections (:scenes @app) collections)]
             (swap! app assoc :collections collections)
-            (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
+            (when (:reindex? opt true)
+              (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))}))))))
 
     (index-content app)
     (client/start-app app {:on-render on-render})))
