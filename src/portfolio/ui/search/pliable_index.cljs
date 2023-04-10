@@ -3,60 +3,52 @@
             [clojure.string :as str]
             [portfolio.ui.search.index :as index]))
 
-(def sep-re #"[/\.,_\-\?!\s\n\r\(\)\[\]]+")
+(def sep-re #"[/\.,_\-\?!\s\n\r\(\)\[\]:]+")
 
-(defn tokenize-lc [s]
-  (cond
-    (string? s)
-    (-> s
-        str/trim
-        str/lower-case
-        (str/split sep-re))
+(defn tokenize-lower-case [s]
+  [(str/lower-case (str/trim s))])
 
-    (and (coll? s) (not (map? s)))
-    (mapcat tokenize-lc s)))
+(defn remove-diacritics [s]
+  [(-> (str/trim s)
+       (.normalize "NFD")
+       (str/replace #"[\u0300-\u036f]" "")
+       str/lower-case)])
 
-(defn tokenize-clean [s]
-  (cond
-    (string? s)
-    (-> s
-        str/trim
-        (.normalize "NFD")
-        (str/replace #"[\u0300-\u036f]" "")
-        str/lower-case
-        (str/split sep-re))
+(defn tokenize-words [s]
+  (filter not-empty (str/split s sep-re)))
 
-    (and (coll? s) (not (map? s)))
-    (mapcat tokenize-clean s)))
+(defn tokenize-keyword [x]
+  (if (keyword? x)
+    (if-let [ns (namespace x)]
+      (let [s (str ns "/" (name x))]
+        [ns (name x) s (str x)])
+      [(str x) (name x)])
+    [x]))
 
-(defn get-ngrams
-  ([word n]
-   (get-ngrams word n n))
-  ([word min-n max-n]
+(defn stringify-keyword [x]
+  [(cond-> x
+     (keyword? x) str)])
+
+(defn tokenize-ngrams
+  ([n word]
+   (tokenize-ngrams n n word))
+  ([min-n max-n word]
    (->> (for [n (range min-n (inc max-n))]
           (->> word
                (partition n 1)
                (map str/join)))
         (apply concat))))
 
-(defn get-clean-ngrams [x min-n max-n]
-  (mapcat #(get-ngrams % min-n max-n) (tokenize-clean x)))
+(defn tokenize [x & [tokenizers]]
+  (reduce
+   (fn [tokens f] (mapcat f tokens))
+   (remove nil? (if (coll? x) x [x]))
+   (or tokenizers [vector])))
 
-(defn get-words [x tokenize]
-  (cond
-    (keyword? x)
-    (if-let [ns (namespace x)]
-      (let [s (str ns "/" (name x))]
-        (concat [s (str x)]
-                (get-words s tokenize)))
-      (concat [(str x)]
-              (get-words (name x) tokenize)))
-
-    (string? x)
-    (tokenize x)
-
-    (and (coll? x) (not (map? x)))
-    (mapcat #(get-words % tokenize) x)))
+(def default-tokenizers
+  [stringify-keyword
+   remove-diacritics
+   tokenize-words])
 
 (defn get-field-syms [field xs]
   (for [[word weight] (into [] (frequencies xs))]
@@ -65,18 +57,9 @@
 (defn index-document [index schema id doc]
   (->> schema
        (mapcat (fn [[field config]]
-                 (let [f (:f config field)
-                       tokenize (or (:tokenizer config) tokenize-clean)]
-                   (cond
-                     (:ngrams config)
-                     (let [[n1 n2] (:ngrams config)]
-                       (->> (tokenize (f doc))
-                            (mapcat #(get-ngrams % n1 n2))
-                            (get-field-syms field)))
-
-                     :else
-                     (->> (get-words (f doc) tokenize)
-                          (get-field-syms field))))))
+                 (let [f (:f config field)]
+                   (->> (tokenize (f doc) (or (:tokenizers config) default-tokenizers))
+                        (get-field-syms field)))))
        (reduce (fn [index {:keys [field sym weight]}]
                  (assoc-in index [field sym id] {:weight weight}))
                index)))
@@ -95,17 +78,26 @@
                :fields (into {} (map (juxt :field :score) xs))
                :term term}))))
 
-(defn match-query [index {:keys [q boost tokenizer fields operator]}]
-  (let [tokenize (or tokenizer tokenize-clean)
-        fields (or fields (keys index))
+(defn qualified-match? [terms res {:keys [operator min-accuracy]}]
+  (<= (cond
+        (and (= :or operator) min-accuracy)
+        (* min-accuracy (count terms))
+
+        (= :or operator)
+        1
+
+        :else (count terms))
+      (count res)))
+
+(defn match-query [index {:keys [q boost tokenizers fields] :as query}]
+  (let [fields (or fields (keys index))
         boost (or boost 1)
-        terms (tokenize q)]
+        terms (tokenize q (or tokenizers default-tokenizers))]
     (->> terms
          (mapcat #(score-term index fields %))
          (group-by :id)
          (filter (fn [[_ xs]]
-                   (or (= :or operator)
-                       (= (count xs) (count terms)))))
+                   (qualified-match? terms xs query)))
          (map (fn [[id xs]]
                 {:id id
                  :score (* boost (reduce + 0 (map :score xs)))
@@ -116,7 +108,7 @@
                              (map (juxt :term (comp #(* boost %) :score)))
                              (into {}))})))))
 
-(defn search-index [index q]
+(defn query [index q]
   (let [res (map #(match-query index %) (:queries q))
         ids (map #(set (map :id %)) res)
         res-ids (if (= :or (:operator q))
@@ -137,23 +129,27 @@
        (filter #(or (string? %) (keyword? %)))))
 
 (defn index-scene [index scene]
-  (index-document
-   index
-   {:title {}
-    :title.ngram {:f :title
-                  :ngrams [3 4]}
-    :docs {}
-    :docs.ngram {:f :docs
-                 :ngrams [3 4]}
-    :tags {}
-    :collection {}
-    :params-data {:f get-params-data}}
-   (:id scene)
-   scene))
+  (let [ngram-tokenizers [stringify-keyword
+                          remove-diacritics
+                          tokenize-words
+                          (partial tokenize-ngrams 2 3)]]
+    (index-document
+     index
+     {:title {}
+      :title.ngram {:f :title
+                    :tokenizers ngram-tokenizers}
+      :docs {}
+      :docs.ngram {:f :docs
+                   :tokenizers ngram-tokenizers}
+      :tags {}
+      :collection {}
+      :params-data {:f get-params-data}}
+     (:id scene)
+     scene)))
 
 (defn search [index q]
   (when (not-empty (some-> q str/trim))
-    (search-index
+    (query
      index
      {:operator :or
       :queries
@@ -161,8 +157,12 @@
         :operator :and
         :boost 3}
        {:q q
-        :tokenizer #(get-clean-ngrams % 3 4)
-        :operator :and}]})))
+        :tokenizers [remove-diacritics
+                     tokenize-words
+                     (partial tokenize-ngrams 2 3)]
+        :fields #{:title.ngram :docs.ngram}
+        :operator :or
+        :min-accuracy 0.3}]})))
 
 (defn create-index []
   (let [index (atom {})]
