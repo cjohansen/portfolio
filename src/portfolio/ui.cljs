@@ -15,7 +15,7 @@
             [portfolio.ui.search :as search]
             [portfolio.ui.search.index :as index]))
 
-(def app (atom nil))
+(defonce app (atom nil))
 
 (defn get-collections [scenes collections]
   (->> (collection/get-default-organization (vals scenes) (vals collections))
@@ -52,30 +52,31 @@
            (index/index index doc)))))))
 
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data]}]]
-  (let [->diffable (partial search/get-diffables (or get-indexable-data search/get-indexable-data))]
-    (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
+  (when-not (client/started? app)
+    (let [->diffable (partial search/get-diffables (or get-indexable-data search/get-indexable-data))]
+      (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
 
-    (add-watch data/scenes ::app
-      (fn [_ _ old-scenes scenes]
-        (let [collections (get-collections scenes (:collections @app))
-              old-collections (get-collections old-scenes (:collections @app))]
-          (swap! app (fn [state]
-                       (-> state
-                           (assoc :scenes scenes)
-                           (assoc :collections collections))))
-          (index-content
-           app
-           {:ids (concat
-                  (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
-                  (search/get-diff-keys (->diffable collections) (->diffable old-collections)))}))
-        (eventually-execute app [:go-to-current-location])))
+      (add-watch data/scenes ::app
+        (fn [_ _ old-scenes scenes]
+          (let [collections (get-collections scenes (:collections @app))
+                old-collections (get-collections old-scenes (:collections @app))]
+            (swap! app (fn [state]
+                         (-> state
+                             (assoc :scenes scenes)
+                             (assoc :collections collections))))
+            (index-content
+             app
+             {:ids (concat
+                    (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
+                    (search/get-diff-keys (->diffable collections) (->diffable old-collections)))}))
+          (eventually-execute app [:go-to-current-location])))
 
-    (add-watch data/collections ::app
-      (fn [_ _ _ collections]
-        (let [old-collections (:collections @app)
-              collections (get-collections (:scenes @app) collections)]
-          (swap! app assoc :collections collections)
-          (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
+      (add-watch data/collections ::app
+        (fn [_ _ _ collections]
+          (let [old-collections (:collections @app)
+                collections (get-collections (:scenes @app) collections)]
+            (swap! app assoc :collections collections)
+            (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
 
-  (index-content app)
-  (client/start-app app {:on-render on-render}))
+    (index-content app)
+    (client/start-app app {:on-render on-render})))

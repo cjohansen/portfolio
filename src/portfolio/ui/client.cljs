@@ -84,9 +84,12 @@
               first
               css/reload-css-file))))))
 
+(defn started? [app]
+  (::started? @app))
+
 (defn start-app [app & [{:keys [on-render]}]]
   (css/load-css-files (:css-paths @app))
-  (if (::started? @app)
+  (if (started? app)
     (render app {:on-render on-render})
     (do
       (js/document.body.addEventListener "click" #(relay-body-clicks app %))
