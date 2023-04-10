@@ -20,10 +20,7 @@
   :will-leave (ec/leave)
   [{:keys [suggestions]}]
   [:nav.suggestions
-   {:style {:padding "16px 12px 12px"
-            :margin-top -4
-            :border-radius 4}}
-   [:ol
+   [:ol {:style {:padding 12}}
     (for [{:keys [illustration title actions]} suggestions]
       [:li {:on-click actions
             :style {:cursor "pointer"
@@ -39,6 +36,7 @@
 (d/defcomponent AutoCompleter [{:keys [text placeholder icon action on-input suggestions]}]
   [:div.auto-completer
    {:style {:padding 8
+            :transition "background 0.15s ease-in"
             :background (if (seq suggestions)
                           "var(--auto-complete-active-bg)"
                           "var(--folder-bg)")}}
