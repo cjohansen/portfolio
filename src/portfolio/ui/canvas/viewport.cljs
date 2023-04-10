@@ -76,7 +76,7 @@
                           ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
                           ["0" "none"])]
     (set! (.. el -style -height) h)
-    (set! (.. el -style -margin) (str "0 auto " margin))
+    (set! (.. el -style -margin) (str margin " auto"))
     (set! (.. el -style -boxShadow) shadow)))
 
 (defn get-padding [xs]
