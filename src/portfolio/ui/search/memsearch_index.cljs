@@ -16,10 +16,10 @@
   (let [index (atom {})]
     (reify
       index/Index
-      (index-document [_self doc]
+      (index [_self doc]
         (swap! index #(merge-with concat % (build-doc-index doc))))
 
-      (search [_self q]
+      (query [_self q]
         (->> (ms/text-search q @index)
              (map (fn [[id {:keys [score]}]]
                     {:id id

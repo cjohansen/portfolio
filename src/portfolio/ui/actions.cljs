@@ -138,7 +138,7 @@
 
 (defn search [{:keys [index]} q]
   (when index
-    {:assoc-in [[:search/suggestions] (index/search index q)]}))
+    {:assoc-in [[:search/suggestions] (index/query index q)]}))
 
 (declare execute-action!)
 

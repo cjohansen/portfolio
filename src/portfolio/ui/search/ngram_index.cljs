@@ -68,10 +68,10 @@
         min-score-ratio (or min-score-ratio 0.4)]
     (reify
       index/Index
-      (index-document [_ document]
+      (index [_ document]
         (add-to-index! index (:id document) (index-scene document)))
 
-      (index/search [_ q]
+      (index/query [_ q]
         (let [res (search @index q)
               threshold (* min-score-ratio (:score (first res)))]
           (remove #(< (:score %) threshold) res))))))

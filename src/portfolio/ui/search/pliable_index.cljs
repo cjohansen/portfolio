@@ -1,7 +1,6 @@
 (ns portfolio.ui.search.pliable-index
   (:require [clojure.set :as set]
-            [clojure.string :as str]
-            [portfolio.ui.search.index :as index]))
+            [clojure.string :as str]))
 
 (def sep-re #"[/\.,_\-\?!\s\n\r\(\)\[\]:]+")
 
@@ -122,54 +121,3 @@
                  :score (reduce + 0 (map :score xs))
                  :fields (apply merge-with + (map :fields xs))
                  :terms (apply merge-with + (map :terms xs))})))))
-
-(defn get-params-data [scene]
-  (->> (:params scene)
-       (tree-seq coll? identity)
-       (filter #(or (string? %) (keyword? %)))))
-
-(defn index-scene [index scene]
-  (let [ngram-tokenizers [stringify-keyword
-                          remove-diacritics
-                          tokenize-words
-                          (partial tokenize-ngrams 2 3)]]
-    (index-document
-     index
-     {:title {}
-      :title.ngram {:f :title
-                    :tokenizers ngram-tokenizers}
-      :docs {}
-      :docs.ngram {:f :docs
-                   :tokenizers ngram-tokenizers}
-      :tags {}
-      :collection {}
-      :params-data {:f get-params-data}}
-     (:id scene)
-     scene)))
-
-(defn search [index q]
-  (when (not-empty (some-> q str/trim))
-    (query
-     index
-     {:operator :or
-      :queries
-      [{:q q
-        :operator :and
-        :boost 3}
-       {:q q
-        :tokenizers [remove-diacritics
-                     tokenize-words
-                     (partial tokenize-ngrams 2 3)]
-        :fields #{:title.ngram :docs.ngram}
-        :operator :or
-        :min-accuracy 0.3}]})))
-
-(defn create-index []
-  (let [index (atom {})]
-    (reify
-      index/Index
-      (index-document [_ doc]
-        (swap! index index-scene doc))
-
-      (search [_ q]
-        (search @index q)))))

@@ -15,18 +15,21 @@
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]
             [portfolio.ui.search.memsearch-index :as memsearch]
-            [portfolio.ui.search.pliable-index :as pliable]))
+            [portfolio.ui.search :as search]))
 
 (defonce app
   (ui/start!
    {:on-render (fn [page-data]
                  (inspector/inspect "Page data" page-data))
 
-    :index (pliable/create-index)
+    :index (search/create-index)
     ;;:index (memsearch/create-index)
 
     :config
     {:css-paths ["/portfolio/demo.css"]
+
+     ;;:title "Portfolio"
+
      #_#_:canvas/gallery-defaults {:viewport/width 390
                                    :viewport/height 400}
 
