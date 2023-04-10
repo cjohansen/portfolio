@@ -24,8 +24,7 @@
          (map vec)
          (into (cond-> {:id (keyword (str *ns*) (str id))
                         :line line
-                        :docs docs
-                        :stuff (str (type (first rest)))}
+                        :docs docs}
                  (and (= 1 (count rest)) fn-like?)
                  (assoc :component-fn (first rest))
 
