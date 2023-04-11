@@ -77,6 +77,19 @@
                (map str/join)))
         (apply concat))))
 
+(defn tokenize-edge-ngrams
+  "Converts a string to ngram tokens from the beginning of the string.
+  When only one number is passed, only that sized ngrams are produced,
+  otherwise, every length ngram from `min-n` to `max-n` is produced.
+
+  ```clj
+  (tokenize-edge-ngrams 1 5 \"Hello\") ;;=> (\"H\" \"He\" \"Hel\" \"Hell\" \"Hello\")
+  ```"
+  ([n word]
+   (tokenize-edge-ngrams n n word))
+  ([min-n max-n word]
+   (for [n (range min-n (inc max-n))]
+     (str/join (take n word)))))
 
 (defn tokenize
   "Converts value `x` to tokens with the provided `tokenizers`. `tokenizers` is a
