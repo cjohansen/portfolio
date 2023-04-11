@@ -4,10 +4,12 @@
             [dumdom.core :as d]
             [portfolio.homeless :as h]
             [portfolio.ui.actions :as actions]
+            [portfolio.ui.collection :as collection]
             [portfolio.ui.components.app :refer [App]]
             [portfolio.ui.core :as portfolio]
             [portfolio.ui.css :as css]
-            [portfolio.ui.router :as router]))
+            [portfolio.ui.router :as router]
+            [portfolio.ui.routes :as routes]))
 
 (defn render [app {:keys [on-render]}]
   (let [state @app
@@ -103,7 +105,7 @@
          (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
          (actions/execute-action!
           app
-          (if (empty? (:query-params (router/get-current-location)))
+          (if (nil? (collection/get-selection @app (routes/get-id (router/get-current-location))))
             [:go-to-location {:query-params {:id (:id (first (sort-by :id (vals (:scenes @app)))))}}]
             [:go-to-current-location]))
          (swap! app assoc ::started? true)))))

@@ -93,14 +93,16 @@
       (get-collection-scenes state [id])))
 
 (defn get-selection [state id]
-  (let [scene (first (filter (comp #{id} :id) (vals (:scenes state))))]
-    {:scenes (get-selected-scenes state id)
-     :kind (if scene :scene :collection)
-     :path (get-collection-path state id)
-     :target (or scene
-                 (->> (vals (:collections state))
-                      (filter (comp #{id} :id))
-                      first))}))
+  (let [scene (first (filter (comp #{id} :id) (vals (:scenes state))))
+        target (or scene
+                   (->> (vals (:collections state))
+                        (filter (comp #{id} :id))
+                        first))]
+    (when target
+      {:scenes (get-selected-scenes state id)
+       :kind (if scene :scene :collection)
+       :path (get-collection-path state id)
+       :target target})))
 
 (defn by-id [state id]
   (or (->> (vals (:scenes state))
