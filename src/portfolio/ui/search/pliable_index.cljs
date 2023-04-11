@@ -88,7 +88,7 @@
   ([n word]
    (tokenize-edge-ngrams n n word))
   ([min-n max-n word]
-   (for [n (range min-n (inc max-n))]
+   (for [n (range min-n (inc (min max-n (count word))))]
      (str/join (take n word)))))
 
 (defn tokenize
