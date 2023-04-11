@@ -1,6 +1,8 @@
 (ns portfolio.ui.search
-  (:require [portfolio.ui.search.index :as index]
-            [portfolio.ui.search.pliable-index :as pliable]))
+  (:require [portfolio.ui.collection :as collection]
+            [portfolio.ui.routes :as routes]
+            [portfolio.ui.search.pliable-index :as pliable]
+            [portfolio.ui.search.protocols :as index]))
 
 (defn get-diff-keys [m1 m2]
   (->> m1
@@ -94,3 +96,27 @@
 
       (query [_ q]
         (search @index q)))))
+
+(defn prepare-result [state location result]
+  (if (satisfies? index/SearchResult (:index state))
+    (index/prepare-result (:index state) state location result)
+    (let [doc (collection/by-id state (:id result))]
+      {:title (:title doc)
+       :illustration (collection/get-illustration doc state)
+       :actions [[:go-to-location (routes/get-location location doc)]]})))
+
+(defn prepare-search [state location]
+  (let [q (not-empty (:search/query state))]
+    {:icon :portfolio.ui.icons/magnifying-glass
+     :placeholder "Search"
+     :text (:search/query state)
+     :on-input (->> [[:assoc-in [:search/query] :event.target/value]
+                     [:search :event.target/value]]
+                    (remove nil?))
+     :action (when q
+               {:icon :portfolio.ui.icons/x
+                :actions [[:assoc-in [:search/query] ""]
+                          [:assoc-in [:search/suggestions] nil]]})
+     :suggestions (->> (:search/suggestions state)
+                       (take 6)
+                       (map #(prepare-result state location %)))}))

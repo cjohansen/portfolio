@@ -7,7 +7,7 @@
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
             [portfolio.ui.scene-browser :as scene-browser]
-            [portfolio.ui.search.index :as index]))
+            [portfolio.ui.search.protocols :as search]))
 
 (defn assoc-in*
   "Takes a map and pairs of path value to assoc-in to the map. Makes `assoc-in`
@@ -138,7 +138,7 @@
 
 (defn search [{:keys [index]} q]
   (when index
-    {:assoc-in [[:search/suggestions] (index/query index q)]}))
+    {:assoc-in [[:search/suggestions] (search/query index q)]}))
 
 (declare execute-action!)
 

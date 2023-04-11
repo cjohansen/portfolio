@@ -1,7 +1,7 @@
 (ns portfolio.ui.search.memsearch-index
-  (:require [memsearch.core :as ms]
-            [portfolio.ui.search.index :as index]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [memsearch.core :as ms]
+            [portfolio.ui.search.protocols :as search]))
 
 (defn build-doc-index [doc]
   (ms/text-index
@@ -15,7 +15,7 @@
 (defn create-index []
   (let [index (atom {})]
     (reify
-      index/Index
+      search/Index
       (index [_self doc]
         (swap! index #(merge-with concat % (build-doc-index doc))))
 

@@ -1,7 +1,7 @@
 (ns portfolio.ui.search.ngram-index
-  (:require [clojure.string :as str]
-            [clojure.set :as set]
-            [portfolio.ui.search.index :as index]))
+  (:require [clojure.set :as set]
+            [clojure.string :as str]
+            [portfolio.ui.search.protocols :as index]))
 
 (defn get-ngrams [s min-n max-n]
   (->> (for [n (range min-n (inc max-n))]

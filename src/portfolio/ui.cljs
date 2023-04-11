@@ -13,7 +13,7 @@
             [portfolio.ui.client :as client]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.search :as search]
-            [portfolio.ui.search.index :as index]))
+            [portfolio.ui.search.protocols :as index]))
 
 (defonce app (atom nil))
 
