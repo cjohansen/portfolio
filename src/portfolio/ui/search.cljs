@@ -52,24 +52,34 @@
        (tree-seq coll? identity)
        (filter #(or (string? %) (keyword? %)))))
 
+(def ngram-tokenizers
+  [pliable/stringify-keyword
+   pliable/remove-diacritics
+   pliable/tokenize-words
+   (partial pliable/tokenize-ngrams 2 3)])
+
+(def prefix-tokenizers
+  [pliable/stringify-keyword
+   pliable/remove-diacritics
+   pliable/tokenize-words
+   (partial pliable/tokenize-edge-ngrams 2 10)])
+
 (defn index-scene [index scene]
-  (let [ngram-tokenizers [pliable/stringify-keyword
-                          pliable/remove-diacritics
-                          pliable/tokenize-words
-                          (partial pliable/tokenize-ngrams 2 3)]]
-    (pliable/index-document
-     index
-     {:title {}
-      :title.ngram {:f :title
-                    :tokenizers ngram-tokenizers}
-      :docs {}
-      :docs.ngram {:f :docs
-                   :tokenizers ngram-tokenizers}
-      :tags {}
-      :collection {}
-      :params-data {:f get-params-data}}
-     (:id scene)
-     scene)))
+  (pliable/index-document
+   index
+   {:title {}
+    :title.ngram {:f :title
+                  :tokenizers ngram-tokenizers}
+    :title.prefix {:f :title
+                   :tokenizers prefix-tokenizers}
+    :docs {}
+    :docs.ngram {:f :docs
+                 :tokenizers ngram-tokenizers}
+    :tags {}
+    :collection {}
+    :params-data {:f get-params-data}}
+   (:id scene)
+   scene))
 
 (defn search [index q]
   (pliable/query
@@ -80,12 +90,15 @@
       :operator :and
       :boost 3}
      {:q q
-      :tokenizers [pliable/remove-diacritics
-                   pliable/tokenize-words
-                   (partial pliable/tokenize-ngrams 2 3)]
+      :operator :and
+      :tokenizers prefix-tokenizers
+      :fields #{:title.prefix}
+      :boost 2}
+     {:q q
+      :tokenizers ngram-tokenizers
       :fields #{:title.ngram :docs.ngram}
       :operator :or
-      :min-accuracy 0.3}]}))
+      :min-accuracy 0.5}]}))
 
 (defn create-index []
   (let [index (atom {})]
