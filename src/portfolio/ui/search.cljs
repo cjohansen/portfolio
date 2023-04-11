@@ -98,12 +98,10 @@
         (search @index q)))))
 
 (defn prepare-result [state location result]
-  (if (satisfies? index/SearchResult (:index state))
-    (index/prepare-result (:index state) state location result)
-    (let [doc (collection/by-id state (:id result))]
-      {:title (:title doc)
-       :illustration (collection/get-illustration doc state)
-       :actions [[:go-to-location (routes/get-location location doc)]]})))
+  (let [doc (collection/by-id state (:id result))]
+    {:title (:title doc)
+     :illustration (collection/get-illustration doc state)
+     :actions [[:go-to-location (routes/get-location location doc)]]}))
 
 (defn prepare-search [state location]
   (let [q (not-empty (:search/query state))]
@@ -117,6 +115,7 @@
                {:icon :portfolio.ui.icons/x
                 :actions [[:assoc-in [:search/query] ""]
                           [:assoc-in [:search/suggestions] nil]]})
-     :suggestions (->> (:search/suggestions state)
-                       (take 6)
-                       (map #(prepare-result state location %)))}))
+     :suggestions (for [result (take 6 (:search/suggestions state))]
+                    (if (satisfies? index/SearchResult (:index state))
+                      (index/prepare-result (:index state) state location result)
+                      (prepare-result state location result)))}))
