@@ -28,6 +28,7 @@ body {
 
   /* Theming */
 
+  --hover-bg: #1181f926;
   --header-border: #111;
   --gallery-bg: var(--gallery);
   --gallery-fg: var(--shark);
@@ -50,6 +51,7 @@ body {
   --input-active-fg: var(--alto);
   --input-focus-border: var(--alto);
   --auto-complete-active-bg: var(--cod-gray);
+  --secondary-text: #999;
 }
 
 body {
@@ -141,7 +143,7 @@ a.inverted:visited,
 }
 
 .hoverable:hover {
-  background: #1ea7fd26;
+  background: var(--hover-bg);
   cursor: pointer;
 }
 
@@ -229,6 +231,7 @@ input {
 .auto-completer .suggestions {
   color: var(--input-active-fg);
 }
-.auto-completer .suggestions li:hover {
-  text-decoration: underline;
+
+.auto-completer .suggestions strong {
+  color: var(--fg);
 }

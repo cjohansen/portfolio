@@ -20,23 +20,31 @@
   :will-leave (ec/leave)
   [{:keys [suggestions]}]
   [:nav.suggestions
-   [:ol {:style {:padding 12}}
-    (for [{:keys [illustration title actions]} suggestions]
-      [:li {:on-click actions
-            :style {:cursor "pointer"
-                    :display "flex"
-                    :align-items "center"
-                    :gap 10
-                    :padding 6}}
-       (when (:icon illustration)
-         (icons/render-icon (:icon illustration) {:size 16
-                                                  :color (:color illustration)}))
-       title])]])
+   [:ol {:style {:padding "12px 0"}}
+    (for [{:keys [illustration title description actions]} suggestions]
+      [:li.hoverable
+       {:on-click actions
+        :style {:padding "8px 18px"
+                :cursor "pointer"
+                :border-radius 4}}
+       [:div
+        {:style {:display "flex"
+                 :align-items "center"
+                 :gap 10}}
+        (when (:icon illustration)
+          (icons/render-icon (:icon illustration) {:size 16
+                                                   :color (:color illustration)}))
+        title]
+       (when description
+         [:div {:style {:color "var(--secondary-text)"
+                        :padding "6px 0 0 26px"}}
+          description])])]])
 
 (d/defcomponent AutoCompleter [{:keys [text placeholder icon action on-input suggestions]}]
   [:div.auto-completer
    {:style {:padding 8
             :transition "background 0.15s ease-in"
+            :--hover-bg "var(--shark)"
             :background (if (seq suggestions)
                           "var(--auto-complete-active-bg)"
                           "var(--folder-bg)")}}
