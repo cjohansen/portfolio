@@ -62,7 +62,11 @@
       (icons/render-icon
        (:icon toggle)
        {:size 16
-        :style {:margin-right 8}
+        :style (merge
+                {:margin-right 8}
+                (when-let [rotation (:rotation toggle)]
+                  {:transition "transform 0.15s"
+                   :transform (str "rotate(" rotation "deg)")}))
         :on-click (:actions toggle)}))
     (when (:icon illustration)
       (icons/render-icon

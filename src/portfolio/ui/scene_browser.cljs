@@ -30,10 +30,9 @@
              :context (get-context state path)
              :actions (get-actions opt collection)
              :illustration (collection/get-package-illustration state collection expanded?)
-             :toggle {:icon (if expanded?
-                              :portfolio.ui.icons/caret-down
-                              :portfolio.ui.icons/caret-right)
-                      :actions [[:assoc-in exp-path (not expanded?)]]}}
+             :toggle {:icon :portfolio.ui.icons/caret-right
+                      :actions [[:assoc-in exp-path (not expanded?)]]
+                      :rotation (if expanded? 90 0)}}
       expanded?
       (assoc :items (prepare-browser-collections state opt (conj path (:id collection))))
 
