@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas
   (:require [markdown.core :as md]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.code :as code]
             [portfolio.ui.components.canvas :refer [CanvasView]]
@@ -14,7 +15,10 @@
 (extend-type cljs.core/PersistentArrayMap
   canvas/ICanvasToolValue
   (get-tool-value [tool state canvas-id]
-    (get-in state [:panes canvas-id (:id tool) :value])))
+    (let [id (or (:group-id tool) (:id tool))]
+      (merge
+       (get-in state [:tools id :value])
+       (get-in state [:panes canvas-id id :value])))))
 
 (defn get-current-addon [location addons]
   (or (when-let [id (some-> location :query-params :addon keyword)]
@@ -44,7 +48,7 @@
      :content content}))
 
 (defn get-tool-defaults [tools]
-  (apply merge (map :default-value tools)))
+  (apply merge (map addons/get-default-tool-value tools)))
 
 (defn toolbar-value? [tool]
   (or (satisfies? canvas/ICanvasToolValue tool)

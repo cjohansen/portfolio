@@ -2,9 +2,7 @@
   (:require [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.canvas :as canvas]
-            [portfolio.ui.components.canvas-toolbar-buttons
-             :refer
-             [Button ButtonGroup]]))
+            [portfolio.ui.components.canvas-toolbar-buttons :refer [Button ButtonGroup]]))
 
 (defn reset-canvas-zoom [_ el opt]
   (when-not (contains? opt :zoom/level)
@@ -37,9 +35,7 @@
        :active? (if (< 0 increment)
                   (< 1 level)
                   (< level 1))
-       :actions [[:assoc-in
-                  (addons/get-options-path pane tool)
-                  {:zoom/level (+ increment level)}]]}
+       :actions (addons/get-set-actions pane tool {:zoom/level (+ increment level)})}
       {`protocols/render-toolbar-button #'Button})))
 
 (def impl
@@ -73,7 +69,7 @@
     :icon :portfolio.ui.icons/arrow-counter-clockwise
     :prepare-canvas #'reset-canvas-zoom
     :get-actions (fn [tool _ pane]
-                   [[:dissoc-in (addons/get-options-path pane tool)]])
+                   (addons/get-clear-actions pane tool))
     :show? (fn [_ _ {:keys [pane-options]}]
              (and (:zoom/level pane-options)
                   (not= 1 (:zoom/level pane-options))))}))

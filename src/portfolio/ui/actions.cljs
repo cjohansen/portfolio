@@ -181,6 +181,9 @@
   (when-let [paths (:replace-css-files res)]
     (css/replace-loaded-css-files paths)))
 
+(defn save-in-local-storage [k v]
+  (.setItem js/localStorage (str k) (pr-str v)))
+
 (defn execute-action! [app action]
   (println "execute-action!" action)
   (process-action-result!
@@ -196,6 +199,7 @@
                        :load-css-files paths
                        :replace-css-files paths})
      :remove-scene-param (apply remove-scene-param @app (rest action))
+     :save-in-local-storage (apply save-in-local-storage (rest action))
      :set-scene-param (apply set-scene-param @app (rest action))
      :search (apply search @app (rest action))))
   app)
@@ -203,7 +207,7 @@
 (def available-actions
   #{:assoc-in :dissoc-in :go-to-location :go-to-current-location
     :remove-scene-param :set-scene-param :fn/call :event/prevent-default
-    :search})
+    :search :save-in-local-storage})
 
 (defn actions? [x]
   (and (sequential? x)

@@ -30,6 +30,8 @@
   (addons/create-toolbar-menu-button
    {:id :canvas/grid
     :title "Grid"
+    :global? true
+    :persist? true
     :icon :portfolio.ui.icons/grid-four
     :options (or (:grid/options config)
                  [{:title "5 x 20px"
