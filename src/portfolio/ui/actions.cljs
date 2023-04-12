@@ -143,49 +143,53 @@
 (declare execute-action!)
 
 (defn process-action-result! [app res]
-  (doseq [ref (:release res)]
-    (println "Stop watching atom" (pr-str ref))
-    (remove-watch ref ::portfolio))
-  (doseq [[k t f & args] (:fns res)]
-    (println (str "Calling " k " on " t " with") (pr-str args))
-    (apply f args))
-  (doseq [ref (:subscribe res)]
-    (println "Start watching atom" (pr-str ref))
-    (add-watch ref ::portfolio
-      (fn [_ _ _ _]
-        (swap! app update :heartbeat (fnil inc 0)))))
-  (when-let [url (:update-window-location res)]
-    (when-not (= url (router/get-current-url))
-      (println "Updating browser URL to" url)
-      (.pushState js/history false false url)))
-  (when-let [title (:set-page-title res)]
-    (println (str "Set page title to '" title "'"))
-    (set! js/document.title title))
-  (when (or (:dissoc-in res) (:assoc-in res))
-    (when (:assoc-in res)
-      (println ":assoc-in" (pr-str (:assoc-in res))))
-    (when (:dissoc-in res)
-      (println ":dissoc-in" (pr-str (:dissoc-in res))))
-    (swap! app (fn [state]
-                 (apply assoc-in*
-                        (apply dissoc-in* state (:dissoc-in res))
-                        (:assoc-in res)))))
-  (doseq [action (:actions res)]
-    (execute-action! app action))
-  (when-let [[ref path v] (:swap res)]
-    (swap! ref assoc-in path v))
-  (when-let [[ref v] (:reset res)]
-    (reset! ref v))
-  (when-let [paths (:load-css-files res)]
-    (css/load-css-files paths))
-  (when-let [paths (:replace-css-files res)]
-    (css/replace-loaded-css-files paths)))
+  (let [log (if (:log? @app)
+              println
+              (fn [& _args]))]
+    (doseq [ref (:release res)]
+      (log "Stop watching atom" (pr-str ref))
+      (remove-watch ref ::portfolio))
+    (doseq [[k t f & args] (:fns res)]
+      (log (str "Calling " k " on " t " with") (pr-str args))
+      (apply f args))
+    (doseq [ref (:subscribe res)]
+      (log "Start watching atom" (pr-str ref))
+      (add-watch ref ::portfolio
+        (fn [_ _ _ _]
+          (swap! app update :heartbeat (fnil inc 0)))))
+    (when-let [url (:update-window-location res)]
+      (when-not (= url (router/get-current-url))
+        (log "Updating browser URL to" url)
+        (.pushState js/history false false url)))
+    (when-let [title (:set-page-title res)]
+      (log (str "Set page title to '" title "'"))
+      (set! js/document.title title))
+    (when (or (:dissoc-in res) (:assoc-in res))
+      (when (:assoc-in res)
+        (log ":assoc-in" (pr-str (:assoc-in res))))
+      (when (:dissoc-in res)
+        (log ":dissoc-in" (pr-str (:dissoc-in res))))
+      (swap! app (fn [state]
+                   (apply assoc-in*
+                          (apply dissoc-in* state (:dissoc-in res))
+                          (:assoc-in res)))))
+    (doseq [action (:actions res)]
+      (execute-action! app action))
+    (when-let [[ref path v] (:swap res)]
+      (swap! ref assoc-in path v))
+    (when-let [[ref v] (:reset res)]
+      (reset! ref v))
+    (when-let [paths (:load-css-files res)]
+      (css/load-css-files paths))
+    (when-let [paths (:replace-css-files res)]
+      (css/replace-loaded-css-files paths))))
 
 (defn save-in-local-storage [k v]
   (.setItem js/localStorage (str k) (pr-str v)))
 
 (defn execute-action! [app action]
-  (println "execute-action!" action)
+  (when (:log? @app)
+    (println "execute-action!" action))
   (process-action-result!
    app
    (case (first action)

@@ -27,6 +27,7 @@
 
     :config
     {:css-paths ["/portfolio/demo.css"]
+     :log? true
 
      ;;:title "Portfolio"
 

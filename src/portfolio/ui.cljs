@@ -42,13 +42,14 @@
 (def eventually-execute (h/debounce actions/execute-action! 250))
 
 (defn index-content [app & [{:keys [ids]}]]
-  (let [{:keys [index scenes collections]} @app]
+  (let [{:keys [index scenes collections log?]} @app]
     (when index
       (js/requestAnimationFrame
        (fn [_]
          (doseq [doc (cond->> (concat (vals scenes) (vals collections))
                        ids (filter (comp (set ids) :id)))]
-           (println "Index" (:id doc))
+           (when log?
+             (println "Index" (:id doc)))
            (index/index index doc)))))))
 
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data] :as opt}]]
