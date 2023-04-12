@@ -15,7 +15,7 @@
 
 (defprotocol ICanvasToolValue
   :extend-via-metadata true
-  (get-tool-value [self state canvas-id]))
+  (get-tool-value [self state pane-id]))
 
 (defprotocol ICanvasToolMiddleware
   :extend-via-metadata true

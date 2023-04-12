@@ -3,7 +3,7 @@
             [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.components.canvas :as canvas]))
 
-(defn prepare-canvas [data el {:grid/keys [offset size group-size] :as opt}]
+(defn prepare-canvas [_data el {:grid/keys [offset size group-size] :as opt}]
   (let [body-style (.-style (canvas/get-iframe el))
         zoom (or (:zoom/level opt) 1)]
     (if (and (number? size) (not= 0 size))
@@ -33,6 +33,7 @@
     :global? true
     :persist? true
     :icon :portfolio.ui.icons/grid-four
+    :default-value {:grid/size 0}
     :options (or (:grid/options config)
                  [{:title "5 x 20px"
                    :value {:grid/offset 0

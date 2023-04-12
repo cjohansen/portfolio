@@ -3,31 +3,67 @@
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]))
 
-(defn get-expand-path [vid]
-  [:canvas/tools vid :expanded])
-
-(defn get-set-actions [pane tool v]
-  (let [id (or (:group-id tool) (:id tool))]
-    (cond-> [[:assoc-in [:panes (:pane-id pane) id :value] v]]
-      (:global? tool) (conj [:assoc-in [:tools id :value] v])
-      (:persist? tool) (conj [:save-in-local-storage id v]))))
-
-(defn get-clear-actions [pane tool]
-  (let [id (or (:group-id tool) (:id tool))]
-    (cond-> [[:dissoc-in [:panes (:pane-id pane) id :value]]]
-      (:global? tool) (conj [:dissoc-in [:tools id :value]])
-      (:persist? tool) (conj [:save-in-local-storage id nil]))))
+(defn get-tool-id [tool]
+  (or (:group-id tool) (:id tool)))
 
 (defn get-persisted-value [tool]
-  (some->> (str (or (:group-id tool) (:id tool)))
-           (.getItem js/localStorage)
-           not-empty
-           r/read-string))
+  (try
+    (some->> (str (get-tool-id tool))
+             (.getItem js/localStorage)
+             not-empty
+             r/read-string)
+    (catch :default _e
+      nil)))
 
-(defn get-default-tool-value [tool]
+(defn get-default-value [tool]
   (or (when (:persist? tool)
         (get-persisted-value tool))
       (:default-value tool)))
+
+(defn get-global-value [state tool]
+  (get-in state [:tools (get-tool-id tool) :value]))
+
+(defn get-pane-value [state tool pane-id]
+  (get-in state [:panes pane-id (get-tool-id tool) :value]))
+
+(defn get-tool-value [state tool & [pane-id]]
+  (merge (get-global-value state tool)
+         (when pane-id
+           (get-pane-value state tool pane-id))))
+
+(defn get-current-value [state tool {:keys [pane-id pane-options]}]
+  (or (when-let [ks (->> (:options tool)
+                         (map :value)
+                         (filter map?)
+                         (mapcat keys)
+                         seq)]
+        (not-empty (select-keys pane-options ks)))
+      (get-tool-value state tool pane-id)
+      (get-default-value tool)))
+
+(defn get-set-actions [tool pane-id v]
+  (let [id (get-tool-id tool)]
+    (cond-> [[:assoc-in [:panes pane-id id :value] v]]
+      (:global? tool) (conj [:assoc-in [:tools id :value] v])
+      (:persist? tool) (conj [:save-in-local-storage id v]))))
+
+(defn get-override-actions [state tool v]
+  (let [id (get-tool-id tool)]
+    (concat
+     (for [[pane-id] (filter (fn [[_ m]] (contains? m id)) (:panes state))]
+       [:dissoc-in [:panes pane-id id :value]])
+     [[:assoc-in [:tools id :value] v]]
+     (when (:persist? tool)
+       [[:save-in-local-storage id v]]))))
+
+(defn get-clear-actions [tool pane-id]
+  (let [id (get-tool-id tool)]
+    (cond-> [[:dissoc-in [:panes pane-id id :value]]]
+      (:global? tool) (conj [:dissoc-in [:tools id :value]])
+      (:persist? tool) (conj [:save-in-local-storage id nil]))))
+
+(defn get-expand-path [vid]
+  [:canvas/tools vid :expanded])
 
 (defn get-custom-tool-source-title [[source]]
   (case source
@@ -38,16 +74,8 @@
     :portfolio.ui.layout/gallery-default "Default config (gallery)"
     :portfolio.ui.layout/default "Default config"))
 
-(defn get-current-value [tool state {:keys [pane-id pane-options]}]
-  (let [selected-value (canvas/get-tool-value tool state pane-id)
-        value (or selected-value (:default-value tool))]
-    {:value value
-     :current-value
-     (and (map? value)
-          (not-empty (select-keys pane-options (keys value))))}))
-
 (defn prepare-tool-menu [tool state pane]
-  (let [{:keys [current-value]} (get-current-value tool state pane)
+  (let [current-value (get-current-value state tool pane)
         custom-options (when (and current-value
                                   (not (contains? (set (map :value (:options tool))) current-value)))
                          [{:title (get-custom-tool-source-title (:config-source pane))
@@ -62,8 +90,8 @@
                      (->> [[:dissoc-in (get-expand-path (:pane-id pane))]]
                           (concat
                            (if selected?
-                             (get-clear-actions pane tool)
-                             (get-set-actions pane tool value)))
+                             (get-clear-actions tool (:pane-id pane))
+                             (get-set-actions tool (:pane-id pane) value)))
                           (concat
                            [(when (ifn? (:on-select tool))
                               [:fn/call (:on-select tool) value])])
@@ -72,7 +100,7 @@
 (defn get-tool-title [state pane tool]
   (or (when (ifn? (:prepare-title tool))
         (let [f (:prepare-title tool)]
-          (f (:current-value (get-current-value tool state pane)))))
+          (f (:current-value (get-current-value state tool pane)))))
       (:title tool)))
 
 (defn prepare-toolbar-menu-button [tool state pane]
@@ -99,6 +127,7 @@
   (with-meta
     (dissoc data :prepare-canvas)
     {`canvas/prepare-toolbar-button #'prepare-toolbar-menu-button
+     `canvas/get-tool-value (fn [tool state pane-id] (get-tool-value state tool pane-id))
      `canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
      `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))}))
 

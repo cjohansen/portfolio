@@ -3,9 +3,8 @@
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]))
 
-(defn show-docs? [state tool pane-id]
-  (-> (or (canvas/get-tool-value tool state pane-id)
-          (addons/get-default-tool-value tool))
+(defn show-docs? [state tool opts]
+  (-> (addons/get-current-value state tool opts)
       (get :docs/show? true)))
 
 (defn create-docs-tool [config]
@@ -16,7 +15,7 @@
       tool
       {`canvas/prepare-toolbar-button
        (fn [_tool state options]
-         (let [docs? (show-docs? state tool (:pane-id options))]
+         (let [docs? (show-docs? state tool options)]
            (when (->> (vals (:scenes state))
                       (concat (vals (:collections state)))
                       (keep :docs)
@@ -25,7 +24,7 @@
                {:title "Toggle docs"
                 :icon :portfolio.ui.icons/file-doc
                 :selected? docs?
-                :actions (addons/get-set-actions options tool {:docs/show? (not docs?)})}
+                :actions (addons/get-set-actions tool (:pane-id options) {:docs/show? (not docs?)})}
                {`canvas/render-toolbar-button #'MenuButton}))))
 
        `canvas/prepare-pane
@@ -34,11 +33,11 @@
           state
           view
           (cond-> ctx
-            (not (show-docs? state tool (:pane-id ctx)))
+            (not (show-docs? state tool ctx))
             (update :scenes (fn [scenes] (map #(dissoc % :title :description) scenes))))))
 
        `canvas/prepare-view
        (fn [_ f state location view]
          (cond-> (f state location view)
-           (not (show-docs? state tool (:id view)))
+           (not (show-docs? state tool {:pane-id (:id view)}))
            (dissoc :title :description)))})))

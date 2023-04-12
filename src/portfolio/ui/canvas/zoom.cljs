@@ -26,7 +26,7 @@
       (.. body -zoomed)
       (reset-canvas-zoom nil el opt))))
 
-(defn prepare-zoom-button [tool _state {:keys [pane-options] :as pane}]
+(defn prepare-zoom-button [tool _state {:keys [pane-options pane-id]}]
   (let [level (or (:zoom/level pane-options) 1)
         increment (or (:zoom-increment tool) 0.25)]
     (with-meta
@@ -35,7 +35,7 @@
        :active? (if (< 0 increment)
                   (< 1 level)
                   (< level 1))
-       :actions (addons/get-set-actions pane tool {:zoom/level (+ increment level)})}
+       :actions (addons/get-set-actions tool pane-id {:zoom/level (+ increment level)})}
       {`protocols/render-toolbar-button #'Button})))
 
 (def impl
@@ -68,8 +68,8 @@
     :title "Reset zoom"
     :icon :portfolio.ui.icons/arrow-counter-clockwise
     :prepare-canvas #'reset-canvas-zoom
-    :get-actions (fn [tool _ pane]
-                   (addons/get-clear-actions pane tool))
+    :get-actions (fn [tool _ {:keys [pane-id]}]
+                   (addons/get-clear-actions tool pane-id))
     :show? (fn [_ _ {:keys [pane-options]}]
              (and (:zoom/level pane-options)
                   (not= 1 (:zoom/level pane-options))))}))
@@ -88,4 +88,5 @@
                (create-reset-zoom-tool config)]}
     {`protocols/prepare-canvas (fn [_ el opt] (zoom el opt))
      `protocols/finalize-canvas (fn [_ _ _])
-     `protocols/prepare-toolbar-button #'prepare-button-group}))
+     `protocols/prepare-toolbar-button #'prepare-button-group
+     `protocols/get-tool-value (fn [tool state pane-id] (addons/get-tool-value state tool pane-id))}))

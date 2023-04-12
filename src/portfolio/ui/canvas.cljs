@@ -12,14 +12,6 @@
 (def view-impl
   {`view/render-view #'CanvasView})
 
-(extend-type cljs.core/PersistentArrayMap
-  canvas/ICanvasToolValue
-  (get-tool-value [tool state canvas-id]
-    (let [id (or (:group-id tool) (:id tool))]
-      (merge
-       (get-in state [:tools id :value])
-       (get-in state [:panes canvas-id id :value])))))
-
 (defn get-current-addon [location addons]
   (or (when-let [id (some-> location :query-params :addon keyword)]
         (first (filter (comp #{id} :id) addons)))
@@ -48,7 +40,7 @@
      :content content}))
 
 (defn get-tool-defaults [tools]
-  (apply merge (map addons/get-default-tool-value tools)))
+  (apply merge (map addons/get-default-value tools)))
 
 (defn toolbar-value? [tool]
   (or (satisfies? canvas/ICanvasToolValue tool)
