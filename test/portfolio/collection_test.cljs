@@ -25,11 +25,11 @@
               :title "Components"
               :kind :folder}
              {:id :sasha.components.spinner-scenes
-              :title "Spinner scenes"
+              :title "Spinner Scenes"
               :kind :package
               :collection :sasha.components}
              {:id :sasha.components.button-scenes
-              :title "Button scenes"
+              :title "Button Scenes"
               :kind :package
               :collection :sasha.components}})))
 
@@ -94,7 +94,24 @@
                 (map :id)
                 set)
            #{:sasha.components.button-scenes
-             :sasha.components.icon-scenes}))))
+             :sasha.components.icon-scenes})))
+
+  (testing "Picks up custom collections"
+    (is (= (sut/get-default-organization
+            [{:id :sasha.icons-scenes/icon-listing
+              :collection :sasha.icons-scenes}]
+            [{:id :sasha.icons-scenes
+              :collection :icons-folder
+              :title "Icons scenes"}
+             {:id :icons-folder
+              :title "Icons folder"}])
+           #{{:id :icons-folder
+              :title "Icons folder"
+              :kind :folder}
+             {:id :sasha.icons-scenes
+              :title "Icons scenes"
+              :kind :package
+              :collection :icons-folder}}))))
 
 (deftest get-collection-path--test
   (testing "Returns collection and all its parents"

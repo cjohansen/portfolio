@@ -44,7 +44,8 @@
 
 (defn get-default-organization [scenes collections]
   (let [existing (into {} (map (juxt :id identity) collections))
-        packages (suggest-packages scenes)
+        packages (for [pkg (suggest-packages scenes)]
+                   (merge pkg (get existing (:id pkg))))
         folders (->> (keep :collection packages)
                      set
                      (map (fn [id]
