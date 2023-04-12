@@ -40,8 +40,7 @@
 (defn render-button [data]
   [:button.button (:text data)])
 
-(defscene reusable-fn
-  :title "Reusable render function"
+(defscene reusable-render-function
   :param {:text "I am a damn button!"}
   render-button)
 

@@ -52,7 +52,7 @@
                             :updated-at #?(:cljs (.getTime (js/Date.))
                                            :clj (.toEpochMilli (java.time.Instant/now))))
                (empty? (:title scene))
-               (assoc :title (name (:id scene)))
+               (assoc :title (h/->title (name (:id scene))))
 
                (nil? (:collection scene))
                (assoc :collection (some-> scene :id namespace keyword))

@@ -1,5 +1,6 @@
 (ns portfolio.ui.collection
   (:require [clojure.string :as str]
+            [portfolio.homeless :as h]
             [portfolio.ui.routes :as routes]))
 
 (defn by-parent-id [parent-id]
@@ -17,8 +18,7 @@
             s)
           (str/split #"\.")
           last
-          (str/replace #"-" " ")
-          str/capitalize))
+          h/title-case))
 
 (defn suggest-packages [scenes]
   (->> scenes
