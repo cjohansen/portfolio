@@ -3,9 +3,9 @@
             [dumdom.core :as d]
             [portfolio.adapter :as adapter]
             [portfolio.ui.canvas.protocols :as canvas]
+            [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.code :refer [Code]]
             [portfolio.ui.components.markdown :refer [Markdown]]
-            [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
             [portfolio.ui.components.triangle :refer [TriangleButton]]
@@ -21,8 +21,7 @@
   (some-> canvas-el get-iframe-document .-body))
 
 (d/defcomponent ComponentError [{:keys [component-params error] :as lol}]
-  [:div {:style {:background "#fff"
-                 :width "100%"
+  [:div {:style {:width "100%"
                  :height "100%"
                  :padding 20}}
    [:h1.h1.error (:title error)]
@@ -129,7 +128,8 @@
   :on-update (fn [el data]
                (on-mounted (get-iframe el) #(render-scene el data)))
   [data]
-  [:div {:style {:background "#fff"
+  [:div {:style {:background (or (:background/background-color (:opt data))
+                                 "var(--canvas-bg)")
                  :display "flex"
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe.canvas
@@ -200,7 +200,7 @@
        (remove nil?)))
 
 (d/defcomponent Problem [{:keys [title text code]}]
-  [:div {:style {:background "#fff"
+  [:div {:style {:background "var(--bg)"
                  :padding 20}}
    [:h2.h2 title]
    [:p.mod text]
@@ -315,7 +315,7 @@
 
 (d/defcomponent Pane
   :keyfn :id
-  [{:keys [toolbar canvases title description menu-bar browser handle] :as data}]
+  [{:keys [toolbar canvases title description menu-bar background browser handle class-name] :as data}]
   [:div.pane
    {:style (into (get-grid-styles data)
                  {:display "flex"
@@ -326,10 +326,11 @@
                          :overflow "scroll"
                          :display "flex"
                          :gap 20
-                         :flex-direction "column"}
-                        (when (:items browser)
-                          {:background "var(--bg)"
-                           :color "var(--fg)"}))}
+                         :flex-direction "column"
+                         :background background})
+          :class (if (:items browser)
+                   :dark
+                   class-name)}
     (when (:items browser)
       (Browser browser))
     (when (or title description)

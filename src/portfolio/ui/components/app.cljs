@@ -20,8 +20,6 @@
                   :overflow "scroll"}}
     (some-> data :header Header)
     [:div {:style {:flex-grow 1
-                   :background "var(--gallery-bg)"
-                   :color "var(--gallery-fg)"
                    :display "flex"
                    :flex-direction "column"}}
      (when (< 1 (or (some-> data :tab-bar :tabs count) 0))

@@ -3,6 +3,7 @@
             [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.code :as code]
+            [portfolio.ui.color :as color]
             [portfolio.ui.components.canvas :refer [CanvasView]]
             [portfolio.ui.layout :as layout]
             [portfolio.ui.routes :as routes]
@@ -70,15 +71,23 @@
   (or (satisfies? canvas/ICanvasToolbarButtonData tool)
       (ifn? (get (meta tool) `canvas/prepare-toolbar-button))))
 
+(defn dark? [background]
+  (when background
+    (< (:l (color/rgb->hsl (color/->rgb background))) 40)))
+
 (defn prepare-pane [state view ctx]
   (when-let [scenes (seq (:scenes ctx))]
     (let [buttons (->> (:tools view)
                        (filter toolbar-button?)
                        (keep #(canvas/prepare-toolbar-button
-                               % state (dissoc ctx :scenes))))]
+                               % state (dissoc ctx :scenes))))
+          background (:background/background-color (:pane-options ctx))]
       (cond-> {:kind :pane
                :id (:pane-id ctx)
-               :canvases (map (partial prepare-canvas (:pane-options ctx)) scenes)}
+               :canvases (map (partial prepare-canvas (:pane-options ctx)) scenes)
+               :class-name (if (dark? background)
+                             :dark
+                             :light)}
         (seq buttons)
         (assoc :toolbar {:buttons buttons})))))
 

@@ -12,6 +12,7 @@
 html,
 body {
   font-size: 15px;
+  --woodsmoke: #141619;
   --shark: #212227;
   --shark-dark: #26262a;
   --cod-gray: #181818;
@@ -28,8 +29,13 @@ body {
 
   /* Theming */
 
+  --bg: var(--shark);
+  --fg: var(--alto);
+  --separator: var(--shark-dark);
+  --hard-separator: #333;
+
   --hover-bg: #1181f926;
-  --header-border: #111;
+  --header-border: var(--woodsmoke);
   --gallery-bg: var(--gallery);
   --gallery-fg: var(--shark);
   --code-bg: #f8f8f8;
@@ -54,11 +60,25 @@ body {
   --secondary-text: #999;
 }
 
-body {
-  --bg: var(--shark);
+.dark {
+  --bg: var(--woodsmoke);
   --fg: var(--alto);
-  --separator: var(--shark-dark);
-  --hard-separator: #333;
+  --code-bg: #333;
+  --code-fg: var(--fg);
+  --canvas-bg: var(--cod-gray);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.light {
+  --bg: var(--gallery-bg);
+  --fg: var(--gallery-fg);
+  --canvas-bg: #ffffff;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
   background: var(--bg);
   color: var(--fg);
   font-weight: normal;
