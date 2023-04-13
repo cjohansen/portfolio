@@ -1,7 +1,8 @@
 (ns portfolio.ui.canvas.addons
   (:require [cljs.reader :as r]
             [portfolio.ui.canvas.protocols :as canvas]
-            [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]))
+            [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]
+            [portfolio.ui.layout :as layout]))
 
 (defn get-tool-id [tool]
   (or (:group-id tool) (:id tool)))
@@ -41,11 +42,12 @@
       (get-tool-value state tool pane-id)
       (get-default-value tool)))
 
-(defn get-set-actions [tool pane-id v]
-  (let [id (get-tool-id tool)]
+(defn get-set-actions [state tool pane-id v]
+  (let [id (get-tool-id tool)
+        global? (or (:global? tool) (not (layout/split-screen? state)))]
     (cond-> [[:assoc-in [:panes pane-id id :value] v]]
-      (:global? tool) (conj [:assoc-in [:tools id :value] v])
-      (:persist? tool) (conj [:save-in-local-storage id v]))))
+      global? (conj [:assoc-in [:tools id :value] v])
+      (and global? (:persist? tool)) (conj [:save-in-local-storage id v]))))
 
 (defn get-override-actions [state tool v]
   (let [id (get-tool-id tool)]
@@ -56,11 +58,12 @@
      (when (:persist? tool)
        [[:save-in-local-storage id v]]))))
 
-(defn get-clear-actions [tool pane-id]
-  (let [id (get-tool-id tool)]
+(defn get-clear-actions [state tool pane-id]
+  (let [id (get-tool-id tool)
+        global? (not (layout/split-screen? state))]
     (cond-> [[:dissoc-in [:panes pane-id id :value]]]
-      (:global? tool) (conj [:dissoc-in [:tools id :value]])
-      (:persist? tool) (conj [:save-in-local-storage id nil]))))
+      global? (conj [:dissoc-in [:tools id :value]])
+      (and global? (:persist? tool)) (conj [:save-in-local-storage id nil]))))
 
 (defn get-expand-path [vid]
   [:canvas/tools vid :expanded])
@@ -90,8 +93,8 @@
                      (->> [[:dissoc-in (get-expand-path (:pane-id pane))]]
                           (concat
                            (if selected?
-                             (get-clear-actions tool (:pane-id pane))
-                             (get-set-actions tool (:pane-id pane) value)))
+                             (get-clear-actions state tool (:pane-id pane))
+                             (get-set-actions state tool (:pane-id pane) value)))
                           (concat
                            [(when (ifn? (:on-select tool))
                               [:fn/call (:on-select tool) value])])

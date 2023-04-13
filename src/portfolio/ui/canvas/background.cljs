@@ -25,7 +25,6 @@
   (let [options (or (:background/options config) default-options)]
     (addons/create-toolbar-menu-button
      {:id :canvas/background
-      :global? true
       :persist? true
       :title "Background"
       :icon :portfolio.ui.icons/palette

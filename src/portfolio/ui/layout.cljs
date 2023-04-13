@@ -51,3 +51,6 @@
 
 (defn get-layout-panes [{:keys [layout]}]
   (get-panes layout))
+
+(defn split-screen? [state]
+  (< 1 (count (get-layout-panes (get-current-layout state)))))

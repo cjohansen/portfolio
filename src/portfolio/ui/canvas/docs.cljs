@@ -24,7 +24,7 @@
                {:title "Toggle docs"
                 :icon :portfolio.ui.icons/file-doc
                 :selected? docs?
-                :actions (addons/get-set-actions tool (:pane-id options) {:docs/show? (not docs?)})}
+                :actions (addons/get-set-actions state tool (:pane-id options) {:docs/show? (not docs?)})}
                {`canvas/render-toolbar-button #'MenuButton}))))
 
        `canvas/prepare-pane
