@@ -94,6 +94,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.document {
+  background: transparent;
+  font-size: 18px;
+  max-width: 800px;
+  margin: 40px auto;
+}
+
 /* Headings */
 .h1, .md h1 {font-size: 1.6rem; font-weight: 400;}
 .h2, .md h2 {font-size: 1.3rem; font-weight: 400;}

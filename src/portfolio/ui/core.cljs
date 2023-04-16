@@ -1,6 +1,7 @@
 (ns portfolio.ui.core
   (:require [clojure.walk :as walk]
             [portfolio.ui.collection :as collection]
+            [portfolio.ui.intro-screen :as intro]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene-browser :as scene-browser]
             [portfolio.ui.screen :as screen]
@@ -77,10 +78,12 @@
     (assoc :selected? true)))
 
 (defn prepare-data [state location]
-  (let [state (assoc state :current-selection (collection/get-selection state (routes/get-id location)))
-        current-view (get-current-view state location)]
-    {:header (prepare-header state location)
-     :sidebar (prepare-sidebar state location)
-     :small? (screen/small-screen? state)
-     :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
-     :view (view/prepare-data current-view state location)}))
+  (if (seq (vals (:scenes state)))
+    (let [state (assoc state :current-selection (collection/get-selection state (routes/get-id location)))
+          current-view (get-current-view state location)]
+      {:header (prepare-header state location)
+       :sidebar (prepare-sidebar state location)
+       :small? (screen/small-screen? state)
+       :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
+       :view (view/prepare-data current-view state location)})
+    {:view (intro/prepare-view state location)}))
