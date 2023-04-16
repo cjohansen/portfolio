@@ -1,6 +1,5 @@
 (ns portfolio.ui.scene
-  (:require [portfolio.ui.code :as code]
-            [portfolio.ui.collection :as collection]))
+  (:require [portfolio.ui.code :as code]))
 
 (defn get-param-overrides [state scene]
   (get-in state [:ui (:id scene) :overrides]))
