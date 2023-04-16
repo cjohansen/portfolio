@@ -36,6 +36,17 @@
        (str/replace #"[\u0300-\u036f]" "")
        str/lower-case)])
 
+(defn duplicate-diacritics
+  "Turns strings with combining diacritics into two separate tokens: one with
+  diacritics removed, and the original string. Strings without combining
+  diacritics are returned as a single normalized token."
+  [s]
+  (let [normalized (.normalize s "NFD")
+        stripped (str/replace normalized #"[\u0300-\u036f]" "")]
+    (if (not= stripped normalized)
+      [stripped normalized]
+      [normalized])))
+
 (defn tokenize-words
   "Converts a string to a sequence of word tokens, removing punctuation."
   [s]
