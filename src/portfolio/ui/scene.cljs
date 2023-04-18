@@ -20,7 +20,7 @@
     (map #(get-param* state scene %) (:params scene))
 
     :else
-    (:params scene)))
+    [(:params scene)]))
 
 (defn prep-scene-fn [state scene]
   (let [params (get-params state scene)]
