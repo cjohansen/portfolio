@@ -58,7 +58,7 @@
                (assoc :collection (some-> scene :id namespace keyword))
 
                (:param scene)
-               (assoc :params [(:param scene)])))
+               (assoc :params (:param scene))))
       (eventually-purge-scenes)
       nil)))
 

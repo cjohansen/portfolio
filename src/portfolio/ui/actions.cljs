@@ -78,14 +78,10 @@
      :fns (concat
            (->> (filter :on-unmount current-scenes)
                 (map (fn [{:keys [on-unmount params id title]}]
-                       (cond-> [:on-unmount (or id title) on-unmount]
-                         (map? params) (conj params)
-                         (not (map? params)) (into params)))))
+                       [:on-unmount (or id title) on-unmount params])))
            (->> (filter :on-mount (:scenes selection))
                 (map (fn [{:keys [on-mount params id title]}]
-                       (cond-> [:on-mount (or id title) on-mount]
-                         (map? params) (conj params)
-                         (not (map? params)) (into params))))))
+                       [:on-mount (or id title) on-mount params]))))
      :release (mapcat scene/get-scene-atoms current-scenes)
      :subscribe (mapcat scene/get-scene-atoms (:scenes selection))
      :set-page-title (get-page-title state selection)

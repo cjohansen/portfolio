@@ -88,9 +88,9 @@ Scenes can take arguments and have function bodies:
 ```clj
 (defscene name
   ;; key/value pairs
-  :param {:title "Your component data here"}
-  [param portfolio-opts]
-  (render-component param))
+  :params {:title "Your component data here"}
+  [params portfolio-opts]
+  (render-component params))
 ```
 
 Scenes can also use existing functions to render:
@@ -100,12 +100,12 @@ Scenes can also use existing functions to render:
   [:button.button (:text data)])
 
 (defscene reusable-fn
-  :param {:text "Click the button!"}
+  :params {:text "Click the button!"}
   render-button)
 ```
 
-By using `:param` and either a function body or an existing function, you allow
-Portfolio to know about the component's arguments. This enables you to use
+By using `:params` and either a function body or an existing function, you allow
+Portfolio to know about the scene's component data. This enables you to use
 `tap>` and Portfolio's UI to interact with your component, or bind the scene to
 an atom for stateful scenes. It also enables you to inspect portfolio's layout
 options (background, viewport size, etc) to render the component.
@@ -114,12 +114,12 @@ Here's an example of passing an atom to your scene:
 
 ```clj
 (defscene name
-  :param (atom {:title "Hello world!"})
-  [param portfolio-opts]
-  [:h1 (:title @param)])
+  :params (atom {:title "Hello world!"})
+  [store portfolio-opts]
+  [:h1 (:title @store)])
 ```
 
-As you can see - if you pass an atom as `:param`, an atom is what is passed to
+As you can see - if you pass an atom as `:params`, an atom is what is passed to
 your component function. If you just want a map, that can also benefit from this
 indirection, because it allows you to programmatically access component data.
 The uses for this are countless, some suggestions include:
@@ -129,29 +129,41 @@ The uses for this are countless, some suggestions include:
 
 ```clj
 (defscene name
-  :param {:title "Hello world!"}
-  [param portfolio-opts]
-  [:h1 (:title param)])
+  :params {:title "Hello world!"}
+  [params portfolio-opts]
+  [:h1 (:title params)])
 ```
 
-While a symbol is a good identifier, you probably want to set `:title` for a
-more pleasant-looking UI:
+Note: For historic reasons, `:param` is the same as `:params`. Any atom in
+`:params` will be watched by Portfolio for re-rendering. This is perfectly
+legal, and will re-render whenever the provided atom changes:
+
+```clj
+(defscene name
+  :params {:store (atom {:title "Hello world!"})}
+  [params portfolio-opts]
+  [:h1 (:title @(:store params))])
+```
+
+Portfolio will "humanize" the scene symbol id for a title. If you don't like the
+result, you can set `:title` to override the UI title:
 
 ```clj
 (defscene default-scenario
-  :title "Default scenario!"
+  :title "'tis the default scenario!"
   :param {:title "Hello world!"}
   [param portfolio-opts]
   [:h1 (:title param)])
 ```
 
-With `:title`, this will list as `Default scenario` in the sidebar instead of
-`default-scenario`.
+With `:title`, this will list as `'tis the default scenario!` in the sidebar
+instead of `Default scenario`.
 
 Currently supported key/value pairs:
 
 - `:title` - Give the scene a nice string name
-- `:param` - The initial parameter passed to the component function
+- `:params` - The initial parameter passed to the component function (`:param`
+  also supported, and does the same thing)
 - `:on-mount` - A function called when the scene is initially mounted. The
   function is passed the component arguments.
 - `:on-unmount` - A function called when the scene is removed from the DOM. The

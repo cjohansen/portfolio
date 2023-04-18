@@ -58,12 +58,12 @@
 (defscene multi-param-scene
   :title "Multiple params"
   :params [(atom {:text "I'm stateful!"}) {:text "And I'm static"}]
-  :on-mount (fn [ref _static]
+  :on-mount (fn [[ref _static]]
               (swap! ref assoc :mounted? true)
               (shuffle-text ref (cycle ["Tick ..." "... tock"])))
-  :on-unmount (fn [ref _static]
+  :on-unmount (fn [[ref _static]]
                 (swap! ref assoc :mounted? false))
-  [ref static]
+  [[ref static]]
   [:button.button (:text @ref) " " (:text static)])
 
 (defscene bomb
