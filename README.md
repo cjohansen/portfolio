@@ -17,6 +17,9 @@ documented in this document are final and will not change. APIs not explicitly
 documented in this document, especially those pertaining to extending and
 customizing the UI, may still be subject to change.
 
+Is Portfolio good enough that you can port over from Storybook? Probably, yes.
+If you're using Storybook extensions not covered by Portfolio, open an issue.
+
 ## Sample
 
 ![The Portfolio UI](./docs/sample.png)
@@ -496,6 +499,18 @@ pouring too much work into them, so we're sure we're one the same page.
 - @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
 - @BorisKourt and @thheller helped with shadow-cljs support.
 - @brandonstubbs React 18-related features.
+
+## Wishlist
+
+Some features and fixes that are likely to be explored in the close future:
+
+- Improved 404 page when namespaces disappear
+- Search in mobile view
+- Improved scene sizing in gallery view (e.g. viewing an entire namespace)
+- Better error-handling for things like `:on-mount`
+- Better first use experience: display some documentation when there are no
+  scenes
+- Generate scenes from a component and specs
 
 ## Changelog
 
