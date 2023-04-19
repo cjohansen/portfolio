@@ -91,9 +91,9 @@ Scenes can take arguments and have function bodies:
 ```clj
 (defscene name
   ;; key/value pairs
-  :params {:title "Your component data here"}
-  [params portfolio-opts]
-  (render-component params))
+  :param {:title "Your component data here"}
+  [param portfolio-opts]
+  (render-component param))
 ```
 
 Scenes can also use existing functions to render:
@@ -107,7 +107,7 @@ Scenes can also use existing functions to render:
   render-button)
 ```
 
-By using `:params` and either a function body or an existing function, you allow
+By using `:param` and either a function body or an existing function, you allow
 Portfolio to know about the scene's component data. This enables you to use
 `tap>` and Portfolio's UI to interact with your component, or bind the scene to
 an atom for stateful scenes. It also enables you to inspect portfolio's layout
@@ -117,12 +117,12 @@ Here's an example of passing an atom to your scene:
 
 ```clj
 (defscene name
-  :params (atom {:title "Hello world!"})
+  :param (atom {:title "Hello world!"})
   [store portfolio-opts]
   [:h1 (:title @store)])
 ```
 
-As you can see - if you pass an atom as `:params`, an atom is what is passed to
+As you can see - if you pass an atom as `:param`, an atom is what is passed to
 your component function. If you just want a map, that can also benefit from this
 indirection, because it allows you to programmatically access component data.
 The uses for this are countless, some suggestions include:
@@ -132,20 +132,9 @@ The uses for this are countless, some suggestions include:
 
 ```clj
 (defscene name
-  :params {:title "Hello world!"}
-  [params portfolio-opts]
-  [:h1 (:title params)])
-```
-
-Note: For historic reasons, `:param` is the same as `:params`. Any atom in
-`:params` will be watched by Portfolio for re-rendering. This is perfectly
-legal, and will re-render whenever the provided atom changes:
-
-```clj
-(defscene name
-  :params {:store (atom {:title "Hello world!"})}
-  [params portfolio-opts]
-  [:h1 (:title @(:store params))])
+  :param {:title "Hello world!"}
+  [param portfolio-opts]
+  [:h1 (:title param)])
 ```
 
 Portfolio will "humanize" the scene symbol id for a title. If you don't like the
@@ -165,8 +154,7 @@ instead of `Default scenario`.
 Currently supported key/value pairs:
 
 - `:title` - Give the scene a nice string name
-- `:params` - The initial parameter passed to the component function (`:param`
-  also supported, and does the same thing)
+- `:param` - The initial parameter passed to the component function
 - `:on-mount` - A function called when the scene is initially mounted. The
   function is passed the component arguments.
 - `:on-unmount` - A function called when the scene is removed from the DOM. The
