@@ -498,6 +498,7 @@ Some features and fixes that are likely to be explored in the close future:
 - Better error-handling for things like `:on-mount`
 - Better first use experience: display some documentation when there are no
   scenes
+- Add a scratchpad of sorts for rendering from the REPL
 - Generate scenes from a component and specs
 
 ## Changelog
