@@ -12,7 +12,7 @@ code[class*=language-],pre[class*=language-]{color:#000;background:0 0;text-shad
 .token.number
 {color:#164}
 
-.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#a11}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{color:#9a6e3a;background:hsla(0,0%,100%,.5)}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}
+.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#a11}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{color:#9a6e3a}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}
 
 
 /* PrismJS 1.29.0
