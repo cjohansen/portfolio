@@ -143,6 +143,9 @@
         (assoc :title (:title scene)
                :description (md/md->html (:docs scene)))
 
+        (:code scene)
+        (assoc :code (md/md->html (str "\n```clojure\n" (:code scene) "\n```")))
+
         (:gallery? layout)
         (assoc :title (:title scene)
                :url (routes/get-scene-url location scene))))))

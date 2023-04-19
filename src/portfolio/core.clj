@@ -1,5 +1,7 @@
 (ns portfolio.core
-  (:require [cljs.env :as env]))
+  (:require [cljs.env :as env]
+            [clojure.pprint :as pprint]
+            [clojure.string :as str]))
 
 (defn portfolio-active? []
   (if-let [options (and cljs.env/*compiler*
@@ -13,6 +15,11 @@
 (defn function-like? [f]
   (or (symbol? f)
       (and (list? f) (= 'var (first f)))))
+
+(defn get-code-str [syms]
+  (-> (with-out-str (apply pprint/pprint syms))
+      str/trim
+      (str/replace #"let\n" "let")))
 
 (defn get-options-map [id line syms]
   (let [docs (when (string? (first syms)) (first syms))
@@ -30,12 +37,15 @@
 
                  (and (= 1 (count rest)) (not fn-like?))
                  (assoc :component-fn `(fn [& _#]
-                                         ~(first rest)))
+                                         ~(first rest))
+                        :code (get-code-str rest))
+
                  (< 1 (count rest))
                  (assoc :component-fn `(fn ~(cond-> (first rest)
                                               (< (count (first rest)) 2)
                                               (into ['& 'args]))
-                                         ~@(drop 1 rest))))))))
+                                         ~@(drop 1 rest))
+                        :code (get-code-str (next rest))))))))
 
 (defn get-collection-options [syms]
   (let [docs (when (string? (first syms)) (first syms))

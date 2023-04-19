@@ -4,6 +4,7 @@
             [portfolio.ui.actions :as actions]
             [portfolio.ui.canvas :as canvas]
             [portfolio.ui.canvas.background :as canvas-bg]
+            [portfolio.ui.canvas.code :as code]
             [portfolio.ui.canvas.compare :as compare]
             [portfolio.ui.canvas.docs :as docs]
             [portfolio.ui.canvas.grid :as canvas-grid]
@@ -35,6 +36,7 @@
                                          (canvas-zoom/create-zoom-tool config)
                                          (split/create-split-tool config)
                                          (docs/create-docs-tool config)
+                                         (code/create-code-tool config)
                                          (compare/create-compare-tool config)
                                          (split/create-close-tool config)])
                                     extra-canvas-tools)})])))

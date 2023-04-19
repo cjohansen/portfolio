@@ -179,7 +179,7 @@
 
 (d/defcomponent CanvasHeader
   :keyfn :title
-  [{:keys [title url description]}]
+  [{:keys [title url description code]}]
   [:div {:style {:margin "20px 20px 0"}}
    [:h2.h3 {:style (when-not (empty? description)
                      {:margin "0 0 10px"})}
@@ -188,10 +188,13 @@
       title)]
    (when-not (empty? description)
      (Markdown {:markdown description
+                :tag :p}))
+   (when-not (empty? code)
+     (Markdown {:markdown code
                 :tag :p}))])
 
 (defn render-canvas [data]
-  (->> [(when (not-empty (select-keys data [:title :description]))
+  (->> [(when (not-empty (select-keys data [:title :description :code]))
           (CanvasHeader data))
         (when (:scene data)
           (if (:component (:scene data))
