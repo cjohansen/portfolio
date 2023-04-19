@@ -1,6 +1,7 @@
 (ns portfolio.ui.icons
   (:require [portfolio.ui.icons.arrow-counter-clockwise :as arrow-counter-clockwise]
             [portfolio.ui.icons.bookmark :as bookmark]
+            [portfolio.ui.icons.brackets-square :as brackets-square]
             [portfolio.ui.icons.browsers :as browsers]
             [portfolio.ui.icons.caret-double-left :as caret-double-left]
             [portfolio.ui.icons.caret-double-right :as caret-double-right]
@@ -40,6 +41,7 @@
    (case icon
      ::arrow-counter-clockwise arrow-counter-clockwise/icon
      ::bookmark bookmark/icon
+     ::brackets-square brackets-square/icon
      ::browsers browsers/icon
      ::caret-double-left caret-double-left/icon
      ::caret-double-right caret-double-right/icon
