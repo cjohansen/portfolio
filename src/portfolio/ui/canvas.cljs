@@ -5,6 +5,7 @@
             [portfolio.ui.code :as code]
             [portfolio.ui.color :as color]
             [portfolio.ui.components.canvas :refer [CanvasView]]
+            [portfolio.ui.components.canvas-toolbar-buttons :refer [ButtonGroup]]
             [portfolio.ui.layout :as layout]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
@@ -75,12 +76,36 @@
   (when background
     (< (:l (color/rgb->hsl (color/->rgb background))) 40)))
 
+(defn create-button-groups [buttons]
+  (loop [buttons buttons
+         grouped (->> buttons
+                      (filter :button-group)
+                      (group-by :button-group)
+                      (into {}))
+         res []]
+    (if-let [{:keys [button-group] :as button} (first buttons)]
+      (recur
+       (next buttons)
+       (dissoc grouped button-group)
+       (cond
+         (nil? button-group)
+         (conj res button)
+
+         (grouped button-group)
+         (conj res (with-meta
+                     {:buttons (grouped button-group)}
+                     {`canvas/render-toolbar-button #'ButtonGroup}))
+
+         :else res))
+      res)))
+
 (defn prepare-pane [state view ctx]
   (when-let [scenes (seq (:scenes ctx))]
     (let [buttons (->> (:tools view)
                        (filter toolbar-button?)
                        (keep #(canvas/prepare-toolbar-button
-                               % state (dissoc ctx :scenes))))
+                               % state (dissoc ctx :scenes)))
+                       create-button-groups)
           background (:background/background-color (:pane-options ctx))]
       (cond-> {:kind :pane
                :id (:pane-id ctx)
