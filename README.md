@@ -12,10 +12,10 @@ ClojureScript development process.
 
 ## Status
 
-Portfolio is stable and ready to use, but not yet feature complete. APIs
-documented in this document are final and will not change. APIs not explicitly
-documented in this document, especially those pertaining to extending and
-customizing the UI, may still be subject to change.
+Portfolio is stable and ready to use. APIs documented in this document are final
+and will not change. APIs not explicitly documented in this document, especially
+those pertaining to extending and customizing the UI, may still be subject to
+change.
 
 Is Portfolio good enough that you can port over from Storybook? Probably, yes.
 If you're using Storybook extensions not covered by Portfolio, open an issue.
@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.04.05"}
+no.cjohansen/portfolio {:mvn/version "2023.04.20"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.04.05"]
+[no.cjohansen/portfolio "2023.04.20"]
 ```
 
 ## Usage
@@ -83,12 +83,21 @@ Portfolio does not depend on any of these, so if you're using
 `portfolio.reagent`, you must explicitly pull in `reagent` yourself.
 
 `defscene` takes a symbol name and a component as its minimum input, but it can
-also take additional key/value pairs:
+also take additional key/value pairs, and an optional docstring:
 
 ```clj
 (defscene name
+  ;; Optional docstring
   ;; key/value pairs
   component)
+```
+
+Docstrings can contain Markdown:
+
+```clj
+(defscene empty-input
+  "The `LabeledInput` component is a responsive form control"
+  (LabeledInput {:label "Your name"}))
 ```
 
 Scenes can take arguments and have function bodies:
@@ -96,9 +105,9 @@ Scenes can take arguments and have function bodies:
 ```clj
 (defscene name
   ;; key/value pairs
-  :param {:title "Your component data here"}
-  [param portfolio-opts]
-  (render-component param))
+  :params {:title "Your component data here"}
+  [params portfolio-opts]
+  (render-component params))
 ```
 
 Scenes can also use existing functions to render:
@@ -112,7 +121,7 @@ Scenes can also use existing functions to render:
   render-button)
 ```
 
-By using `:param` and either a function body or an existing function, you allow
+By using `:params` and either a function body or an existing function, you allow
 Portfolio to know about the scene's component data. This enables you to use
 `tap>` and Portfolio's UI to interact with your component, or bind the scene to
 an atom for stateful scenes. It also enables you to inspect portfolio's layout
@@ -127,7 +136,7 @@ Here's an example of passing an atom to your scene:
   [:h1 (:title @store)])
 ```
 
-As you can see - if you pass an atom as `:param`, an atom is what is passed to
+As you can see - if you pass an atom as `:params`, an atom is what is passed to
 your component function. If you just want a map, that can also benefit from this
 indirection, because it allows you to programmatically access component data.
 The uses for this are countless, some suggestions include:
@@ -137,10 +146,14 @@ The uses for this are countless, some suggestions include:
 
 ```clj
 (defscene name
-  :param {:title "Hello world!"}
-  [param portfolio-opts]
+  :params {:title "Hello world!"}
+  [params portfolio-opts]
   [:h1 (:title param)])
 ```
+
+Portfolio can subscribe to multiple atoms in `:params`. If you set `:params` to
+a map or a vector, Portfolio will `tree-seq` it to find all contained atoms and
+re-render the scene when any of them change.
 
 Portfolio will "humanize" the scene symbol id for a title. If you don't like the
 result, you can set `:title` to override the UI title:
@@ -148,8 +161,8 @@ result, you can set `:title` to override the UI title:
 ```clj
 (defscene default-scenario
   :title "'tis the default scenario!"
-  :param {:title "Hello world!"}
-  [param portfolio-opts]
+  :params {:title "Hello world!"}
+  [params portfolio-opts]
   [:h1 (:title param)])
 ```
 
@@ -159,7 +172,8 @@ instead of `Default scenario`.
 Currently supported key/value pairs:
 
 - `:title` - Give the scene a nice string name
-- `:param` - The initial parameter passed to the component function
+- `:params` - The initial parameter passed to the component function - also
+  aliased as `:param`
 - `:on-mount` - A function called when the scene is initially mounted. The
   function is passed the component arguments.
 - `:on-unmount` - A function called when the scene is removed from the DOM. The
@@ -183,10 +197,10 @@ After you have created your scenes, start the UI:
 
 ### Custom CSS
 
-By default your scenes will render in a blank HTML page called the canvas. This
-page has no default styling, and comes as bare as possible out of the package.
-You might want to add some CSS files to the canvas, which can be done with
-`ui/start!`:
+By default your scenes will render inside an iframe in a blank HTML page called
+the canvas. This page has no default styling, and comes as bare as possible out
+of the package. You might want to add some CSS files to the canvas, which can be
+done with `ui/start!`:
 
 ```clj
 (require '[portfolio.ui :as ui])
@@ -304,6 +318,23 @@ as many resolutions as you need. You can optionally control scene offset from
 the viewport by adding `:viewport/padding` to either a number, or a vector with
 four numbers (padding north, east, south, west).
 
+If you just want to display all scenes in a default viewport, and don't care for
+the viewport button in the toolbar, you can configure it like so:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+ {:config
+  {:viewport/options []
+   :viewport/defaults
+   {:viewport/padding [0 0 0 0]
+    :viewport/width 390
+    :viewport/height 844}}})
+```
+
+You can of course also combine viewport options with a default viewport.
+
 ### Grid
 
 The grid tool displays a grid in the background of your scenes. The default is
@@ -322,6 +353,29 @@ either no grid, or a 5 by 20 pixel grid. Change this as you see fit:
     {:title "No grid"
      :value {:grid/size 0}}]}})
 ```
+
+### Docs
+
+The docs tool toggle documentation on and off globally. It will toggled on by
+default.
+
+### Code
+
+The code tool toggles on and off scene code - e.g. the code in the `defscene`
+body. This only works with inline components and the arguments/body form. If
+your scene is created with just a reference to a function, Portfolio can't
+automatically display its implementation.
+
+### Split windows
+
+The window splitting tool allows you to run multiple panes at once. This allows
+you to view multiple versions of a scene simultaneously.
+
+### Compare tool
+
+The compare tool allows you to select different scenes in split panes. This way
+you can not only compare different versions of the same scene, but also
+different scenes.
 
 ## Organizing scenes
 
@@ -361,6 +415,22 @@ What keys can you stick in this map? Well, the following (more on icons below):
 - `:collapsed-icon-color` - A more specific color for collapsed packages.
 - `:kind` - One of `:folder` or `:package`. Dictates the rendering style.
   Namespaces default to `:package`.
+- `:default-folder-icon` - The default icon to use for folders nested under this
+  collection.
+- `:default-folder-expanded-icon` - The default icon to use for expanded folders
+  nested under this collection. Overrides `:default-folder-icon` when set, and
+  can be overridden on specific folders.
+- `:default-folder-collapsed-icon` - The default icon to use for collapsed folders
+  nested under this collection. Overrides `:default-folder-icon` when set, and
+  can be overridden on specific folders.
+- `:default-package-icon` - The default icon to use for packages nested under this
+  collection.
+- `:default-package-expanded-icon` - The default icon to use for expanded packages
+  nested under this collection. Overrides `:default-package-icon` when set, and
+  can be overridden on specific packages.
+- `:default-package-collapsed-icon` - The default icon to use for collapsed packages
+  nested under this collection. Overrides `:default-package-icon` when set, and
+  can be overridden on specific packages.
 
 #### Scene and collection icons
 
@@ -447,6 +517,27 @@ This will render nested folders:
 
 ![Nested folders](./docs/nested-folders.png)
 
+## Search
+
+Search your scenes and collections. This feature is not enabled by default, as
+it's assumed not to be very useful until you have enough content. To enable it,
+create an index and pass it when you start the UI:
+
+```clj
+(require '[portfolio.ui.search :as search]
+         '[portfolio.ui :as ui])
+
+(ui/start!
+ {:config
+  {:css-paths ["/styles/app.css"]}
+  :index (search/create-index)})
+```
+
+`create-index` returns an implementation of
+`portfolio.ui.search.protocols/Index`. You can provide custom implementations of
+this protocol to completely customize the search. More documentation on this
+will follow.
+
 ## Try it out
 
 You can take the Portfolio UI for a spin by cloning this repo, starting
@@ -506,6 +597,52 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2023.04.21
+
+#### UI improvements
+
+- Many improvements to the UI, big and small
+- Portfolio now works well on mobile devices
+- Split panes can be resized with drag'n'drop
+- Persist the state of tools like background and viewport
+- Portfolio's console logs are disabled by default
+- Added a small intro page for new setups when there are no scenes
+
+#### Compare mode
+
+When running Portfolio in split mode, you can select specific scenes for either
+of the panes. This way you can not only compare different versions of the same
+scene, but compare different scenes to each other.
+
+#### Documentation and code
+
+Scenes and collections can now have Markdown docstrings. These render above the
+scenes, and there is a new toolbar button to toggle their display on or off.
+
+Portfolio can now also optionally display the scene code. This is toggled off by
+default, and can be enabled by clicking the brackets button in the toolbar.
+
+#### Organization improvements
+
+There are some improvements to Portfolio's default organization into packages
+and folders, and particularly their interaction with your custom collection
+configuration.
+
+You can now specify default scene icons for collections.
+
+#### Improved atom param support
+
+Portfolio now watches all atoms in `:param`. This means you can set `:param` to
+e.g. a map or a vector, put several atoms inside (arbitrarily nested), and
+Portfolio will re-render the scene whenever any of them change. To reflect that
+`:param` is no longer necessarily just one thing, it has also been aliased as
+`:params`.
+
+#### Search
+
+Add search, including APIs for customizing indexing, searching, and result
+preparation.
 
 ### 2023.04.05
 
