@@ -151,7 +151,7 @@
                :description (md/md->html (:docs scene)))
 
         (:code scene)
-        (assoc :code (md/md->html (str "\n```clojure\n" (:code scene) "\n```")))
+        (assoc :code (:code scene))
 
         (:gallery? layout)
         (assoc :title (:title scene)

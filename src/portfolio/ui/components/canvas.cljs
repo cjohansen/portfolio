@@ -190,8 +190,10 @@
      (Markdown {:markdown description
                 :tag :p}))
    (when-not (empty? code)
-     (Markdown {:markdown code
-                :tag :p}))])
+     [:div {:style {:margin "20px 0"}}
+      [:h3.h4 {:style {:margin "10px 0"}}
+       "Scene code"]
+      (Code {:code code})])])
 
 (defn render-canvas [data]
   [:div.canvas-wrapper
