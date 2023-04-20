@@ -40,7 +40,7 @@
                :cursor (when actions "pointer")
                :gap 8}}
       (when (:icon illustration)
-        (icons/render-icon
+        (icons/render
          (:icon illustration)
          {:color (:color illustration)
           :size 24}))
@@ -59,7 +59,7 @@
                   :margin (when selected?
                             "0 4px")}}
     (when (:icon toggle)
-      (icons/render-icon
+      (icons/render
        (:icon toggle)
        {:size 16
         :style (merge
@@ -69,7 +69,7 @@
                    :transform (str "rotate(" rotation "deg)")}))
         :on-click (:actions toggle)}))
     (when (:icon illustration)
-      (icons/render-icon
+      (icons/render
        (:icon illustration)
        {:size 16
         :color (if selected?
@@ -93,7 +93,7 @@
                          :border-radius 4
                          :padding (str "8px 0 8px " left-padding "px")}}
      (when (:icon illustration)
-       (icons/render-icon
+       (icons/render
         (:icon illustration)
         {:size 16
          :color (:color illustration)

@@ -24,7 +24,7 @@
                }
        :on-click actions}
       (when icon
-        (icons/render-icon icon {:size 20}))
+        (icons/render icon {:size 20}))
       text]
      (some-> menu PopupMenu)]))
 

@@ -10,7 +10,7 @@
                   :gap 10
                   :align-items "center"}}
     (when illustration
-      (icons/render-icon
+      (icons/render
        (:icon illustration)
        {:size (if (= :small size) 16 24)
         :color (:color illustration)}))
@@ -24,11 +24,11 @@
                    :href url} text]
               text))
           (interpose
-           (icons/render-icon
-            :portfolio.ui.icons/caret-right
+           (icons/render
+            ::icons/caret-right
             {:size 16})))]]
    (when (:icon action)
-     (icons/render-icon
+     (icons/render
       (:icon action)
       {:size 16
        :on-click (:actions action)}))])

@@ -18,7 +18,7 @@
           :mounted-style {:height 56}
           :leaving-style {:height 0}}
     (when (:icon left-action)
-      (icons/render-icon
+      (icons/render
        (:icon left-action)
        {:size 16
         :on-click (:actions left-action)}))

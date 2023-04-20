@@ -13,7 +13,7 @@
                  :align-items "center"
                  :cursor (when actions "pointer")
                  :color "var(--folder-icon-color)"}}
-   (icons/render-icon icon {:size size})])
+   (icons/render icon {:size size})])
 
 (d/defcomponent Suggestions
   :will-enter (ec/enter)
@@ -32,8 +32,8 @@
                  :align-items "center"
                  :gap 10}}
         (when (:icon illustration)
-          (icons/render-icon (:icon illustration) {:size 16
-                                                   :color (:color illustration)}))
+          (icons/render (:icon illustration) {:size 16
+                                              :color (:color illustration)}))
         title]
        (when description
          [:div {:style {:color "var(--secondary-text)"

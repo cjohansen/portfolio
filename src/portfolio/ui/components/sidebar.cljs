@@ -11,8 +11,8 @@
                  :transition "width 0.25s ease"}
          :mounted-style {:width width}
          :leaving-style {:width 0}}
-   (icons/render-icon
-    :portfolio.ui.icons/caret-double-left
+   (icons/render
+    ::icons/caret-double-left
     {:size 16
      :on-click actions
      :style {:margin "16px 8px"}})
