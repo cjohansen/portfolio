@@ -20,6 +20,11 @@ customizing the UI, may still be subject to change.
 Is Portfolio good enough that you can port over from Storybook? Probably, yes.
 If you're using Storybook extensions not covered by Portfolio, open an issue.
 
+## Show me, don't tell me
+
+I recently presented Portfolio at London Clojurians, you can [watch it on
+YouTube](https://www.youtube.com/watch?v=25JDQRFoQ_U).
+
 ## Sample
 
 ![The Portfolio UI](./docs/sample.png)
