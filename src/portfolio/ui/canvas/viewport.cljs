@@ -23,25 +23,13 @@
     (js/parseInt v 10)
     0))
 
-(defn get-height [frame frame-body height & [{:zoom/keys [level]}]]
+(defn get-height [_frame frame-body height & [{:zoom/keys [level]}]]
   (let [level (or level 1)]
     (cond
-      (= :auto height)
-      (let [style (js/window.getComputedStyle frame)
-            root-el-style (some-> frame-body
-                                  .-firstElementChild
-                                  .-firstElementChild
-                                  js/window.getComputedStyle)]
-        (str (* (+ (get-style-px style "padding-top")
-                   (get-style-px style "padding-bottom")
-                   (get-style-px root-el-style "margin-top")
-                   (get-style-px root-el-style "margin-bottom")
-                   (.-scrollHeight frame-body))
-                level) "px"))
+      (contains? #{nil :auto "100%"} height)
+      (str (.-height (.getBoundingClientRect (.-parentNode frame-body))) "px")
 
       (number? height) (str (* height level) "px")
-
-      (nil? height) "100%"
 
       :else height)))
 
@@ -70,7 +58,7 @@
         frame-body (canvas/get-iframe-body el)
         w (get-width frame frame-body width opt)
         h (get-height frame frame-body height opt)
-        [margin shadow] (if (and (or (not= "100%" w) (not= "100%" h))
+        [margin shadow] (if (and (or (not= "100%" w) (not= "100%" height))
                                  (or (not (number? width))
                                      (< (+ 40 width) (get-available-width el))))
                           ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]

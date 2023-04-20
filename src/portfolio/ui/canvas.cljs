@@ -120,7 +120,7 @@
         (assoc :toolbar {:buttons buttons})
 
         (and (not (specifically-sized? (:pane-options ctx)))
-             (<= (count scenes) 1))
+             (not (:gallery? (:layout ctx))))
         (assoc :background background)))))
 
 (defn canvas-tool? [tool]
