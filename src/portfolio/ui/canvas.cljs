@@ -99,6 +99,9 @@
          :else res))
       res)))
 
+(defn specifically-sized? [{:viewport/keys [width height]}]
+  (or (number? width) (number? height)))
+
 (defn prepare-pane [state view ctx]
   (when-let [scenes (seq (:scenes ctx))]
     (let [buttons (->> (:tools view)
@@ -114,7 +117,11 @@
                              :dark
                              :light)}
         (seq buttons)
-        (assoc :toolbar {:buttons buttons})))))
+        (assoc :toolbar {:buttons buttons})
+
+        (and (not (specifically-sized? (:pane-options ctx)))
+             (<= (count scenes) 1))
+        (assoc :background background)))))
 
 (defn canvas-tool? [tool]
   (or (satisfies? canvas/ICanvasTool tool)

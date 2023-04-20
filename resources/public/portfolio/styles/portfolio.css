@@ -123,6 +123,7 @@ code {
 
 pre[class*=language-] {
   background: var(--code-bg);
+  border: 2px solid #dadee5;
   padding: 12px;
   border-radius: 4px;
 }
@@ -207,6 +208,10 @@ input {
 .md p {margin: 20px 0;}
 
 .vs-s .mod {margin: 10px 0}
+
+.canvas-wrapper + .canvas-wrapper {
+  margin-top: 40px;
+}
 
 .canvas-menu-button .button {
   border-radius: 4px;

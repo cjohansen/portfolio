@@ -180,7 +180,7 @@
 (d/defcomponent CanvasHeader
   :keyfn :title
   [{:keys [title url description code]}]
-  [:div {:style {:margin "20px 20px 0"}}
+  [:div {:style {:margin "20px"}}
    [:h2.h3 {:style (when-not (empty? description)
                      {:margin "0 0 10px"})}
     (if url
@@ -194,13 +194,14 @@
                 :tag :p}))])
 
 (defn render-canvas [data]
-  (->> [(when (not-empty (select-keys data [:title :description :code]))
-          (CanvasHeader data))
-        (when (:scene data)
-          (if (:component (:scene data))
-            (Canvas data)
-            (ComponentError (:scene data))))]
-       (remove nil?)))
+  [:div.canvas-wrapper
+   (->> [(when (not-empty (select-keys data [:title :description :code]))
+           (CanvasHeader data))
+         (when (:scene data)
+           (if (:component (:scene data))
+             (Canvas data)
+             (ComponentError (:scene data))))]
+        (remove nil?))])
 
 (d/defcomponent Problem [{:keys [title text code]}]
   [:div {:style {:background "var(--bg)"
@@ -318,18 +319,17 @@
 
 (d/defcomponent Pane
   :keyfn :id
-  [{:keys [toolbar canvases title description menu-bar background browser handle class-name] :as data}]
+  [{:keys [toolbar canvases title description background menu-bar browser handle class-name] :as data}]
   [:div.pane
    {:style (into (get-grid-styles data)
-                 {:display "flex"
+                 {:min-height "100%"
+                  :display "flex"
                   :flex-direction "column"})}
    (some-> toolbar Toolbar)
    (some-> menu-bar WrappedMenuBar)
-   [:div {:style (merge {:flex-grow "1"
-                         :overflow "scroll"
-                         :display "flex"
-                         :gap 20
-                         :flex-direction "column"
+   [:div {:style (merge {:overflow "scroll"
+                         :flex-grow 1
+                         :transition "background 0.15s"
                          :background background})
           :class (if (:items browser)
                    :dark
@@ -337,15 +337,13 @@
     (when (:items browser)
       (Browser browser))
     (when (or title description)
-      [:div {:style {:margin "20px 20px 0"}}
+      [:div {:style {:margin "20px"}}
        (when title
          [:h1.h1 title])
        (when description
          (Markdown {:markdown description}))])
     (when (seq canvases)
-      (->> canvases
-           (interpose {:kind :separator})
-           (mapcat render-canvas)))]
+      (map render-canvas canvases))]
    (some-> handle Handle)])
 
 (defn render-layout [data]
