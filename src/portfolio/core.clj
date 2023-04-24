@@ -21,7 +21,9 @@
         (with-out-str (clojure.pprint/pprint sym)))
       str/join
       str/trim
-      (str/replace #"let\n" "let")))
+      (str/replace #"let\n\s+" "let ")
+      (str/replace #"if\n\s+" "if ")
+      (str/replace #"when\n\s+" "when ")))
 
 (defn get-options-map [id line syms]
   (let [docs (when (string? (first syms)) (first syms))
