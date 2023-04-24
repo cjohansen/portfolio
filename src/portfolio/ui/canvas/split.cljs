@@ -115,7 +115,7 @@
              (< 0 (count pane-path)))
     (with-meta
       {:title (:title tool)
-       :icon :portfolio.ui.icons/cross
+       :icon :portfolio.ui.icons/x
        :align :right
        :actions [[:assoc-in (into layout-path [:layout])
                   (close-pane layout pane-path)]]}
