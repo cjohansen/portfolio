@@ -17,7 +17,7 @@
                   :flex-direction "column"
                   :flex-grow 1
                   :position "relative"
-                  :overflow "scroll"}}
+                  :overflow "auto"}}
     (some-> data :header Header)
     [:div {:style {:flex-grow 1
                    :display "flex"

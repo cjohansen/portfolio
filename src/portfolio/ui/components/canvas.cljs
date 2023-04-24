@@ -43,7 +43,7 @@
         el)
       (let [error (js/document.createElement "div")]
         (set! (.-className error) "error-container")
-        (set! (.. error -style -overflow) "scroll")
+        (set! (.. error -style -overflow) "auto")
         (.appendChild el error)
         error)))
 
@@ -225,7 +225,7 @@
 
 (defn get-grid-styles [data]
   (into {:position "absolute"
-         :overflow "scroll"}
+         :overflow "hidden"}
         (if (:height data)
           {:left 0
            :right 0
@@ -329,7 +329,7 @@
                   :flex-direction "column"})}
    (some-> toolbar Toolbar)
    (some-> menu-bar WrappedMenuBar)
-   [:div {:style (merge {:overflow "scroll"
+   [:div {:style (merge {:overflow "auto"
                          :flex-grow 1
                          :transition "background 0.15s"
                          :background background})
@@ -363,7 +363,7 @@
                  :display "flex"
                  :flex-direction "column"}}
    (when-let [problems (:problems data)]
-     [:div {:style {:overflow "scroll"}}
+     [:div {:style {:overflow "auto"}}
       (map Problem problems)])
    [:div {:style {:flex-grow 1
                   :position "relative"}}

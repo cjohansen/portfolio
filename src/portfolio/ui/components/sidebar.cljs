@@ -7,7 +7,7 @@
 (d/defcomponent Sidebar [{:keys [width title items lists actions slide? search]}]
   [:div {:style {:width (if slide? 0 width)
                  :flex-shrink "0"
-                 :overflow-y "scroll"
+                 :overflow-y "auto"
                  :transition "width 0.25s ease"}
          :mounted-style {:width width}
          :leaving-style {:width 0}}
