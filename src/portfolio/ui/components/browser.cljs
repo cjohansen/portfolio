@@ -28,7 +28,7 @@
 
 (d/defcomponent Folder [{:keys [title illustration actions items context]}]
   (let [left-padding (+ 8 (get-context-offset context :folder))]
-    [:div {:style {}}
+    [:div {:style {:background "var(--bg)"}}
      [:h2.h4
       {:on-click actions
        :style {:background "var(--folder-bg)"
