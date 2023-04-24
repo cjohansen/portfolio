@@ -53,6 +53,7 @@
   :on-unmount (fn [ref]
                 (swap! ref assoc :mounted? false))
   [ref]
+  (prn "My implementation consists of two s-exps")
   [:button.button (:text @ref)])
 
 (defscene multi-param-scene

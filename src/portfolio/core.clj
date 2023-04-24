@@ -17,7 +17,9 @@
       (and (list? f) (= 'var (first f)))))
 
 (defn get-code-str [syms]
-  (-> (with-out-str (apply pprint/pprint syms))
+  (-> (for [sym syms]
+        (with-out-str (clojure.pprint/pprint sym)))
+      str/join
       str/trim
       (str/replace #"let\n" "let")))
 
