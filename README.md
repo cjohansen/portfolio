@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.04.20"}
+no.cjohansen/portfolio {:mvn/version "2023.04.26"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.04.20"]
+[no.cjohansen/portfolio "2023.04.26"]
 ```
 
 ## Usage
@@ -583,6 +583,7 @@ pouring too much work into them, so we're sure we're one the same page.
 - @rome-user added [support for pure React components and Helix](https://github.com/cjohansen/portfolio/pull/2).
 - @BorisKourt and @thheller helped with shadow-cljs support.
 - @brandonstubbs React 18-related features.
+- @elken made some visual improvements
 
 ## Wishlist
 
@@ -597,6 +598,16 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2023.04.26
+
+- Now works properly with advanced compilation mode in shadow-cljs (e.g.
+  production builds)
+- Add back a missing close icon
+- Remove some unnecessary scrollbars in the UI
+- Don't trip on scenes with multiple lines of code in their body
+- Render compare mode menus with the proper background
+- Slightly improved code formatting for scene code
 
 ### 2023.04.21
 
