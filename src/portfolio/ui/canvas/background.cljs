@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.background
-  (:require [portfolio.ui.canvas.addons :as addons]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.components.canvas :as canvas]))
 
 (def default-options
@@ -27,7 +28,7 @@
      {:id :canvas/background
       :persist? true
       :title "Background"
-      :icon :portfolio.ui.icons/palette
+      :icon (icons/icon :phosphor.regular/palette)
       :options (or (:background/options config) options)
       :default-value (->> (or (when-let [id (:background/default-option-id config)]
                                 (filter (comp #{id} :id) options))

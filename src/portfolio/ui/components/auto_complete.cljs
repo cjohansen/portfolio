@@ -1,7 +1,7 @@
 (ns portfolio.ui.components.auto-complete
   (:require [dumdom.core :as d]
-            [portfolio.ui.components.elastic-container :as ec]
-            [portfolio.ui.icons :as icons]))
+            [phosphor.icons :as icons]
+            [portfolio.ui.components.elastic-container :as ec]))
 
 (defn render-icon [{:keys [icon size actions align]}]
   [:div {:on-click actions

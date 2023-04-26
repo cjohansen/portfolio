@@ -435,10 +435,20 @@ What keys can you stick in this map? Well, the following (more on icons below):
 #### Scene and collection icons
 
 You might be wondering - "what's an icon, anyway?". Good question. An icon is
-either hiccup for an SVG element, or one of the keywords in
-[`portfolio.ui.icons`](./src/portfolio/ui/icons.cljs). These icons are manually
-fetched from [Phosphor icons](https://phosphoricons.com/) on demand, feel free
-to add more via a PR.
+either hiccup or an SVG element, or a reference to an icon in
+[`phosphor-clj`](https://github.com/cjohansen/phosphor-clj). You can browse
+icons on the [Phosphor icons website](https://phosphoricons.com/).
+
+To refer Phosphor icons:
+
+```clj
+(require '[phosphor.icons :as icons]
+         '[portfolio.reagent :as portfolio])
+
+(portfolio/configure-collections
+  {:title "My UI Components"
+   :icon (icons/icon :phosphor.regular/hamburger)})
+```
 
 ### Customizing folders
 

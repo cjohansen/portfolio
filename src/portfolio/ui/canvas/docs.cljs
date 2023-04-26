@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.docs
-  (:require [portfolio.ui.canvas.addons :as addons]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]))
 
@@ -23,7 +24,7 @@
              (with-meta
                {:title "Toggle docs"
                 :button-group :canvas/docs
-                :icon :portfolio.ui.icons/file-doc
+                :icon (icons/icon :phosphor.regular/file-doc)
                 :selected? docs?
                 :actions (addons/get-set-actions state tool (:pane-id options) {:docs/show? (not docs?)})}
                {`canvas/render-toolbar-button #'MenuButton}))))

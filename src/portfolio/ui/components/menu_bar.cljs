@@ -1,6 +1,6 @@
 (ns portfolio.ui.components.menu-bar
   (:require [dumdom.core :as d]
-            [portfolio.ui.icons :as icons]))
+            [phosphor.icons :as icons]))
 
 (d/defcomponent MenuBar [{:keys [title action illustration size]}]
   [:div {:style {:display "flex"
@@ -25,10 +25,10 @@
               text))
           (interpose
            (icons/render
-            ::icons/caret-right
+            (icons/icon :phosphor.regular/caret-right)
             {:size 16})))]]
    (when (:icon action)
-     (icons/render
-      (:icon action)
-      {:size 16
-       :on-click (:actions action)}))])
+     [:span {:on-click (:actions action)}
+      (icons/render
+       (:icon action)
+       {:size 16})])])

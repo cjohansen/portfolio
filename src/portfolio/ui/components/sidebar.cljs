@@ -1,8 +1,8 @@
 (ns portfolio.ui.components.sidebar
   (:require [dumdom.core :as d]
+            [phosphor.icons :as icons]
             [portfolio.ui.components.auto-complete :refer [AutoCompleter]]
-            [portfolio.ui.components.browser :as browser]
-            [portfolio.ui.icons :as icons]))
+            [portfolio.ui.components.browser :as browser]))
 
 (d/defcomponent Sidebar [{:keys [width title items lists actions slide? search]}]
   [:div {:style {:width (if slide? 0 width)
@@ -12,7 +12,7 @@
          :mounted-style {:width width}
          :leaving-style {:width 0}}
    (icons/render
-    ::icons/caret-double-left
+    (icons/icon :phosphor.regular/caret-double-left)
     {:size 16
      :on-click actions
      :style {:margin "16px 8px"}})

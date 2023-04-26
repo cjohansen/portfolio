@@ -1,5 +1,6 @@
 (ns portfolio.ui.search
-  (:require [portfolio.ui.collection :as collection]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.collection :as collection]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.search.pliable-index :as pliable]
             [portfolio.ui.search.protocols :as index]))
@@ -118,14 +119,14 @@
 
 (defn prepare-search [state location]
   (let [q (not-empty (:search/query state))]
-    {:icon :portfolio.ui.icons/magnifying-glass
+    {:icon (icons/icon :phosphor.regular/magnifying-glass)
      :placeholder "Search"
      :text (:search/query state)
      :on-input (->> [[:assoc-in [:search/query] :event.target/value]
                      [:search :event.target/value]]
                     (remove nil?))
      :action (when q
-               {:icon :portfolio.ui.icons/x
+               {:icon (icons/icon :phosphor.regular/x)
                 :actions [[:assoc-in [:search/query] ""]
                           [:assoc-in [:search/suggestions] nil]]})
      :suggestions (for [result (take 6 (:search/suggestions state))]

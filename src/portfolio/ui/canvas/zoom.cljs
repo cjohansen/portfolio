@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.zoom
-  (:require [portfolio.ui.canvas.addons :as addons]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.canvas :as canvas]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [Button ButtonGroup]]))
@@ -48,7 +49,7 @@
     {:id :canvas/zoom-in
      :group-id :canvas/zoom
      :title "Zoom in"
-     :icon :portfolio.ui.icons/magnifying-glass-plus
+     :icon (icons/icon :phosphor.regular/magnifying-glass-plus)
      :zoom-increment (or (:zoom-increment config) 0.25)}
     impl))
 
@@ -57,7 +58,7 @@
     {:id :canvas/zoom-out
      :group-id :canvas/zoom
      :title "Zoom out"
-     :icon :portfolio.ui.icons/magnifying-glass-minus
+     :icon (icons/icon :phosphor.regular/magnifying-glass-minus)
      :zoom-increment (or (:zoom-increment config) -0.25)}
     impl))
 
@@ -66,7 +67,7 @@
    {:id :canvas/zoom-reset
     :group-id :canvas/zoom
     :title "Reset zoom"
-    :icon :portfolio.ui.icons/arrow-counter-clockwise
+    :icon (icons/icon :phosphor.regular/arrow-counter-clockwise)
     :prepare-canvas #'reset-canvas-zoom
     :get-actions (fn [tool state {:keys [pane-id]}]
                    (addons/get-clear-actions state tool pane-id))

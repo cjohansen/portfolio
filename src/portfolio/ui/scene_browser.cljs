@@ -1,5 +1,6 @@
 (ns portfolio.ui.scene-browser
   (:require [clojure.walk :as walk]
+            [phosphor.icons :as icons]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]))
@@ -30,7 +31,7 @@
              :context (get-context state path)
              :actions (get-actions opt collection)
              :illustration (collection/get-package-illustration state collection expanded?)
-             :toggle {:icon :portfolio.ui.icons/caret-right
+             :toggle {:icon (icons/icon :phosphor.regular/caret-right)
                       :actions [[:assoc-in exp-path (not expanded?)]]
                       :rotation (if expanded? 90 0)}}
       expanded?

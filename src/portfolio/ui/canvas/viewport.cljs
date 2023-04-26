@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.viewport
-  (:require [portfolio.ui.canvas.addons :as addons]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.components.canvas :as canvas]))
 
 (defn get-width [frame frame-body width & [{:zoom/keys [level]}]]
@@ -98,7 +99,7 @@
     (addons/create-toolbar-menu-button
      {:id :canvas/viewport
       :title "Viewport"
-      :icon :portfolio.ui.icons/browsers
+      :icon (icons/icon :phosphor.regular/browsers)
       :default-value default-value
       :options (->> (or (:viewport/options config)
                         [{:title "Auto"

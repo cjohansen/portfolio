@@ -1,7 +1,7 @@
 (ns portfolio.ui.components.browser
   (:require [dumdom.core :as d]
-            [portfolio.ui.components.elastic-container :as ec]
-            [portfolio.ui.icons :as icons]))
+            [phosphor.icons :as icons]
+            [portfolio.ui.components.elastic-container :as ec]))
 
 (declare render-menu)
 

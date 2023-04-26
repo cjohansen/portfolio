@@ -1,5 +1,6 @@
 (ns portfolio.ui.core
   (:require [clojure.walk :as walk]
+            [phosphor.icons :as icons]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.intro-screen :as intro]
             [portfolio.ui.routes :as routes]
@@ -50,7 +51,7 @@
   (when-not (sidebar? state)
     {:left-action
      (when-not (screen/small-screen? state)
-       {:icon :portfolio.ui.icons/caret-double-right
+       {:icon (icons/icon :phosphor.regular/caret-double-right)
         :actions [[:assoc-in [:sidebar-status]
                    (if (screen/small-screen? state)
                      :visible

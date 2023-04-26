@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.split
-  (:require [portfolio.ui.canvas.protocols :as protocols]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [Button ButtonGroup]]
             [portfolio.ui.layout :as layout]
             [portfolio.ui.screen :as screen]))
@@ -44,7 +45,7 @@
   (when (or (not (:desktop-only? tool)) (not (screen/small-screen? state)))
     (with-meta
       {:title (:title tool)
-       :icon :portfolio.ui.icons/columns
+       :icon (icons/icon :phosphor.regular/columns)
        :actions [[:assoc-in (into layout-path [:layout])
                   (split-layout-horizontally layout pane-path)]]}
       {`protocols/render-toolbar-button #'Button})))
@@ -67,7 +68,7 @@
   (when (or (not (:desktop-only? tool)) (not (screen/small-screen? state)))
     (with-meta
       {:title (:title tool)
-       :icon :portfolio.ui.icons/rows
+       :icon (icons/icon :phosphor.regular/rows)
        :actions [[:assoc-in (into layout-path [:layout])
                   (split-layout-vertically layout pane-path)]]}
       {`protocols/render-toolbar-button #'Button})))
@@ -115,7 +116,7 @@
              (< 0 (count pane-path)))
     (with-meta
       {:title (:title tool)
-       :icon :portfolio.ui.icons/x
+       :icon (icons/icon :phosphor.regular/x)
        :align :right
        :actions [[:assoc-in (into layout-path [:layout])
                   (close-pane layout pane-path)]]}

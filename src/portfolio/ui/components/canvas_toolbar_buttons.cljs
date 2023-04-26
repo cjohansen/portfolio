@@ -1,6 +1,6 @@
 (ns portfolio.ui.components.canvas-toolbar-buttons
   (:require [dumdom.core :as d]
-            [portfolio.ui.icons :as icons]
+            [phosphor.icons :as icons]
             [portfolio.ui.canvas.protocols :as protocols]
             [portfolio.ui.components.popup-menu :refer [PopupMenu]]))
 

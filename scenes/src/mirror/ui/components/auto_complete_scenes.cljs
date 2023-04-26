@@ -1,7 +1,7 @@
 (ns mirror.ui.components.auto-complete-scenes
-  (:require [portfolio.dumdom :as portfolio :refer-macros [defscene]]
-            [portfolio.ui.components.auto-complete :refer [AutoCompleter]]
-            [portfolio.ui.icons :as icons]))
+  (:require [phosphor.icons :as icons]
+            [portfolio.dumdom :as portfolio :refer-macros [defscene]]
+            [portfolio.ui.components.auto-complete :refer [AutoCompleter]]))
 
 (portfolio/configure-scenes
  {:title "Auto complete"})
@@ -15,33 +15,33 @@
 (defscene with-icon-and-action
   (AutoCompleter
    {:text "Apples"
-    :icon ::icons/magnifying-glass
-    :action {:icon ::icons/x
+    :icon (icons/icon :phosphor.regular/magnifying-glass)
+    :action {:icon (icons/icon :phosphor.regular/x)
              :actions []}}))
 
 (defscene placeholder-with-icon
   (AutoCompleter
    {:placeholder "Search"
-    :icon ::icons/magnifying-glass}))
+    :icon (icons/icon :phosphor.regular/magnifying-glass)}))
 
 (defscene with-suggestions
   (AutoCompleter
    {:text "auto compl"
-    :icon ::icons/magnifying-glass
+    :icon (icons/icon :phosphor.regular/magnifying-glass)
     :on-input []
     :suggestions [{:title "Auto complete"
-                   :illustration {:icon :portfolio.ui.icons/package
+                   :illustration {:icon (icons/icon :phosphor.regular/package)
                                   :color "var(--highlight-color)"}
                    :actions []}
                   {:title "unadorned-input"
                    :description "Auto complete"
-                   :illustration {:icon :portfolio.ui.icons/bookmark
+                   :illustration {:icon (icons/icon :phosphor.regular/bookmark)
                                   :color "var(--browser-unit-icon-color)"}
                    :actions []}
                   {:title "with-placeholder"
                    :description "Auto complete"
-                   :illustration {:icon :portfolio.ui.icons/bookmark
+                   :illustration {:icon (icons/icon :phosphor.regular/bookmark)
                                   :color "var(--browser-unit-icon-color)"}
                    :actions []}]
-    :action {:icon ::icons/x
+    :action {:icon (icons/icon :phosphor.regular/x)
              :actions []}}))

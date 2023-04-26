@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.grid
   (:require [clojure.string :as str]
+            [phosphor.icons :as icons]
             [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.components.canvas :as canvas]))
 
@@ -31,7 +32,7 @@
    {:id :canvas/grid
     :title "Grid"
     :persist? true
-    :icon :portfolio.ui.icons/grid-four
+    :icon (icons/icon :phosphor.regular/grid-four)
     :default-value {:grid/size 0}
     :options (or (:grid/options config)
                  [{:title "5 x 20px"

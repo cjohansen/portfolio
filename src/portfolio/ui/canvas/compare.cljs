@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.compare
-  (:require [portfolio.ui.canvas :refer [prepare-scenes]]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas :refer [prepare-scenes]]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]
@@ -27,7 +28,7 @@
                curating? (get-in state path)]
            (with-meta
              {:title "Select pane scene(s) for comparison"
-              :icon :portfolio.ui.icons/git-diff
+              :icon (icons/icon :phosphor.regular/git-diff)
               :align :right
               :selected? curating?
               :actions (cond-> [[:assoc-in path (not curating?)]]

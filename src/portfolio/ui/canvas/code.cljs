@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas.code
-  (:require [portfolio.ui.canvas.addons :as addons]
+  (:require [phosphor.icons :as icons]
+            [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.components.canvas-toolbar-buttons :refer [MenuButton]]))
 
@@ -23,7 +24,7 @@
              (with-meta
                {:title "Toggle code"
                 :button-group :canvas/docs
-                :icon :portfolio.ui.icons/brackets-square
+                :icon (icons/icon :phosphor.regular/brackets-square)
                 :selected? code?
                 :actions (addons/get-set-actions state tool (:pane-id options) {:code/show? (not code?)})}
                {`canvas/render-toolbar-button #'MenuButton}))))

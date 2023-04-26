@@ -17,6 +17,11 @@
       <artifactId>markdown-clj</artifactId>
       <version>1.11.4</version>
     </dependency>
+    <dependency>
+      <groupId>no.cjohansen</groupId>
+      <artifactId>phosphor-clj</artifactId>
+      <version>2023.04.27</version>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

@@ -1,5 +1,6 @@
 (ns portfolio.ui.collection
   (:require [clojure.string :as str]
+            [phosphor.icons :as icons]
             [portfolio.homeless :as h]
             [portfolio.ui.routes :as routes]))
 
@@ -139,8 +140,8 @@
                (get-in-parents state collection :default-folder-collapsed-icon))
              (get-in-parents state collection :default-folder-icon)
              (if expanded?
-               :portfolio.ui.icons/folder-open
-               :portfolio.ui.icons/folder))
+               (icons/icon :phosphor.regular/folder-open)
+               (icons/icon :phosphor.regular/folder)))
    :color (or (if expanded?
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
@@ -156,7 +157,7 @@
                (get-in-parents state collection :default-package-expanded-icon)
                (get-in-parents state collection :default-package-collapsed-icon))
              (get-in-parents state collection :default-package-icon)
-             :portfolio.ui.icons/cube)
+             (icons/icon :phosphor.regular/cube))
    :color (or (if expanded?
                 (:expanded-icon-color collection)
                 (:collapsed-icon-color collection))
@@ -170,7 +171,7 @@
              (when selected?
                (get-in-parents state scene :default-scene-selected-icon))
              (get-in-parents state scene :default-scene-icon)
-             :portfolio.ui.icons/bookmark)
+             (icons/icon :phosphor.regular/bookmark))
    :color (or (when selected?
                 (:selected-icon-color scene))
               (:icon-color scene)
@@ -192,7 +193,7 @@
                 (assoc :url (routes/get-url location item)))))
 
    :action {:icon (if (get-in state expand-path)
-                    :portfolio.ui.icons/caret-up
-                    :portfolio.ui.icons/caret-down)
+                    (icons/icon :phosphor.regular/caret-up)
+                    (icons/icon :phosphor.regular/caret-down))
             :actions [[:assoc-in expand-path (not (get-in state expand-path))]]}
    :illustration (some-> (:target selection) (get-illustration state))})

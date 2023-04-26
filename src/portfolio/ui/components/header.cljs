@@ -1,8 +1,8 @@
 (ns portfolio.ui.components.header
   (:require [dumdom.core :as d]
+            [phosphor.icons :as icons]
             [portfolio.ui.components.browser :refer [Browser]]
-            [portfolio.ui.components.menu-bar :refer [MenuBar]]
-            [portfolio.ui.icons :as icons]))
+            [portfolio.ui.components.menu-bar :refer [MenuBar]]))
 
 (d/defcomponent Header [{:keys [menu-bar left-action menu]}]
   [:div
@@ -18,10 +18,8 @@
           :mounted-style {:height 56}
           :leaving-style {:height 0}}
     (when (:icon left-action)
-      (icons/render
-       (:icon left-action)
-       {:size 16
-        :on-click (:actions left-action)}))
+      [:span {:on-click (:actions left-action)}
+       (icons/render (:icon left-action) {:size 16})])
     (MenuBar menu-bar)]
    (when menu
      (Browser menu))])
