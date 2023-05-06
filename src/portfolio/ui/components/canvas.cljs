@@ -91,7 +91,7 @@
        (let [doc (->> el .-contentDocument)]
          (set! (.. doc -documentElement -style -height) "auto")
          (when-not (.getElementById doc "canvas")
-           (let [el (doc.createElement "div")]
+           (let [el (.createElement doc "div")]
              (set! (.-id el) "canvas")
              (.appendChild (.-body doc) el)))
          (f))))))
