@@ -15,7 +15,7 @@
           (fn [k]
             (aset (.-dataset el) k "")))
          (set! (.-innerHTML el) "")
-         (.appendChild el (.cloneNode component true)))
+         (.appendChild el component))
        (js/console.error "Asked to render DOM element without a container")))})
 
 (defn create-scene [scene]
