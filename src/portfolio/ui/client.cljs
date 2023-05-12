@@ -75,16 +75,8 @@
 
 (defn keep-css-files-up-to-date [app]
   (when-not (::css-listener @app)
-    (.addEventListener
-     js/document.body
-     "figwheel.after-css-load"
-     (fn css-listener [e]
-       (swap! app assoc ::css-listener css-listener)
-       (doseq [file (:css-files (.-data e))]
-         (->> (:css-paths @app)
-              (filter #(str/includes? file %))
-              first
-              css/reload-css-file))))))
+    (let [observer (css/watch-css-reloads (:css-paths @app))]
+      (swap! app assoc ::css-listener observer))))
 
 (defn started? [app]
   (::started? @app))

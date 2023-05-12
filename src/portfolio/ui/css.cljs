@@ -14,7 +14,7 @@
     (set! (.-type link) "text/css")
     (set! (.-portfolio link) "portfolio")
     (when media
-      (set! (.-media link) "print"))
+      (set! (.-media link) media))
     link))
 
 (defn reload-css-file [file]
@@ -32,11 +32,34 @@
       (.appendChild iframe-head reloaded))))
 
 (defn load-css-files [paths]
-  ;; Figwheel only reloads CSS files in the document. To avoid user CSS files
-  ;; skewing the Portfolio UI design, the files are loaded as print-only CSS.
+  ;; Figwheel and shadow-cljs only reload CSS files loaded in the document. To
+  ;; avoid user CSS files skewing the Portfolio UI design, the files are loaded
+  ;; with a bogus media attribute.
   (doseq [path paths]
     (when-not (find-link-by-href js/document.head path)
       (.appendChild js/document.head (create-css-link path {:media "portfolio"})))))
+
+(defn on-head-mutation [mutations paths]
+  (let [paths (set paths)]
+    (doseq [path (->> mutations
+                      (mapcat #(.-addedNodes %))
+                      (filter (comp #{"LINK"} #(.-tagName %)))
+                      (map #(.-href %))
+                      (map #(second (re-find #"(?:https?://[^/]+)?([^\?]+)" %)))
+                      (filter paths))]
+      (reload-css-file path))))
+
+(defn watch-css-reloads [paths]
+  (let [observer (js/MutationObserver.
+                  (fn [ms]
+                    (on-head-mutation ms paths)))]
+    (.observe
+     observer
+     js/document.head
+     #js {:attributes true
+          :subtree true
+          :childList true})
+    observer))
 
 (defn replace-loaded-css-files [paths]
   (doseq [iframe (array-seq (.querySelectorAll js/document.body "iframe"))]
