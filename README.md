@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.04.26"}
+no.cjohansen/portfolio {:mvn/version "2023.05.12"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.04.26"]
+[no.cjohansen/portfolio "2023.05.12"]
 ```
 
 ## Usage
@@ -608,6 +608,13 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2023.05.12
+
+- Render icons via [phosphor-clj](https://github.com/cjohansen/phosphor-clj)
+- Fix bug: Using a custom canvas HTML failed if Portfolio's rendering target
+  wasn't hard-coded.
+- Adjust implementation of CSS reloading to also work for shadow-cljs
 
 ### 2023.04.26
 
