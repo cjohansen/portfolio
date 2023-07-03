@@ -14,7 +14,8 @@
     (map? (:params scene))
     (->> (:params scene)
          (map (fn [[k v]] [k (get-param* state scene v)]))
-         (into {}))
+         (into {})
+         vector)
 
     (coll? (:params scene))
     (map #(get-param* state scene %) (:params scene))
@@ -24,7 +25,7 @@
 
 (defn prep-scene-fn [state scene]
   (let [params (get-params state scene)]
-    (cond-> (assoc scene :component-params (code/code-str params))
+    (cond-> (assoc scene :component-params (map code/code-str params))
       (:component scene)
       (assoc :component-fn #(:component scene))
 
