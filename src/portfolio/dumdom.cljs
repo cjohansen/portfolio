@@ -1,5 +1,7 @@
 (ns portfolio.dumdom
-  (:require [dumdom.core :as d]
+  (:require [dumdom.component :as component]
+            [dumdom.core :as d]
+            [dumdom.element :as element]
             [portfolio.adapter :as adapter]
             [portfolio.data :as data])
   (:require-macros [portfolio.dumdom]))
@@ -23,3 +25,15 @@
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
+
+(data/register-scene-renderer!
+ (fn [x]
+   (when-let [scene (cond
+                      (or (element/hiccup? x)
+                          (component/component? x))
+                      {:component x}
+
+                      (or (element/hiccup? (:component x))
+                          (component/component? (:component x)))
+                      x)]
+     (create-scene scene))))
