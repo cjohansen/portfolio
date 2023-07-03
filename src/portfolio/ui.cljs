@@ -13,6 +13,7 @@
             [portfolio.ui.canvas.zoom :as canvas-zoom]
             [portfolio.ui.client :as client]
             [portfolio.ui.collection :as collection]
+            [portfolio.ui.routes :as routes]
             [portfolio.ui.search :as search]
             [portfolio.ui.search.protocols :as index]))
 
@@ -54,6 +55,11 @@
              (println "Index" (:id doc)))
            (index/index index doc)))))))
 
+(defn render-scene [x]
+  (when-let [scene (data/get-tapped-scene x)]
+    (data/register-repl-scene! scene)
+    (actions/execute-action! app [:go-to-location (routes/get-scene-location (routes/get-current-location) scene)])))
+
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data] :as opt}]]
   (let [->diffable (partial search/get-diffables (or get-indexable-data search/get-indexable-data))]
     (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
@@ -81,7 +87,9 @@
                 collections (get-collections (:scenes @app) collections)]
             (swap! app assoc :collections collections)
             (when (:reindex? opt true)
-              (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))))
+              (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
+
+      (add-tap render-scene)))
 
   (when-not (client/started? app)
     (index-content app))
