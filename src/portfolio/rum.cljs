@@ -1,7 +1,8 @@
 (ns portfolio.rum
   (:require [rum.core :as rum]
             [portfolio.adapter :as adapter]
-            [portfolio.data :as data])
+            [portfolio.data :as data]
+            ["react" :as react])
   (:require-macros [portfolio.rum]))
 
 ::data/keep
@@ -17,3 +18,13 @@
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
+
+(data/register-scene-renderer!
+ (fn [x]
+   (when-let [scene (cond
+                      (react/isValidElement x)
+                      {:component x}
+
+                      (react/isValidElement (:component x))
+                      x)]
+     (create-scene scene))))
