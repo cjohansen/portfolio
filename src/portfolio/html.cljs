@@ -20,3 +20,13 @@
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
+
+(data/register-scene-renderer!
+ (fn [x]
+   (when-let [scene (cond
+                      (string? x)
+                      {:component x}
+
+                      (string? (:component x))
+                      x)]
+     (create-scene scene))))
