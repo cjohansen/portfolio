@@ -1,14 +1,12 @@
 (ns portfolio.ui.client
   "Bootstrap and render a Portfolio UI app instance"
-  (:require [clojure.string :as str]
-            [dumdom.core :as d]
+  (:require [dumdom.core :as d]
             [portfolio.homeless :as h]
             [portfolio.ui.actions :as actions]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.components.app :refer [App]]
             [portfolio.ui.core :as portfolio]
             [portfolio.ui.css :as css]
-            [portfolio.ui.router :as router]
             [portfolio.ui.routes :as routes]))
 
 (defn render [app {:keys [on-render]}]
@@ -97,10 +95,10 @@
          (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
          (actions/execute-action!
           app
-          (if (nil? (collection/get-selection @app (routes/get-id (router/get-current-location))))
+          (if (nil? (collection/get-selection @app (routes/get-id (routes/get-current-location))))
             (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
               [:go-to-location {:query-params {:id id}}]
-              [:go-to-location (dissoc (router/get-current-location) :query-params)])
+              [:go-to-location (dissoc (routes/get-current-location) :query-params)])
             [:go-to-current-location]))
          (swap! app assoc ::started? true)))))
   app)

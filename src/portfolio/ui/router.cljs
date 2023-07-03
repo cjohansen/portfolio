@@ -36,12 +36,6 @@
     (cond-> {:path path}
       (string? query) (assoc :query-params (parse-query-params query)))))
 
-(defn get-current-url []
-  (js/window.location.href.replace js/window.location.origin ""))
-
-(defn get-current-location []
-  (get-location (get-current-url)))
-
 (defn- blank? [v]
   (or (nil? v)
       (false? v)

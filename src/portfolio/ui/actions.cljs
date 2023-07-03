@@ -3,7 +3,6 @@
             [portfolio.ui.collection :as collection]
             [portfolio.ui.css :as css]
             [portfolio.ui.layout :as layout]
-            [portfolio.ui.router :as router]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
             [portfolio.ui.scene-browser :as scene-browser]
@@ -85,7 +84,7 @@
      :release (mapcat scene/get-scene-atoms current-scenes)
      :subscribe (mapcat scene/get-scene-atoms (:scenes selection))
      :set-page-title (get-page-title state selection)
-     :update-window-location (router/get-url location)}))
+     :update-window-location (routes/get-url location)}))
 
 (defn remove-scene-param
   ([state scene-id]
@@ -154,7 +153,7 @@
         (fn [_ _ _ _]
           (swap! app update :heartbeat (fnil inc 0)))))
     (when-let [url (:update-window-location res)]
-      (when-not (= url (router/get-current-url))
+      (when-not (= url (routes/get-current-url))
         (log "Updating browser URL to" url)
         (.pushState js/history false false url)))
     (when-let [title (:set-page-title res)]
@@ -193,7 +192,7 @@
      :dissoc-in {:dissoc-in (rest action)}
      :fn/call (let [[fn & args] (rest action)] (apply fn args))
      :go-to-location (apply go-to-location @app (rest action))
-     :go-to-current-location (go-to-location @app (router/get-current-location))
+     :go-to-current-location (go-to-location @app (routes/get-current-location))
      :set-css-files (let [[paths] (rest action)]
                       {:assoc-in [[:css-paths] paths]
                        :load-css-files paths
