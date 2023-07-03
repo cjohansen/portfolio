@@ -22,7 +22,7 @@
                 [:folder :package] 0
                 [:package :folder] 24
                 [:package :package] 24
-                [:folder :unit] 32
+                [:folder :unit] 8
                 [:package :unit] 48)))
        (reduce + 0)))
 
