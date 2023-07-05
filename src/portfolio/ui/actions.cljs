@@ -234,7 +234,7 @@
   (walk/prewalk
    (fn [x]
      (if (actions? x)
-       (fn [e]
+       (fn [e & [data]]
          (when (->> (tree-seq coll? identity x)
                     (filter #{[:event/prevent-default]})
                     seq)
@@ -246,6 +246,9 @@
             (walk/prewalk
              (fn [ax]
                (cond
+                 (get data ax)
+                 (get data ax)
+
                  (= :event.target/value ax)
                  (some-> e .-target .-value)
 
@@ -256,3 +259,6 @@
              action))))
        x))
    data))
+
+(defn dispatch [actions e & [data]]
+  (actions e data))
