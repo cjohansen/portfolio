@@ -69,3 +69,8 @@
 
 (defscene bomb
   (Bomb {}))
+
+(defscene parameterized-bomb
+  :params {:text "Boom!"}
+  [params]
+  (Bomb params))
