@@ -74,3 +74,13 @@
   :params {:text "Boom!"}
   [params]
   (Bomb params))
+
+(defscene multi-param-bomb
+  :params [{:text "Boom!"} {:note "Several"}]
+  [params]
+  (Bomb (first params)))
+
+(defscene atom-param-bomb
+  :params (atom {:text "Boom!"})
+  [params]
+  (Bomb @params))
