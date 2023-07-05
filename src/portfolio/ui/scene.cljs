@@ -25,7 +25,7 @@
 
 (defn prep-scene-fn [state scene]
   (let [params (get-params state scene)]
-    (cond-> (assoc scene :component-params (map code/code-str params))
+    (cond-> (assoc scene :component-params (seq (keep code/code-str params)))
       (:component scene)
       (assoc :component-fn #(:component scene))
 
