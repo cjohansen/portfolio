@@ -20,7 +20,7 @@
 (defn get-iframe-body [canvas-el]
   (some-> canvas-el get-iframe-document .-body))
 
-(d/defcomponent ComponentError [{:keys [component-params error] :as lol}]
+(d/defcomponent ComponentError [{:keys [component-params error]}]
   [:div {:style {:width "100%"
                  :height "100%"
                  :padding 20}}
