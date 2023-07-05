@@ -218,9 +218,10 @@
    (->> [(when (not-empty (select-keys data [:title :description :code]))
            (CanvasHeader data))
          (when (:scene data)
-           (if (:component (:scene data))
-             (Canvas data)
-             (ComponentError (:scene data))))]
+           (if (or (not (:component (:scene data)))
+                   (:error (:scene data)))
+             (ComponentError (:scene data))
+             (Canvas data)))]
         (remove nil?))])
 
 (d/defcomponent Problem [{:keys [title text code]}]
