@@ -120,13 +120,31 @@
       (when b (set! (.. document -documentElement -style -paddingLeft) (str b "px")))
       (when l (set! (.. document -documentElement -style -paddingRight) (str l "px"))))))
 
+(defn process-render-queue [el]
+  (when (.-renderFromQueue el)
+    (on-mounted
+     (get-iframe el)
+     #(when-let [data (.-renderQueue el)]
+        (set! (.-renderQueue el) nil)
+        (render-scene el data)))))
+
+(defn enqueue-render-data [el data]
+  (set! (.-renderQueue el) data)
+  (process-render-queue el))
+
 (d/defcomponent Canvas
   :on-mount (fn [el data]
-              (on-mounted (get-iframe el)
-                          (fn []
-                            (init-canvas el data #(render-scene el data)))))
+              (set! (.-renderQueue el) data)
+              (on-mounted
+               (get-iframe el)
+               (fn []
+                 (init-canvas
+                  el data
+                  (fn []
+                    (set! (.-renderFromQueue el) true)
+                    (process-render-queue el))))))
   :on-update (fn [el data]
-               (on-mounted (get-iframe el) #(render-scene el data)))
+               (enqueue-render-data el data))
   [data]
   [:div {:style {:background (or (:background/background-color (:opt data))
                                  "var(--canvas-bg)")
