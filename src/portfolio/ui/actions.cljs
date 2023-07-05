@@ -210,7 +210,7 @@
 
 (defn actions? [x]
   (and (sequential? x)
-       (not (empty? x))
+       (seq x)
        (every? #(and (sequential? %)
                      (contains? available-actions (first %))) x)))
 
