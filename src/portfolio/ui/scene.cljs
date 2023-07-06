@@ -22,16 +22,9 @@
     :else
     (get-param* state scene (:params scene))))
 
-(defn ensure-coll [x]
-  (if (and (coll? x) (not (map? x)))
-    x
-    [x]))
-
 (defn prep-scene-fn [state scene]
   (let [params (get-params state scene)]
-    (cond-> (assoc scene :component-params (->> (ensure-coll params)
-                                                (keep code/code-str)
-                                                seq))
+    (cond-> (assoc scene :component-params (code/code-str params))
       (:component scene)
       (assoc :component-fn #(:component scene))
 

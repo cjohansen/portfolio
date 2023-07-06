@@ -54,9 +54,12 @@
        (map #(canvas/get-tool-value % state id))
        (apply merge)))
 
-(defn prepare-error [{:keys [exception cause] :as hmm}]
+(defn prepare-error [{:keys [exception cause data]}]
   {:message (.-message exception)
-   :ex-data (code/code-str (ex-data exception))
+   :data (conj (map #(update % :data code/code-str) data)
+               (when-let [data (ex-data exception)]
+                 {:label "ex-data"
+                  :data (code/code-str data)}))
    :stack (.-stack exception)
    :title (or cause "Failed to render component")})
 
