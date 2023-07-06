@@ -27,6 +27,6 @@
                       (reagent/valid-tag? x)
                       {:component x}
 
-                      (reagent/valid-tag? x (:component x))
+                      (reagent/valid-tag? (:component x))
                       x)]
      (create-scene scene))))
