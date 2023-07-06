@@ -1,8 +1,7 @@
 (ns portfolio.react-utils
   (:require [goog]
             ["react" :as react]
-            [portfolio.ui.actions :as actions])
-  (:require-macros [portfolio.react-utils]))
+            [portfolio.ui.actions :as actions]))
 
 (defn get-scene [this]
   (.. this -props -scene))
