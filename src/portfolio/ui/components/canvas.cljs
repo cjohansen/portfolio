@@ -1,10 +1,11 @@
 (ns portfolio.ui.components.canvas
-  (:require [cljs.pprint :as pprint]
-            [dumdom.core :as d]
+  (:require [dumdom.core :as d]
             [portfolio.adapter :as adapter]
             [portfolio.ui.canvas.protocols :as canvas]
+            [portfolio.ui.code :as code]
             [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.code :refer [Code]]
+            [portfolio.ui.components.error :refer [Error]]
             [portfolio.ui.components.markdown :refer [Markdown]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
@@ -19,23 +20,6 @@
 
 (defn get-iframe-body [canvas-el]
   (some-> canvas-el get-iframe-document .-body))
-
-(d/defcomponent ComponentError [{:keys [component-params error]}]
-  [:div {:style {:width "100%"
-                 :height "100%"
-                 :padding 20}}
-   [:h1.h1.error (:title error)]
-   [:p.mod (:message error)]
-   (when component-params
-     [:div.vs-s.mod
-      [:h2.h3.mod "Component params"]
-      (for [param component-params]
-        [:p.mod (Code {:code param})])])
-   (when-let [data (:ex-data error)]
-     [:div.vs-s.mod
-      [:h2.h3.mod "ex-data"]
-      [:p.mod (Code {:code data})]])
-   [:p [:pre (:stack error)]]])
 
 (defn get-error-container [el]
   (or (when-let [el (.querySelector el "error-container")]
@@ -52,13 +36,16 @@
     (js/setTimeout #(set! (.. el -style -height) "auto") 100)
     (set! (.. iframe -style -display) "none")
     (d/render
-     (ComponentError
-      {:component-params (:component-params scene)
-       :error {:title "Failed to mount component"
-               :message (.-message e)
-               :stack (.-stack e)
-               :ex-data (when-let [data (ex-data e)]
-                          (with-out-str (pprint/pprint data)))}})
+     (Error
+      {:title "Failed to mount component"
+       :message (.-message e)
+       :stack (.-stack e)
+       :data [(when-let [data (ex-data e)]
+                {:label "ex-data"
+                 :data (code/code-str data)})
+              (when-let [params (:component-params scene)]
+                {:label "Component params"
+                 :data params})]})
      error)))
 
 (defn render-scene [el {:keys [scene tools opt]}]
@@ -220,7 +207,7 @@
          (when (:scene data)
            (if (or (not (:component (:scene data)))
                    (:error (:scene data)))
-             (ComponentError (:scene data))
+             (Error (:error (:scene data)))
              (Canvas data)))]
         (remove nil?))])
 
