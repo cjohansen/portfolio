@@ -2,10 +2,12 @@
   (:require [gadget.inspector :as inspector]
             [mirror.ui.components.auto-complete-scenes]
             [mirror.ui.components.browser-scenes]
+            [mirror.ui.components.hud-scenes]
             [portfolio.ui :as ui]))
 
 ::mirror.ui.components.browser-scenes/keep
 ::mirror.ui.components.auto-complete-scenes/keep
+::mirror.ui.components.hud-scenes/keep
 
 (def app
   (ui/start!

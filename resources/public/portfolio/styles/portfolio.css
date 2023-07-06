@@ -33,6 +33,7 @@ body {
   --fg: var(--alto);
   --separator: var(--shark-dark);
   --hard-separator: #333;
+  --soft-separator: var(--alto);
 
   --hover-bg: #1181f926;
   --header-border: var(--woodsmoke);
@@ -266,4 +267,9 @@ input {
 
 .auto-completer .suggestions strong {
   color: var(--fg);
+}
+
+.hud {
+  background: rgba(255, 220, 110, 0.85);
+  background: rgba(255, 250, 160, 1);
 }
