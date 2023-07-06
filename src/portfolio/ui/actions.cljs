@@ -145,8 +145,18 @@
       (log "Stop watching atom" (pr-str ref))
       (remove-watch ref ::portfolio))
     (doseq [[k t f & args] (:fns res)]
-      (log (str "Calling " k " on " t " with") (pr-str args))
-      (apply f args))
+      (try
+        (log (str "Calling " k " on " t " with") (pr-str args))
+        (apply f args)
+        (catch :default e
+          (execute-action!
+           app
+           [:assoc-in [:error]
+            {:exception e
+             :cause (str k " on " t " threw exception")
+             :data [(when (seq args)
+                      {:label "arguments"
+                       :data args})]}]))))
     (doseq [ref (:subscribe res)]
       (log "Start watching atom" (pr-str ref))
       (add-watch ref ::portfolio

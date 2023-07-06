@@ -269,6 +269,18 @@ input {
   color: var(--fg);
 }
 
+.clickable {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  line-height: 1;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  display: inline-block;
+}
+
 .hud {
   background: rgba(255, 220, 110, 0.85);
   background: rgba(255, 250, 160, 1);

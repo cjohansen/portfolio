@@ -84,3 +84,10 @@
   :params (atom {:text "Boom!"})
   [params]
   (Bomb @params))
+
+(defscene on-mount-error
+  :params {:text "Boom!"}
+  :on-mount (fn [params]
+              (throw (ex-info "on-mount says boom!" {:number 42})))
+  [params]
+  [:button.button (:text params)])

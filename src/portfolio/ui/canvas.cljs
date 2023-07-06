@@ -1,5 +1,6 @@
 (ns portfolio.ui.canvas
   (:require [markdown.core :as md]
+            [phosphor.icons :as icons]
             [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.code :as code]
@@ -77,8 +78,6 @@
                                  {:exception :action/exception
                                   :info :action/info
                                   :cause :action/cause}]])
-        error (assoc-in [:scene :actions :clear-render-error]
-                        [[:dissoc-in [:scenes id :error]]])
         error (assoc-in [:scene :error] (prepare-error error)))
       (catch :default e
         (assoc-in canvas [:scene :error] (prepare-error {:exception e}))))))
@@ -231,7 +230,13 @@
         (and (:docs target) (= :collection kind))
         (assoc
          :title (:title target)
-         :description (md/md->html (:docs target))))
+         :description (md/md->html (:docs target)))
+
+        (:error state)
+        (assoc :hud
+               {:action {:actions [[:dissoc-in [:error]]]
+                         :icon (icons/icon :phosphor.bold/x)}
+                :error (prepare-error (:error state))}))
       view-impl)))
 
 (defn view-prepper? [tool]

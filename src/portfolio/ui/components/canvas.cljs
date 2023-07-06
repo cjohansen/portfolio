@@ -6,6 +6,7 @@
             [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.code :refer [Code]]
             [portfolio.ui.components.error :refer [Error]]
+            [portfolio.ui.components.hud :as hud]
             [portfolio.ui.components.markdown :refer [Markdown]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]
             [portfolio.ui.components.tab-bar :refer [TabBar]]
@@ -325,6 +326,16 @@
                              :top 0
                              :bottom 0})}])
 
+(defn render-hud [hud]
+  (hud/render-hud
+   {:action (:action hud)
+    :style {:position "absolute"
+            :bottom 20
+            :left 20
+            :right 20}}
+   (when-let [error (:error hud)]
+     (Error error))))
+
 (d/defcomponent Pane
   :keyfn :id
   [{:keys [toolbar canvases title description background menu-bar browser handle class-name] :as data}]
@@ -374,4 +385,5 @@
    [:div {:style {:flex-grow 1
                   :position "relative"}}
     (render-layout data)]
+   (some-> data :hud render-hud)
    (some-> data :panel CanvasPanel)])
