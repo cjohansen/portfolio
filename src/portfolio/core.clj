@@ -33,23 +33,26 @@
     (->> pairs
          (take-while (comp keyword? first))
          (map vec)
-         (into (cond-> {:id (keyword (str *ns*) (str id))
-                        :line line
-                        :docs docs}
+         (into (cond
                  (and (= 1 (count rest)) fn-like?)
-                 (assoc :component-fn (first rest))
+                 {:component-fn (first rest)}
 
-                 (and (= 1 (count rest)) (not fn-like?))
-                 (assoc :component-fn `(fn [& _#]
-                                         ~(first rest))
-                        :code (get-code-str rest))
+                 (and (not fn-like?)
+                      (or (not (vector? (first rest)))
+                          (= 1 (count rest))))
+                 {:component-fn `(fn [& _#]
+                                   ~@rest)
+                  :code (get-code-str rest)}
 
                  (< 1 (count rest))
-                 (assoc :component-fn `(fn ~(cond-> (first rest)
-                                              (< (count (first rest)) 2)
-                                              (into ['& 'args]))
-                                         ~@(drop 1 rest))
-                        :code (get-code-str (next rest))))))))
+                 {:component-fn `(fn ~(cond-> (first rest)
+                                        (< (count (first rest)) 2)
+                                        (into ['& 'args]))
+                                   ~@(drop 1 rest))
+                  :code (get-code-str (next rest))}))
+         (into {:id (keyword (str *ns*) (str id))
+                :line line
+                :docs docs}))))
 
 (defn get-collection-options [syms]
   (let [docs (when (string? (first syms)) (first syms))

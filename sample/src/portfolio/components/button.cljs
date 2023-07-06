@@ -68,6 +68,7 @@
   [:button.button (:text @ref) " " (:text static)])
 
 (defscene bomb
+  (prn "Look ma, stray s-exps!")
   (Bomb {}))
 
 (defscene parameterized-bomb
