@@ -225,8 +225,8 @@
   (let [layout (layout/get-current-layout state)
         {:keys [scenes kind target]} (:current-selection state)]
     (with-meta
-      (cond-> (if-let [problems (:problems view)]
-                {:problems problems}
+      (cond-> (if-let [error (first (:problems view))]
+                {:hud {:error error}}
                 (assoc (prepare-layout state location view layout scenes)
                        :panel (when (and (= 1 (count scenes)) (seq (:addons view)))
                                 (prepare-panel state location (first scenes) (:addons view)))))
@@ -259,16 +259,26 @@
 
 (defn describe-missing-tool-id [tool]
   {:title "Badly configured canvas tool"
-   :text [:span "Canvas tool extensions must have an " [:code ":id"] " or they won't work correctly. Please inspect this tool:"]
-   :code (code/code-str tool)})
+   :message [:span "Canvas tool extensions must have an " [:code ":id"] " or they won't work correctly. Please inspect this tool."]
+   :data [{:label "Configuration"
+           :data (code/code-str tool)}]})
+
+(defn describe-problem [tool {:keys [data message]}]
+  {:title "Badly configured canvas tool"
+   :message [:span message " " [:code (code/code-str data)]]
+   :data [{:label "Configuration"
+           :data (code/code-str (dissoc tool :problems))}]})
 
 (defn create-canvas [{:keys [tools addons layout]}]
   (-> {:id ::canvas
        :title "Canvas"
-       :tools (filter :id tools)
+       :tools (->> (filter :id tools)
+                   (remove :problems))
        :addons addons
        :layout (or layout {})
-       :problems (->> (remove :id tools)
+       :problems (->> (remove :problems tools)
+                      (remove :id)
                       (map describe-missing-tool-id)
+                      (concat (mapcat #(map (partial describe-problem %) (:problems %)) tools))
                       seq)}
       (with-meta data-impl)))

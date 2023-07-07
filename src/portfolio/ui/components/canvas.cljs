@@ -199,13 +199,6 @@
              (Canvas data)))]
         (remove nil?))])
 
-(d/defcomponent Problem [{:keys [title text code]}]
-  [:div {:style {:background "var(--bg)"
-                 :padding 20}}
-   [:h2.h2 title]
-   [:p.mod text]
-   (Code {:code code})])
-
 (def direction
   {:rows "column"
    :cols "row"})
@@ -366,9 +359,6 @@
   [:div {:style {:flex-grow 1
                  :display "flex"
                  :flex-direction "column"}}
-   (when-let [problems (:problems data)]
-     [:div {:style {:overflow "auto"}}
-      (map Problem problems)])
    [:div {:style {:flex-grow 1
                   :position "relative"}}
     (render-layout data)]

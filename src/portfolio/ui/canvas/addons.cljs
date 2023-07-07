@@ -123,16 +123,17 @@
       {`canvas/render-toolbar-button #'MenuButton})))
 
 (defn create-toolbar-menu-button [data]
-  (doseq [k #{:id :title :options :prepare-canvas}]
-    (when-not (k data)
-      (throw (ex-info "Can't create toolbar menu button without key"
-                      {:k k :data data}))))
-  (with-meta
-    (dissoc data :prepare-canvas)
-    {`canvas/prepare-toolbar-button #'prepare-toolbar-menu-button
-     `canvas/get-tool-value (fn [tool state pane-id] (get-tool-value state tool pane-id))
-     `canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
-     `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))}))
+  (let [missing (filter (comp nil? data) #{:id :title :options :prepare-canvas})]
+    (with-meta
+      (cond-> (dissoc data :prepare-canvas)
+        (seq missing)
+        (assoc :problems [{:problem :missing-keys
+                           :data (set missing)
+                           :message "Can't create toolbar menu button without keys"}]))
+      {`canvas/prepare-toolbar-button #'prepare-toolbar-menu-button
+       `canvas/get-tool-value (fn [tool state pane-id] (get-tool-value state tool pane-id))
+       `canvas/prepare-canvas (or (:prepare-canvas data) (fn [_ _ _]))
+       `canvas/finalize-canvas (or (:finalize-canvas data) (fn [_ _ _]))})))
 
 (defn create-canvas-extension [data]
   (assert (:id data) "Can't create viewport extension without :id")
