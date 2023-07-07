@@ -208,6 +208,15 @@ input {
 .md h6,
 .md p {margin: 20px 0;}
 
+.md ol,
+.md ul {
+  margin: 20px 0 20px 20px;
+}
+
+.md ol {list-style-type: number;}
+.md ul {list-style-type: disc;}
+.md li {margin: 10px 0;}
+
 .vs-s .mod {margin: 10px 0}
 
 .canvas-wrapper + .canvas-wrapper {
