@@ -44,7 +44,8 @@
               (when-not (:tick @params)
                 (swap! params assoc :tick (js/setInterval #(swap! params update :error not) 2000))))
   :on-unmount (fn [params]
-                (js/clearInterval (:tick @params)))
+                (js/clearInterval (:tick @params))
+                (swap! params dissoc :tick))
   [params]
   (react.createElement bogus-component (clj->js @params)))
 
