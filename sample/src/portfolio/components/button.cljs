@@ -2,8 +2,8 @@
   (:require [portfolio.dumdom :as portfolio :refer-macros [defscene]]
             [dumdom.core :as d]))
 
-(d/defcomponent Bomb [_]
-  (throw (ex-info "Oh no!" {:data 42})))
+(d/defcomponent Bomb [{:keys [text data]}]
+  (throw (ex-info text data)))
 
 (defn shuffle-text [ref texts]
   (js/setTimeout
@@ -69,25 +69,25 @@
 
 (defscene bomb
   (prn "Look ma, stray s-exps!")
-  (Bomb {}))
+  (Bomb {:text "Oh no!", :data {:data 42}}))
 
 (defscene parameterized-bomb
-  :params {:text "Boom!"}
+  :params {:text "Boom!" :data {:secret "Ssh!"}}
   [params]
   (Bomb params))
 
 (defscene multi-param-bomb
-  :params [{:text "Boom!"} {:note "Several"}]
+  :params [{:text "Multi-paramed explosion"} {:data {:id :multi-params}}]
   [params]
   (Bomb (first params)))
 
 (defscene atom-param-bomb
-  :params (atom {:text "Boom!"})
+  :params (atom {:text "Atom paramed overflow"})
   [params]
   (Bomb @params))
 
 (defscene on-mount-error
-  :params {:text "Boom!"}
+  :params {:text "Mounting issues"}
   :on-mount (fn [params]
               (throw (ex-info "on-mount says boom!" {:number 42})))
   [params]
