@@ -32,7 +32,7 @@
        (.render root (react.createElement Wrapper #js {:scene scene}))))})
 
 (defn create-scene [scene]
-  (adapter/prepare-scene scene component-impl))
+  (react-util/create-scene scene component-impl))
 
 (data/register-scene-renderer!
  (fn [x]

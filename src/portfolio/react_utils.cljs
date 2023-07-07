@@ -1,7 +1,15 @@
 (ns portfolio.react-utils
   (:require [goog]
             ["react" :as react]
-            [portfolio.ui.actions :as actions]))
+            [portfolio.ui.actions :as actions]
+            [portfolio.adapter :as adapter]))
+
+(defn create-scene [scene impl]
+  (-> scene
+      (update :component-fn (fn [f]
+                              (fn [& args]
+                                (react.createElement #(apply f args) #js {}))))
+      (adapter/prepare-scene impl)))
 
 (defn get-scene [this]
   (.. this -props -scene))

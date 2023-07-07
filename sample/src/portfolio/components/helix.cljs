@@ -47,3 +47,15 @@
                 (js/clearInterval (:tick @params)))
   [params]
   (react.createElement bogus-component (clj->js @params)))
+
+(defn HookExample
+  [props]
+  (let [^js [date _set-date] (react.useState (js/Date.))]
+    (react.createElement "div" nil (str date))))
+
+(defscene indirect-hook
+  (react.createElement HookExample))
+
+(defscene inline-hook
+  (let [^js [date _set-date] (react.useState (js/Date.))]
+    (react.createElement "div" nil (str date))))
