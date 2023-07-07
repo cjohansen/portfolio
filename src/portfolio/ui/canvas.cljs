@@ -55,7 +55,9 @@
        (apply merge)))
 
 (defn prepare-error [{:keys [exception cause data]} & [scene]]
-  {:message (.-message exception)
+  {:message (or (.-message exception)
+                (when exception
+                  (str "Exception was not an Error instance: " exception)))
    :data (-> (map #(update % :data code/code-str) data)
              (conj (when-let [data (ex-data exception)]
                      {:label "ex-data"

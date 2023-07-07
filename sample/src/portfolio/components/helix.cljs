@@ -60,3 +60,8 @@
 (defscene inline-hook
   (let [^js [date _set-date] (react/useState (js/Date.))]
     (react/createElement "div" nil (str date))))
+
+(defscene string-error
+  (let [^js [date _set-date] (react/useState (js/Date.))]
+    (throw "Don't do this")
+    (react/createElement "div" nil (str date))))
