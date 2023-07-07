@@ -271,4 +271,6 @@
    data))
 
 (defn dispatch [actions e & [data]]
-  (actions e data))
+  ;; Dispatch asynchronously to avoid triggering a render within an ongoing
+  ;; render.
+  (js/requestAnimationFrame #(actions e data)))

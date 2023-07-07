@@ -55,18 +55,21 @@
        (map #(canvas/get-tool-value % state id))
        (apply merge)))
 
-(defn prepare-error [{:keys [exception cause data]}]
+(defn prepare-error [{:keys [exception cause data]} & [scene]]
   {:message (.-message exception)
-   :data (conj (map #(update % :data code/code-str) data)
-               (when-let [data (ex-data exception)]
-                 {:label "ex-data"
-                  :data (code/code-str data)}))
+   :data (-> (map #(update % :data code/code-str) data)
+             (conj (when-let [data (ex-data exception)]
+                     {:label "ex-data"
+                      :data (code/code-str data)}))
+             (conj (when-let [params (:component-params scene)]
+                     {:label "Component params"
+                      :data params})))
    :stack (.-stack exception)
    :title (or cause "Failed to render component")})
 
-(defn prepare-canvas [options canvas]
+(defn prepare-canvas [options {:keys [scene] :as canvas}]
   (let [f (-> canvas :scene :component-fn)
-        {:keys [id component-params]} (:scene canvas)
+        {:keys [id component-params]} scene
         error (get-in canvas [:scene component-params :runtime-error])
         canvas (assoc canvas :opt options)]
     (try
@@ -78,9 +81,9 @@
                                  {:exception :action/exception
                                   :info :action/info
                                   :cause :action/cause}]])
-        error (assoc-in [:scene :error] (prepare-error error)))
+        error (assoc-in [:scene :error] (prepare-error error scene)))
       (catch :default e
-        (assoc-in canvas [:scene :error] (prepare-error {:exception e}))))))
+        (assoc-in canvas [:scene :error] (prepare-error {:exception e} scene))))))
 
 (defn toolbar-button? [tool]
   (or (satisfies? canvas/ICanvasToolbarButtonData tool)

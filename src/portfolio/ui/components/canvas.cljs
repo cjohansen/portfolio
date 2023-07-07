@@ -1,8 +1,8 @@
 (ns portfolio.ui.components.canvas
   (:require [dumdom.core :as d]
             [portfolio.adapter :as adapter]
+            [portfolio.ui.actions :as actions]
             [portfolio.ui.canvas.protocols :as canvas]
-            [portfolio.ui.code :as code]
             [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.code :refer [Code]]
             [portfolio.ui.components.error :refer [Error]]
@@ -22,32 +22,12 @@
 (defn get-iframe-body [canvas-el]
   (some-> canvas-el get-iframe-document .-body))
 
-(defn get-error-container [el]
-  (or (when-let [el (.querySelector el "error-container")]
-        (set! (.-innerHTML el) "")
-        el)
-      (let [error (js/document.createElement "div")]
-        (set! (.-className error) "error-container")
-        (set! (.. error -style -overflow) "auto")
-        (.appendChild el error)
-        error)))
-
-(defn render-error [el iframe scene e]
-  (let [error (get-error-container el)]
-    (js/setTimeout #(set! (.. el -style -height) "auto") 100)
-    (set! (.. iframe -style -display) "none")
-    (d/render
-     (Error
-      {:title "Failed to mount component"
-       :message (.-message e)
-       :stack (.-stack e)
-       :data [(when-let [data (ex-data e)]
-                {:label "ex-data"
-                 :data (code/code-str data)})
-              (when-let [params (:component-params scene)]
-                {:label "Component params"
-                 :data params})]})
-     error)))
+(defn report-error [cause e scene]
+  (actions/dispatch
+   (:report-render-error (:actions scene))
+   nil
+   {:action/exception e
+    :action/cause cause}))
 
 (defn render-scene [el {:keys [scene tools opt]}]
   (let [iframe (get-iframe el)
@@ -56,19 +36,26 @@
     (when error
       (.removeChild (.-parentNode error) error)
       (set! (.. iframe -style -display) "block"))
-    (try
-      (doseq [tool tools]
-        (canvas/prepare-canvas tool el opt))
-      (adapter/render-component scene canvas)
-      (catch :default e
-        (render-error el iframe scene e)))
-    (js/setTimeout
-     #(try
-        (doseq [tool tools]
-          (canvas/finalize-canvas tool el opt))
+    (doseq [tool tools]
+      (try
+        (canvas/prepare-canvas tool el opt)
         (catch :default e
-          (render-error el iframe scene e)))
-     50)))
+          (-> (str "Failed to prepare canvas with " (:id tool))
+              (report-error e scene)))))
+    (try
+      (adapter/render-component scene canvas)
+      (js/setTimeout
+       (fn []
+         (doseq [tool tools]
+           (try
+             (canvas/finalize-canvas tool el opt)
+             (catch :default e
+               (-> (str "Failed to finalize canvas with " (:id tool))
+                   (report-error e scene))))))
+       50)
+      (catch :default e
+        (-> (str "Failed to render " (str "'" (:title scene) "'"))
+            (report-error e scene))))))
 
 (defn on-mounted [el f]
   (if (some-> el .-contentDocument (.getElementById "canvas"))
