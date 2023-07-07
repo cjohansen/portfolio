@@ -153,7 +153,7 @@
            app
            [:assoc-in [:error]
             {:exception e
-             :cause (str k " on " t " threw exception")
+             :cause (str k " on " (name t) " threw exception")
              :data [(when (seq args)
                       {:label "arguments"
                        :data args})]}]))))
