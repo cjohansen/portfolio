@@ -29,7 +29,7 @@
                               (set! (.-innerHTML el) "")
                               (set! (.-unmount el) nil)))
        (set! (.-unmountLib el) "react18")
-       (.render root (react.createElement Wrapper #js {:scene scene}))))})
+       (.render root (react/createElement Wrapper #js {:scene scene}))))})
 
 (defn create-scene [scene]
   (react-util/create-scene scene component-impl))

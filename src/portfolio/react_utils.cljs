@@ -8,7 +8,7 @@
   (-> scene
       (update :component-fn (fn [f]
                               (fn [& args]
-                                (react.createElement #(apply f args) #js {}))))
+                                (react/createElement #(apply f args) #js {}))))
       (adapter/prepare-scene impl)))
 
 (defn get-scene [this]
@@ -16,7 +16,7 @@
 
 (defn create-safe-wrapper []
   (let [ctor (fn [])]
-    (goog.inherits ctor react.Component)
+    (goog.inherits ctor react/Component)
     (set! (.-getDerivedStateFromError ctor)
           (fn [error]
             #js {:error error}))

@@ -16,7 +16,7 @@
      (assert (some? el) "Asked to render component into null container.")
      (when-let [f (some-> el .-unmount)]
        (f))
-     (react-dom/render (react.createElement Wrapper #js {:scene scene}) el))})
+     (react-dom/render (react/createElement Wrapper #js {:scene scene}) el))})
 
 (defn create-scene [scene]
   (react-util/create-scene scene component-impl))

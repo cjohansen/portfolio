@@ -28,7 +28,7 @@
 
 (def bogus-component
   (let [ctor (fn [])]
-    (goog.inherits ctor react.Component)
+    (goog.inherits ctor react/Component)
     (specify! (.-prototype ctor)
       Object
       (render [this]
@@ -47,16 +47,16 @@
                 (js/clearInterval (:tick @params))
                 (swap! params dissoc :tick))
   [params]
-  (react.createElement bogus-component (clj->js @params)))
+  (react/createElement bogus-component (clj->js @params)))
 
 (defn HookExample
   [props]
-  (let [^js [date _set-date] (react.useState (js/Date.))]
-    (react.createElement "div" nil (str date))))
+  (let [^js [date _set-date] (react/useState (js/Date.))]
+    (react/createElement "div" nil (str date))))
 
 (defscene indirect-hook
-  (react.createElement HookExample))
+  (react/createElement HookExample))
 
 (defscene inline-hook
-  (let [^js [date _set-date] (react.useState (js/Date.))]
-    (react.createElement "div" nil (str date))))
+  (let [^js [date _set-date] (react/useState (js/Date.))]
+    (react/createElement "div" nil (str date))))
