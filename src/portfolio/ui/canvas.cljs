@@ -1,6 +1,5 @@
 (ns portfolio.ui.canvas
-  (:require [markdown.core :as md]
-            [phosphor.icons :as icons]
+  (:require [phosphor.icons :as icons]
             [portfolio.ui.canvas.addons :as addons]
             [portfolio.ui.canvas.protocols :as canvas]
             [portfolio.ui.code :as code]
@@ -165,7 +164,7 @@
 
         (:docs scene)
         (assoc :title (:title scene)
-               :description (md/md->html (:docs scene)))
+               :description (:docs scene))
 
         (:code scene)
         (assoc :code (:code scene))
@@ -233,7 +232,7 @@
         (and (:docs target) (= :collection kind))
         (assoc
          :title (:title target)
-         :description (md/md->html (:docs target)))
+         :description (:docs target))
 
         (:error state)
         (assoc :hud
