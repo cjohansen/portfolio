@@ -55,18 +55,18 @@
             :else w))))
 
 (defn finalize-canvas [_ el {:viewport/keys [width height] :as opt}]
-  (let [frame (canvas/get-iframe el)
-        frame-body (canvas/get-iframe-body el)
-        w (get-width frame frame-body width opt)
-        h (get-height frame frame-body height opt)
-        [margin shadow] (if (and (or (not= "100%" w) (not= "100%" height))
-                                 (or (not (number? width))
-                                     (< (+ 40 width) (get-available-width el))))
-                          ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
-                          ["0" "none"])]
-    (set! (.. el -style -height) h)
-    (set! (.. el -style -margin) (str margin " auto"))
-    (set! (.. el -style -boxShadow) shadow)))
+  (when-let [frame-body (canvas/get-iframe-body el)]
+    (let [frame (canvas/get-iframe el)
+          w (get-width frame frame-body width opt)
+          h (get-height frame frame-body height opt)
+          [margin shadow] (if (and (or (not= "100%" w) (not= "100%" height))
+                                   (or (not (number? width))
+                                       (< (+ 40 width) (get-available-width el))))
+                            ["20px" "rgba(0, 0, 0, 0.1) 0px 1px 5px 0px"]
+                            ["0" "none"])]
+      (set! (.. el -style -height) h)
+      (set! (.. el -style -margin) (str margin " auto"))
+      (set! (.. el -style -boxShadow) shadow))))
 
 (defn get-padding
   ([xs] (get-padding nil xs))
