@@ -12,6 +12,7 @@
 html,
 body {
   font-size: 15px;
+  --black: #000;
   --woodsmoke: #141619;
   --shark: #212227;
   --shark-dark: #26262a;
@@ -19,13 +20,12 @@ body {
   --alto: #d5d5d5;
   --gallery: #eee;
   --white: #fff;
-  --picton-blue: #4090e4;
   --azure-radiance: #1181f9;
   --mariner: #2963c1;
   --tuna: #35353a;
   --cadet-blue: #b1b9c1;
   --silver-tree: #61c093;
-  --malachite: #11f94b;
+  --aquamarine: #61efff;
 
   /* Theming */
 
