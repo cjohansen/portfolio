@@ -31,6 +31,7 @@ body {
 
   --bg: var(--shark);
   --fg: var(--alto);
+  --sharp-fg: var(--white);
   --separator: var(--shark-dark);
   --hard-separator: #333;
   --soft-separator: var(--alto);
@@ -74,8 +75,14 @@ body {
 .light {
   --bg: var(--gallery-bg);
   --fg: var(--gallery-fg);
-  --canvas-bg: #ffffff;
+  --sharp-fg: var(--black);
+  --canvas-bg: var(--white);
   background: var(--bg);
+  color: var(--fg);
+}
+
+.contrast {
+  --fg: var(--sharp-fg);
   color: var(--fg);
 }
 
@@ -104,6 +111,7 @@ body {
 
 /* Headings */
 .h1, .md h1 {font-size: 1.6rem; font-weight: 400;}
+.h1 {font-size: 3rem;}
 .h2, .md h2 {font-size: 1.3rem; font-weight: 400;}
 .h3, .md h3 {font-size: 1.2rem; font-weight: 400;}
 .h4, .md h4 {font-size: 1.067rem; font-weight: 400;}
@@ -293,4 +301,24 @@ input {
 .hud {
   background: rgba(255, 220, 110, 0.85);
   background: rgba(255, 250, 160, 1);
+}
+
+/* Logo */
+
+@keyframes wiggle-medium {
+  0% { transform: rotate(0deg); }
+  80% { transform: rotate(0deg); }
+  85% { transform: rotate(15deg); }
+  95% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.circle {
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 1;
+}
+
+.blue-gradient {
+  background: linear-gradient(135deg, var(--mariner) 0%, var(--aquamarine) 100%);
 }
