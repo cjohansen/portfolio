@@ -73,18 +73,15 @@
         {:keys [id component-params]} scene
         error (get-in canvas [:scene component-params :runtime-error])
         canvas (assoc canvas :opt options)]
-    (try
-      (cond-> canvas
-        (ifn? f) (assoc-in [:scene :component] (f options))
-        (nil? error) (assoc-in [:scene :actions :report-render-error]
-                               [[:assoc-in
-                                 [:scenes id component-params :runtime-error]
-                                 {:exception :action/exception
-                                  :info :action/info
-                                  :cause :action/cause}]])
-        error (assoc-in [:scene :error] (prepare-error error scene)))
-      (catch :default e
-        (assoc-in canvas [:scene :error] (prepare-error {:exception e} scene))))))
+    (cond-> canvas
+      (ifn? f) (assoc-in [:scene :component-fn] (partial f options))
+      (nil? error) (assoc-in [:scene :actions :report-render-error]
+                             [[:assoc-in
+                               [:scenes id component-params :runtime-error]
+                               {:exception :action/exception
+                                :info :action/info
+                                :cause :action/cause}]])
+      error (assoc-in [:scene :error] (prepare-error error scene)))))
 
 (defn toolbar-button? [tool]
   (or (satisfies? canvas/ICanvasToolbarButtonData tool)

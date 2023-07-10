@@ -43,7 +43,7 @@
           (-> (str "Failed to prepare canvas with " (:id tool))
               (report-error e scene)))))
     (try
-      (adapter/render-component scene canvas)
+      (adapter/render-component (assoc scene :component ((:component-fn scene))) canvas)
       (js/setTimeout
        (fn []
          (doseq [tool tools]
@@ -193,7 +193,7 @@
    (->> [(when (not-empty (select-keys data [:title :description :code]))
            (CanvasHeader data))
          (when (:scene data)
-           (if (or (not (:component (:scene data)))
+           (if (or (not (:component-fn (:scene data)))
                    (:error (:scene data)))
              (Error (:error (:scene data)))
              (Canvas data)))]
