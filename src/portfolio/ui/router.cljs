@@ -32,9 +32,11 @@
            (into {})))
 
 (defn get-location [url]
-  (let [[path query] (str/split url #"\?")]
+  (let [[url hash] (str/split url #"#")
+        [path query] (str/split url #"\?")]
     (cond-> {:path path}
-      (string? query) (assoc :query-params (parse-query-params query)))))
+      (string? query) (assoc :query-params (parse-query-params query))
+      (string? hash) (assoc :hash hash))))
 
 (defn- blank? [v]
   (or (nil? v)
@@ -70,4 +72,7 @@
 
 (defn get-url [location]
   (let [qs (encode-query-params (:query-params location))]
-    (str (:path location) (when-not (empty? qs) (str "?" qs)))))
+    (str (:path location)
+         (when-not (empty? qs) (str "?" qs))
+         (when-let [hash (:hash location)]
+           (str "#" hash)))))

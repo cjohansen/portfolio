@@ -92,7 +92,7 @@
                        [:on-mount (or id title) on-mount params]))))
      :release (mapcat scene/get-scene-atoms current-scenes)
      :subscribe (mapcat scene/get-scene-atoms (:scenes selection))
-     :set-page-title (get-page-title state selection)
+     :set-page-title (get-page-title state {:selection selection :document document})
      :update-window-location (routes/get-url location)}))
 
 (defn remove-scene-param
@@ -174,7 +174,10 @@
     (when-let [url (:update-window-location res)]
       (when-not (= url (routes/get-current-url))
         (log "Updating browser URL to" url)
-        (.pushState js/history false false url)))
+        (.pushState js/history false false url))
+      (js/requestAnimationFrame
+       #(when-let [el (some-> js/location.hash (subs 1) js/document.getElementById)]
+          (.scrollIntoView el))))
     (when-let [title (:set-page-title res)]
       (log (str "Set page title to '" title "'"))
       (set! js/document.title title))
