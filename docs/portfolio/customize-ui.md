@@ -126,6 +126,20 @@ The compare tool allows you to select different scenes in split panes. This way
 you can not only compare different versions of the same scene, but also
 different scenes.
 
+## Portfolio documentation
+
+The Portfolio documentation will be available via a button in the sidebar when
+Portfolio is served from localhost or directly via an IP address. You can
+control the button's appearance manually. The following example disables it
+completely:
+
+```clj
+(require '[portfolio.ui :as ui])
+
+(ui/start!
+  {:config {:portfolio-docs? false}})
+```
+
 ## More customization
 
 - [Customize CSS](./custom-css.md)

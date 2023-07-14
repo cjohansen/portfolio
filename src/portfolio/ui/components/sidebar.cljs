@@ -4,7 +4,7 @@
             [portfolio.ui.components.auto-complete :refer [AutoCompleter]]
             [portfolio.ui.components.browser :as browser]))
 
-(d/defcomponent Sidebar [{:keys [width title items lists actions slide? search]}]
+(d/defcomponent Sidebar [{:keys [width title items lists actions slide? search footer]}]
   [:div {:style {:width (if slide? 0 width)
                  :flex-shrink "0"
                  :overflow-y "auto"
@@ -20,4 +20,12 @@
    (when search
      [:div {:style {:margin "0 0 20px"}}
       (AutoCompleter search)])
-   (browser/render-items items)])
+   (browser/render-items items)
+   (when footer
+     [:div {:style {:position "absolute"
+                    :bottom 0
+                    :padding 20}}
+      (for [{:keys [text icon actions]} (:buttons footer)]
+        [:a {:on-click actions
+             :title text}
+         (icons/render icon {:size 16})])])])

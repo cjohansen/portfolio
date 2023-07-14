@@ -24,8 +24,15 @@
        (map (juxt :id identity))
        (into {})))
 
+(defn portfolio-docs? [user-v]
+  (if (nil? user-v)
+    (boolean (or (= "localhost" js/location.hostname)
+                 (re-find #"\d+\.\d+\.\d+\.\d+" js/location.href)))
+    user-v))
+
 (defn create-app [config canvas-tools extra-canvas-tools]
   (-> config
+      (update :portfolio-docs? portfolio-docs?)
       (assoc :scenes @data/scenes)
       (assoc :collections (get-collections @data/scenes @data/collections))
       (assoc :views [(canvas/create-canvas

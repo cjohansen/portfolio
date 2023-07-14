@@ -45,7 +45,11 @@
                   :hidden)]]
      :items (prepare-scene-browser state location)
      :search (when (:index state)
-               (search/prepare-search state location))}))
+               (search/prepare-search state location))
+     :footer (when (:portfolio-docs? state)
+               {:buttons [{:text "Portfolio documentation"
+                           :icon (icons/icon :phosphor.regular/book)
+                           :actions [[:go-to-location {:query-params {:doc "index"}}]]}]})}))
 
 (defn prepare-header [state location]
   (when-not (sidebar? state)
