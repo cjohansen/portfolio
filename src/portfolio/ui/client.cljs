@@ -98,7 +98,7 @@
           (if (nil? (collection/get-selection @app (routes/get-id (routes/get-current-location))))
             (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
               [:go-to-location {:query-params {:id id}}]
-              [:go-to-location (dissoc (routes/get-current-location) :query-params)])
+              [:go-to-location (assoc (routes/get-current-location) :query-params {:doc "up-and-running"})])
             [:go-to-current-location]))
          (swap! app assoc ::started? true)))))
   app)

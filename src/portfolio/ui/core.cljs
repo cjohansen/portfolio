@@ -2,7 +2,7 @@
   (:require [clojure.walk :as walk]
             [phosphor.icons :as icons]
             [portfolio.ui.collection :as collection]
-            [portfolio.ui.intro-screen :as intro]
+            [portfolio.ui.document :as doc]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene-browser :as scene-browser]
             [portfolio.ui.screen :as screen]
@@ -86,5 +86,7 @@
        :sidebar (prepare-sidebar state location)
        :small? (screen/small-screen? state)
        :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
-       :view (view/prepare-data current-view state location)})
-    {:view (intro/prepare-view state location)}))
+       :view (if-let [document (doc/get-document (routes/get-document-id location))]
+               (doc/prepare-view state location document)
+               (view/prepare-data current-view state location))})
+    {:view (doc/prepare-view state location (doc/get-document :document/up-and-running))}))

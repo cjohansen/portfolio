@@ -2,6 +2,7 @@
   (:require [clojure.walk :as walk]
             [portfolio.ui.collection :as collection]
             [portfolio.ui.css :as css]
+            [portfolio.ui.document :as document]
             [portfolio.ui.layout :as layout]
             [portfolio.ui.routes :as routes]
             [portfolio.ui.scene :as scene]
@@ -52,12 +53,18 @@
 (defn atom? [x]
   (satisfies? cljs.core/IWatchable x))
 
-(defn get-page-title [state selection]
+(defn get-page-title [state {:keys [selection document]}]
   (let [suffix (when (:title state) (str " - " (:title state)))]
-    (if (:target selection)
+    (cond
+      (:target selection)
       (case (:kind selection)
         :scene (str "Scene: " (:title (:target selection)) suffix)
         :collection (str "Collection: " (:title (:target selection)) suffix))
+
+      document
+      (:title document)
+
+      :else
       (str "No scenes found" suffix))))
 
 (defn go-to-location [state location]
@@ -69,7 +76,9 @@
         expansions (->> (:path selection)
                         (map scene-browser/get-expanded-path)
                         (remove #(get-in state %))
-                        (mapcat (fn [path] [path true])))]
+                        (mapcat (fn [path] [path true])))
+        document (when (nil? id)
+                   (document/get-document (routes/get-document-id location)))]
     {:assoc-in (cond-> [[:location] location
                         (layout/get-current-layout-path) lp]
                  (nil? (get-in state lp)) (into [lp layout])

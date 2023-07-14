@@ -1,9 +1,9 @@
-{:paths ["src" "resources"]
+{:paths ["src" "resources" "docs"]
  :deps {cjohansen/dumdom {:mvn/version "2023.04.26"}
         markdown-clj/markdown-clj {:mvn/version "1.11.4"}
         no.cjohansen/phosphor-clj {:mvn/version "2023.07.07"}}
  :aliases
- {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src" "scenes/src"]
+ {:dev {:extra-paths ["dev" "test" "dev-resources" "sample/src" "scenes/src" "intro/src"]
         :extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}
                      org.clojure/clojurescript {:mvn/version "1.11.60"}
                      com.bhauman/figwheel-main {:mvn/version "0.2.18"}

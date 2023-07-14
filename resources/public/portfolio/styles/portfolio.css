@@ -110,11 +110,11 @@ body {
 }
 
 /* Headings */
-.h1, .md h1 {font-size: 1.6rem; font-weight: 400;}
+.h1, .md h1 {font-size: 2rem; font-weight: 400;}
 .h1 {font-size: 3rem;}
-.h2, .md h2 {font-size: 1.3rem; font-weight: 400;}
-.h3, .md h3 {font-size: 1.2rem; font-weight: 400;}
-.h4, .md h4 {font-size: 1.067rem; font-weight: 400;}
+.h2, .md h2 {font-size: 1.6rem; font-weight: 400;}
+.h3, .md h3 {font-size: 1.3rem; font-weight: 400;}
+.h4, .md h4 {font-size: 1.2rem; font-weight: 400;}
 
 .text-s {font-size: 0.93rem;}
 
@@ -140,7 +140,8 @@ pre[class*=language-] {
 a,
 a:link,
 a:visited,
-.link {
+.link,
+a:link code {
   color: var(--azure-radiance);
   cursor: pointer;
   text-decoration: none;
@@ -208,17 +209,22 @@ input {
 }
 
 .mod,
+.md p,
+.md pre, .dark .md pre {margin: 10px 0 20px;}
+
+.mod:first-child,
+.md:first-child p:first-child {margin: 20px 0;}
+
 .md h1,
 .md h2,
 .md h3,
 .md h4,
 .md h5,
-.md h6,
-.md p {margin: 20px 0;}
+.md h6 {margin: 30px 0 10px;}
 
 .md ol,
 .md ul {
-  margin: 20px 0 20px 20px;
+  margin: 10px 0 20px 20px;
 }
 
 .md ol {list-style-type: number;}

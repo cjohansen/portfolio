@@ -27,7 +27,7 @@ YouTube](https://www.youtube.com/watch?v=25JDQRFoQ_U).
 
 ## Sample
 
-![The Portfolio UI](./docs/sample.png)
+![The Portfolio UI](./docs/portfolio/sample.png)
 
 There is a [live sample](https://cjohansen.github.io/) to check out. The source
 code for the sample is [also available](https://github.com/cjohansen/sasha).
@@ -525,7 +525,7 @@ belongs to another collection:
 
 This will render nested folders:
 
-![Nested folders](./docs/nested-folders.png)
+![Nested folders](./docs/portfolio/nested-folders.png)
 
 ## Search
 

@@ -1,5 +1,6 @@
 ^{:css-dirs ["resources/public/portfolio"]
-  :extra-main-files {:mirror {:main mirror.scenes}}}
+  :extra-main-files {:mirror {:main mirror.scenes}
+                     :intro {:main intro.core}}}
 {:main "portfolio.dev"
  :optimizations :none
  :pretty-print true

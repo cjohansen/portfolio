@@ -1,10 +1,10 @@
-(ns mirror.ui.components.intro-screen-scenes
+(ns mirror.ui.components.document-scenes
   (:require [portfolio.dumdom :as portfolio :refer-macros [defscene]]
             [portfolio.ui.components.document :refer [Document]]
-            [portfolio.ui.intro-screen :as intro]))
+            [portfolio.ui.document :as intro]))
 
 (portfolio/configure-scenes
- {:title "Intro screen"})
+ {:title "Documents"})
 
 (defscene setup-good
-  (Document (intro/prepare-view {} {})))
+  (Document (intro/prepare-view {} {} :document/up-and-running)))

@@ -24,6 +24,10 @@
 (defn get-id [location]
   (some-> location :query-params :id keyword))
 
+(defn get-document-id [location]
+  (when-let [doc (-> location :query-params :doc)]
+    (keyword "document" doc)))
+
 (defn get-current-url []
   (js/window.location.href.replace js/window.location.origin ""))
 
