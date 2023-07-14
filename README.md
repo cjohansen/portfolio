@@ -211,14 +211,16 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
-### 2023.07.xx
+### 2023.07.14
 
-- Improved error handling
+- Improved error handling in multiple places. If you encounter an uncaught
+  exception, report it as a bug.
 - React components are now rendered with an error boundary. This allows
   Portfolio to present errors from within your React component lifecycle like
   any other error
 - The React adapter now supports the use of hooks directly in scene definitions.
 - `tap>` components from your code or the REPL to render them in Portfolio.
+- Self-host Portfolio's documentation within the tool.
 
 ### 2023.05.12
 
