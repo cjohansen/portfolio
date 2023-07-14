@@ -85,13 +85,14 @@
 
 (d/defcomponent Unit [{:keys [title url actions selected? illustration context]}]
   (let [left-padding (get-context-offset context :unit)]
-    [:li.text-s {:style {:background (when selected? "var(--highlight-bg)")
-                         :font-weight (when selected? 600)
-                         :display "flex"
-                         :align-items "center"
-                         :margin "4px 4px"
-                         :border-radius 4
-                         :padding (str "8px 0 8px " left-padding "px")}}
+    [:li.text-s
+     {:style {:background (when selected? "var(--highlight-bg)")
+              :font-weight (when selected? 600)
+              :display "flex"
+              :align-items "center"
+              :margin "4px 4px"
+              :border-radius 4
+              :padding (str "8px 0 8px " left-padding "px")}}
      (when (:icon illustration)
        (icons/render
         (:icon illustration)
@@ -99,7 +100,7 @@
          :color (:color illustration)
          :style {:margin-right 8}}))
      (if selected?
-       [:strong title]
+       [:strong {:style {:color "var(--browser-unit-fg)"}} title]
        [:a {:style {:display "block"
                     :color "var(--browser-unit-fg)"}
             :on-click actions
