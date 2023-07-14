@@ -137,6 +137,17 @@ create an index and pass it when you start the UI:
 this protocol to completely customize the search. More documentation on this
 will follow.
 
+## REPL usage
+
+If you just want to see what a specific component looks like with some data you
+caught in your REPL, but don't necessarily want to commit a new scene, you can
+`tap>` components, and Portfolio will render it under a dedicated folder.
+
+```clj
+;; Evaluate this expression
+(tap> (MyComponent {:text "Test"}))
+```
+
 ## Try it out
 
 You can take the Portfolio UI for a spin by cloning this repo, starting
@@ -193,10 +204,18 @@ Some features and fixes that are likely to be explored in the close future:
 - Better error-handling for things like `:on-mount`
 - Better first use experience: display some documentation when there are no
   scenes
-- Add a scratchpad of sorts for rendering from the REPL
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2023.07.xx
+
+- Improved error handling
+- React components are now rendered with an error boundary. This allows
+  Portfolio to present errors from within your React component lifecycle like
+  any other error
+- The React adapter now supports the use of hooks directly in scene definitions.
+- `tap>` components from your code or the REPL to render them in Portfolio.
 
 ### 2023.05.12
 
