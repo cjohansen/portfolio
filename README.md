@@ -195,6 +195,9 @@ pouring too much work into them, so we're sure we're one the same page.
 - @brandonstubbs React 18-related features.
 - @elken made some visual improvements
 
+Portfolio is proudly sponsored by [Clojurists
+Together](https://www.clojuriststogether.org/).
+
 ## Wishlist
 
 Some features and fixes that are likely to be explored in the close future:
