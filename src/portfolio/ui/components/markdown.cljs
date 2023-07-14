@@ -24,17 +24,10 @@
   "Removes line breaks in brackets, which causes markdown-clj to not recognize
   them as links."
   [s]
-  (loop [xs s
-         res []
-         link-text? false]
-    (if-let [c (first xs)]
-      (recur
-       (next xs)
-       (conj res (if (and link-text? (= c "\n")) " " c))
-       (if link-text?
-         (not= c "]")
-         (= c "[")))
-      (str/join res))))
+  (->> (for [[text link] (->> (str/split s #"(\[[^\]]+\]\([^\)]+\))")
+                              (partition-all 2))]
+         (str text (some-> link (str/replace #"\n" " "))))
+       str/join))
 
 (defn render-markdown [s]
   (-> (space-lists s)
