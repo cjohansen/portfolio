@@ -79,14 +79,16 @@
     (assoc :selected? true)))
 
 (defn prepare-data [state location]
-  (if (seq (vals (:scenes state)))
-    (let [state (assoc state :current-selection (collection/get-selection state (routes/get-id location)))
-          current-view (get-current-view state location)]
-      {:header (prepare-header state location)
-       :sidebar (prepare-sidebar state location)
-       :small? (screen/small-screen? state)
-       :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
-       :view (if-let [document (doc/get-document (routes/get-document-id location))]
-               (doc/prepare-view state location document)
-               (view/prepare-data current-view state location))})
-    {:view (doc/prepare-view state location (doc/get-document :document/up-and-running))}))
+  (let [scenes? (seq (vals (:scenes state)))
+        state (assoc state :current-selection (collection/get-selection state (routes/get-id location)))
+        current-view (get-current-view state location)
+        document (doc/get-document (routes/get-document-id location))]
+    (cond-> {:small? (screen/small-screen? state)
+             :tab-bar {:tabs (map #(prepare-view-option current-view %) (:views state))}
+             :view (cond
+                     document (doc/prepare-view state location document)
+                     scenes? (view/prepare-data current-view state location)
+                     :else (doc/prepare-view state location (doc/get-document :document/up-and-running)))}
+
+      scenes? (assoc :header (prepare-header state location)
+                     :sidebar (prepare-sidebar state location)))))
