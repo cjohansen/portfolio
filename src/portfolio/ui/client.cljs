@@ -38,6 +38,8 @@
       (if (or e.ctrlKey e.metaKey)
         (.open js/window path "_blank")
         (do
+          (when (:log? @app)
+            (println "Update URL from body click" path))
           (.pushState js/history false false path)
           (actions/execute-action! app [:go-to-current-location]))))))
 
@@ -95,10 +97,14 @@
          (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
          (actions/execute-action!
           app
-          (if (nil? (collection/get-selection @app (routes/get-id (routes/get-current-location))))
-            (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
-              [:go-to-location {:query-params {:id id}}]
-              [:go-to-location (assoc (routes/get-current-location) :query-params {:doc "up-and-running"})])
-            [:go-to-current-location]))
+          (let [location (routes/get-current-location)]
+            (if (nil? (collection/get-selection @app (routes/get-id location)))
+              (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
+                [:go-to-location {:query-params {:id id}}]
+                [:go-to-location
+                 (cond-> location
+                   (nil? (-> location :query-params :doc))
+                   (assoc :query-params {:doc "up-and-running"}))])
+              [:go-to-current-location])))
          (swap! app assoc ::started? true)))))
   app)
