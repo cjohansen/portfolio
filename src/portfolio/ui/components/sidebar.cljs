@@ -28,7 +28,8 @@
     {:size 16
      :on-click actions
      :style {:margin "16px 8px"}})
-   (when title [:h1.h1 {:style {:margin "20px 10px"}} title])
+   (when title [:h1.h1 {:style {:margin "20px 10px"
+                                :font-size "1.5rem"}} title])
    (when search
      [:div {:style {:margin "0 0 20px"}}
       (AutoCompleter search)])
