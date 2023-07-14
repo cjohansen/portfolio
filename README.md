@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.05.12"}
+no.cjohansen/portfolio {:mvn/version "2023.07.14"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.05.12"]
+[no.cjohansen/portfolio "2023.07.14"]
 ```
 
 ## Usage
