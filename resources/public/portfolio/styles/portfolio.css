@@ -141,7 +141,7 @@ a,
 a:link,
 a:visited,
 .link,
-a:link code {
+a code {
   color: var(--azure-radiance);
   cursor: pointer;
   text-decoration: none;

@@ -4,7 +4,13 @@
             [portfolio.ui.docs :as docs]))
 
 (def docs
-  {:document/up-and-running (docs/prepare-doc (docs/load-doc "up-and-running.md"))})
+  {:document/up-and-running (docs/prepare-doc (docs/load-doc "up-and-running.md"))
+   :document/defscene (docs/prepare-doc (docs/load-doc "defscene.md"))
+   :document/organization (docs/prepare-doc (docs/load-doc "organization.md"))
+   :document/custom-css (docs/prepare-doc (docs/load-doc "custom-css.md"))
+   :document/custom-html (docs/prepare-doc (docs/load-doc "custom-html.md"))
+   :document/customize-ui (docs/prepare-doc (docs/load-doc "customize-ui.md"))
+   :document/index (docs/prepare-doc (docs/load-doc "index.md"))})
 
 (defn get-document [id]
   (when-let [doc (get docs id)]
