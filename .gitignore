@@ -4,3 +4,6 @@
 /portfolio.jar
 .cache
 .calva
+/node_modules/
+/package-lock.json
+/package.json
