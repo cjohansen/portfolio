@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.07.14"}
+no.cjohansen/portfolio {:mvn/version "2023.07.15"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.07.14"]
+[no.cjohansen/portfolio "2023.07.15"]
 ```
 
 ## Usage
@@ -211,7 +211,7 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
-### 2023.07.14
+### 2023.07.15
 
 - Improved error handling in multiple places. If you encounter an uncaught
   exception, report it as a bug.
@@ -220,7 +220,8 @@ Some features and fixes that are likely to be explored in the close future:
   any other error
 - The React adapter now supports the use of hooks directly in scene definitions.
 - `tap>` components from your code or the REPL to render them in Portfolio.
-- Self-host Portfolio's documentation within the tool.
+- Serve browsable documentation directly inside Portfolio (there's a book icon
+  in the top left corner).
 
 ### 2023.05.12
 
