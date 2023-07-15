@@ -4,7 +4,7 @@
 - [Custom HTML](./custom-html.md)
 - [Customize the Portfolio UI](./customize-ui.md)
 - [Using defscene](./defscene.md)
-- [Organizing scenes](./defscene.md)
+- [Organizing scenes](./organization.md)
 
 ## Help and feedback
 
