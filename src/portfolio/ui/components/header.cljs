@@ -4,7 +4,7 @@
             [portfolio.ui.components.browser :refer [Browser]]
             [portfolio.ui.components.menu-bar :refer [MenuBar]]))
 
-(d/defcomponent Header [{:keys [menu-bar left-action menu]}]
+(d/defcomponent Header [{:keys [menu-bar buttons menu]}]
   [:div
    [:div {:style {:display "flex"
                   :gap 20
@@ -17,9 +17,10 @@
                   :border-bottom "1px solid var(--header-border)"}
           :mounted-style {:height 56}
           :leaving-style {:height 0}}
-    (when (:icon left-action)
-      [:span {:on-click (:actions left-action)}
-       (icons/render (:icon left-action) {:size 16})])
+    (for [{:keys [text actions icon]} (remove nil? buttons)]
+      [:span {:title text
+              :on-click actions}
+       (icons/render icon {:size 16})])
     (MenuBar menu-bar)]
    (when menu
      (Browser menu))])

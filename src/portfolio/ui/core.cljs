@@ -39,27 +39,31 @@
     {:width 360
      :slide? (boolean (:sidebar-status state))
      :title (not-empty (:title state))
-     :actions [[:assoc-in [:sidebar-status]
-                (if (screen/small-screen? state)
-                  :auto
-                  :hidden)]]
+     :buttons [{:icon (icons/icon :phosphor.regular/caret-double-left)
+                :text "Hide sidebar"
+                :actions [[:assoc-in [:sidebar-status]
+                           (if (screen/small-screen? state)
+                             :auto
+                             :hidden)]]}
+               {:text "Portfolio documentation"
+                :icon (icons/icon :phosphor.regular/book)
+                :actions [[:go-to-location {:query-params {:doc "index"}}]]}]
      :items (prepare-scene-browser state location)
      :search (when (:index state)
-               (search/prepare-search state location))
-     :footer (when (:portfolio-docs? state)
-               {:buttons [{:text "Portfolio documentation"
-                           :icon (icons/icon :phosphor.regular/book)
-                           :actions [[:go-to-location {:query-params {:doc "index"}}]]}]})}))
+               (search/prepare-search state location))}))
 
 (defn prepare-header [state location]
   (when-not (sidebar? state)
-    {:left-action
-     (when-not (screen/small-screen? state)
-       {:icon (icons/icon :phosphor.regular/caret-double-right)
-        :actions [[:assoc-in [:sidebar-status]
-                   (if (screen/small-screen? state)
-                     :visible
-                     :auto)]]})
+    {:buttons [(when-not (screen/small-screen? state)
+                 {:icon (icons/icon :phosphor.regular/caret-double-right)
+                  :text "Show sidebar"
+                  :actions [[:assoc-in [:sidebar-status]
+                             (if (screen/small-screen? state)
+                               :visible
+                               :auto)]]})
+               {:text "Portfolio documentation"
+                :icon (icons/icon :phosphor.regular/book)
+                :actions [[:go-to-location {:query-params {:doc "index"}}]]}]
 
      :menu-bar (collection/prepare-selection-menu-bar
                 state
