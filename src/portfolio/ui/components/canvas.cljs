@@ -81,11 +81,13 @@
          (f))))))
 
 (defn init-canvas [el data f]
-  (let [document (get-iframe-document el)
+  (let [iframe (get-iframe el)
+        document (get-iframe-document el)
         head (.-head document)
         loaded (atom 0)
         try-complete #(when (= (count (:css-paths data)) @loaded)
                         (f))]
+    (set! (.-title document) "Component scene")
     (.addEventListener
      (.-contentWindow iframe)
      "message"
@@ -149,6 +151,7 @@
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe.canvas
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
+     :title "Component scene"
      :style {:border "none"
              :flex-grow "1"
              :width (or (when (number? (:viewport/width (:opt data)))
