@@ -73,7 +73,7 @@
         {:keys [id component-params]} scene
         error (get-in canvas [:scene component-params :runtime-error])
         canvas (assoc canvas :opt options)]
-    (cond-> canvas
+    (cond-> (update-in canvas [:scene :rendered-data :options] options)
       (ifn? f) (assoc-in [:scene :component-fn] (partial f options))
       (nil? error) (assoc-in [:scene :actions :report-render-error]
                              [[:assoc-in

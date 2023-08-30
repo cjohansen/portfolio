@@ -1,5 +1,9 @@
 (ns portfolio.ui.scene
-  (:require [portfolio.ui.code :as code]))
+  (:require [portfolio.ui.code :as code]
+            [clojure.walk :as walk]))
+
+(defn atom? [x]
+  (satisfies? cljs.core/IWatchable x))
 
 (defn get-param-overrides [state scene]
   (get-in state [:ui (:id scene) :overrides]))
@@ -22,9 +26,21 @@
     :else
     (get-param* state scene (:params scene))))
 
+(defn get-param-data [params]
+  (walk/postwalk
+   (fn [x]
+     (if (atom? x)
+       (deref x)
+       x))
+   params))
+
 (defn prep-scene-fn [state scene]
   (let [params (get-params state scene)]
-    (cond-> (assoc scene :component-params (code/code-str params))
+    (cond-> (assoc scene
+                   :component-params (code/code-str params)
+                   :rendered-data {:params (get-param-data params)
+                                   :id (:id scene)
+                                   :updated-at (:updated-at scene)})
       (:component scene)
       (assoc :component-fn #(:component scene))
 
@@ -36,4 +52,4 @@
 
 (defn get-scene-atoms [{:keys [params]}]
   (->> (tree-seq coll? identity params)
-       (filter #(satisfies? cljs.core/IWatchable %))))
+       (filter atom?)))

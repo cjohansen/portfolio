@@ -95,17 +95,25 @@
       (when b (set! (.. document -documentElement -style -paddingLeft) (str b "px")))
       (when l (set! (.. document -documentElement -style -paddingRight) (str l "px"))))))
 
+(defn get-rendered-data [{:keys [scene]}]
+  (:rendered-data scene))
+
 (defn process-render-queue [el]
   (when (.-renderFromQueue el)
     (on-mounted
      (get-iframe el)
      #(when-let [data (.-renderQueue el)]
         (set! (.-renderQueue el) nil)
+        (set! (.-renderedData el) (get-rendered-data data))
         (render-scene el data)))))
 
+(defn novel-render? [el data]
+  (not= (.-renderedData el) (get-rendered-data data)))
+
 (defn enqueue-render-data [el data]
-  (set! (.-renderQueue el) data)
-  (process-render-queue el))
+  (when (novel-render? el data)
+    (set! (.-renderQueue el) data)
+    (process-render-queue el)))
 
 (d/defcomponent Canvas
   :on-mount (fn [el data]
