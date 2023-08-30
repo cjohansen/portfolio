@@ -243,6 +243,23 @@
       0
       n)))
 
+(defn get-action [message]
+  (try
+    (let [msg (js->clj message :keywordize-keys true)]
+      (when (:action msg)
+        (let [action (keyword (:action msg))]
+          (into
+           [action]
+           (cond
+             (= :assoc-in action)
+             (let [[path v] (js->clj (js/JSON.parse (:data msg)) :keywordize-keys true)]
+               [(->> path
+                     (mapv #(cond-> %
+                              (string? %) keyword)))
+                v]))))))
+    (catch :default _e
+      nil)))
+
 (defn actionize-data
   "Given a Portfolio `app` instance and some prepared data to render, wrap
   collections of actions in a function that executes these actions. Using this

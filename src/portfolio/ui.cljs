@@ -96,7 +96,14 @@
             (when (:reindex? opt true)
               (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
 
-      (add-tap render-scene)))
+      (add-tap render-scene)
+
+      (js/window.addEventListener
+       "message"
+       (fn [e]
+         (when (.. e -data -action)
+           (when-let [action (actions/get-action (.-data e))]
+             (actions/execute-action! app action)))))))
 
   (when-not (client/started? app)
     (index-content app))
