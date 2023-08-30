@@ -1,5 +1,6 @@
 (ns portfolio.ui.components.canvas
-  (:require [dumdom.core :as d]
+  (:require [clojure.string :as str]
+            [dumdom.core :as d]
             [portfolio.adapter :as adapter]
             [portfolio.ui.actions :as actions]
             [portfolio.ui.canvas.protocols :as canvas]
@@ -51,7 +52,15 @@
              (canvas/finalize-canvas tool el opt)
              (catch :default e
                (-> (str "Failed to finalize canvas with " (:id tool))
-                   (report-error e scene))))))
+                   (report-error e scene)))))
+         (when-let [win (.-contentWindow iframe)]
+           (.postMessage
+            win
+            (clj->js {:event "scene-rendered"
+                      :scene-id (->> [(namespace (:id scene))
+                                      (name (:id scene))]
+                                     (remove empty?)
+                                     (str/join "/"))}) "*")))
        50)
       (catch :default e
         (-> (str "Failed to render " (str "'" (:title scene) "'"))
@@ -77,6 +86,11 @@
         loaded (atom 0)
         try-complete #(when (= (count (:css-paths data)) @loaded)
                         (f))]
+    (.addEventListener
+     (.-contentWindow iframe)
+     "message"
+     (fn [e]
+       (js/window.postMessage (.-data e))))
     (try-complete)
     (doseq [path (:css-paths data)]
       (let [link (js/document.createElement "link")]
