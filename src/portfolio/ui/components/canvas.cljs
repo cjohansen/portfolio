@@ -85,7 +85,8 @@
         document (get-iframe-document el)
         head (.-head document)
         loaded (atom 0)
-        try-complete #(when (= (count (:css-paths data)) @loaded)
+        target-n (+ (count (:css-paths data)) (count (:script-paths data)))
+        try-complete #(when (= target-n @loaded)
                         (f))]
     (set! (.-title document) "Component scene")
     (.addEventListener
@@ -94,6 +95,8 @@
      (fn [e]
        (js/window.postMessage (.-data e))))
     (try-complete)
+
+    ;; Load CSS files
     (doseq [path (:css-paths data)]
       (let [link (js/document.createElement "link")]
         (set! (.-rel link) "stylesheet")
@@ -105,6 +108,20 @@
            (swap! loaded inc)
            (try-complete)))
         (.appendChild head link)))
+
+    ;; Load scripts
+    (doseq [path (:script-paths data)]
+      (let [link (js/document.createElement "script")]
+        (set! (.-type link) "text/javascript")
+        (set! (.-src link) path)
+        (.addEventListener
+         link "load"
+         (fn [_]
+           (swap! loaded inc)
+           (try-complete)))
+        (.appendChild head link)))
+
+    ;; Set padding properties
     (let [[t r b l] (:viewport/padding (:opt data))]
       (when t (set! (.. document -body -style -paddingTop) (str t "px")))
       (when r (set! (.. document -body -style -paddingBottom) (str r "px")))
@@ -132,6 +149,9 @@
     (process-render-queue el)))
 
 (d/defcomponent Canvas
+  :keyfn (fn [{:keys [css-paths script-paths]}]
+           ;; If either of these change, we need to remount the canvas
+           (str/join (sort (concat css-paths script-paths))))
   :on-mount (fn [el data]
               (set! (.-renderQueue el) data)
               (on-mounted
