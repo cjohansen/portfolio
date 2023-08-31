@@ -7,4 +7,4 @@
  {:title "Documents"})
 
 (defscene setup-good
-  (Document (intro/prepare-view {} {} :document/up-and-running)))
+  (Document (intro/prepare-view {} {} (intro/get-document :document/up-and-running))))
