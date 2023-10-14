@@ -152,9 +152,9 @@ caught in your REPL, but don't necessarily want to commit a new scene, you can
 
 You can take the Portfolio UI for a spin by cloning this repo, starting
 figwheel, and then checking out [http://localhost:5995](http://localhost:5995),
-which will show you all the scenes defined in [./sample/src/portfolio](the
-sample project). There are also some scenes in the "mirror" build, which
-demonstrates some of Portfolio's own UI components, available at
+which will show you all the scenes defined in [the sample project](./sample/src/portfolio).
+There are also some scenes in the "mirror"
+build, which demonstrates some of Portfolio's own UI components, available at
 [http://localhost:5995/mirror.html](http://localhost:5995/mirror.html).
 
 ## Disabling Portfolio in production
