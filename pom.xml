@@ -20,7 +20,7 @@
     <dependency>
       <groupId>no.cjohansen</groupId>
       <artifactId>phosphor-clj</artifactId>
-      <version>2023.04.27</version>
+      <version>2023.07.07</version>
     </dependency>
   </dependencies>
   <build>
