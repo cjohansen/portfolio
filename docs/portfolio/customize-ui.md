@@ -33,11 +33,11 @@ To change the available options, use `:background/options`:
    [{:id :bright-mode
      :title "Bright mode (.bright-mode)"
      :value {:background/background-color "#f8f8f8"
-             :background/body-class "light-mode"}}
+             :background/document-class "light-mode"}}
     {:id :bleak-mode
      :title "Bleak mode (.bleak-mode)"
      :value {:background/background-color "#000000"
-             :background/body-class "dark-mode"}}]
+             :background/document-class "dark-mode"}}]
 
    :background/default-option-id :bleak-mode}})
 ```
