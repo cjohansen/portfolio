@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.07.15"}
+no.cjohansen/portfolio {:mvn/version "2023.12.06"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.07.15"]
+[no.cjohansen/portfolio "2023.12.06"]
 ```
 
 ## Usage
@@ -210,6 +210,13 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2023.12.06
+
+- Properly unmount Reagent components (fix #15)
+- Add support for setting classes on the document element with the background
+  tool, by setting `:background/document-class`
+- Upgrade the phosphor-clj icons dependency to fix a buggy pallette icon
 
 ### 2023.07.15
 
