@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.12.06"}
+no.cjohansen/portfolio {:mvn/version "2023.12.07"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.12.06"]
+[no.cjohansen/portfolio "2023.12.07"]
 ```
 
 ## Usage
@@ -211,12 +211,17 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
-### 2023.12.06
+### 2023.12.07
 
 - Properly unmount Reagent components (fix #15)
 - Add support for setting classes on the document element with the background
   tool, by setting `:background/document-class`
 - Upgrade the phosphor-clj icons dependency to fix a buggy pallette icon
+
+### 2023.12.06
+
+- See 2023.12.07. This release came with a bug that did not re-render scenes
+  when changing Portfolio view options.
 
 ### 2023.07.15
 
