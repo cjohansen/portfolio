@@ -128,8 +128,9 @@
       (when b (set! (.. document -documentElement -style -paddingLeft) (str b "px")))
       (when l (set! (.. document -documentElement -style -paddingRight) (str l "px"))))))
 
-(defn get-rendered-data [{:keys [scene]}]
-  (:rendered-data scene))
+(defn get-rendered-data [{:keys [scene opt]}]
+  {:rendered (:rendered-data scene)
+   :portfolio-options opt})
 
 (defn process-render-queue [el]
   (when (.-renderFromQueue el)
