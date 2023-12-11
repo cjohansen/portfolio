@@ -176,7 +176,7 @@
         (log "Updating browser URL to" url)
         (.pushState js/history false false url))
       (js/requestAnimationFrame
-       #(when-let [el (some-> js/location.hash (subs 1) js/document.getElementById)]
+       #(when-let [el (some-> js/location.hash (subs 1) not-empty js/document.getElementById)]
           (.scrollIntoView el))))
     (when-let [title (:set-page-title res)]
       (log (str "Set page title to '" title "'"))
