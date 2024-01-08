@@ -1,6 +1,9 @@
 (ns portfolio.ui.client
   "Bootstrap and render a Portfolio UI app instance"
-  (:require [dumdom.core :as d]
+  (:require [clojure.edn :as edn]
+            [dumdom.core :as d]
+            [goog.object :as o]
+            [portfolio.adapter :as adapter]
             [portfolio.homeless :as h]
             [portfolio.ui.actions :as actions]
             [portfolio.ui.collection :as collection]
@@ -107,4 +110,44 @@
                    (assoc :query-params {:doc "up-and-running"}))])
               [:go-to-current-location])))
          (swap! app assoc ::started? true)))))
+  app)
+
+(defn mark-embed-ready!
+  [app]
+  (set! (.-portfolioReady js/window) true)
+  (swap! app assoc ::started? true)
+  (js/window.parent.postMessage #js {:portfolio_ready true} "*"))
+
+(defn track-host-location
+  [app]
+  (js/window.addEventListener
+    "message"
+    (fn [e]
+      (let [message (.-data e)]
+        (when-let [scene-id (o/get message "set_scene")]
+          (swap! app assoc ::opt (some-> message (o/get "opt") edn/read-string))
+          (actions/execute-action! app [:go-to-location {:query-params {:id scene-id
+                                                                        :portfolio.embed true}}]))))))
+
+(defn render-component [app {:keys [on-render]}]
+  (let [state @app]
+    (when (ifn? on-render)
+      (on-render
+        ;; TODO: add page-data parameter
+        #_page-data))
+    (if-let [el (js/document.getElementById "portfolio")]
+      (when-let [{:keys [target]} (collection/get-selection state (routes/get-id (:location state)))]
+        (adapter/render-component (assoc target :component ((:component-fn target) nil (::opt state))) el)
+        (js/window.parent.postMessage #js {:portfolio_render (routes/get-id (:location state))}))
+      (js/console.error "Unable to render portfolio: no element with id \"portfolio\""))))
+
+(defn start-embed-app [app & [{:keys [on-render]}]]
+  (css/load-css-files-direct (:css-paths @app))
+  (if (started? app)
+    (render-component app {:on-render on-render})
+    (do
+      (ensure-element!)
+      (track-host-location app)
+      (add-watch app ::render (fn [_ _ _ _] (render-component app {:on-render on-render})))
+      (mark-embed-ready! app)))
   app)
