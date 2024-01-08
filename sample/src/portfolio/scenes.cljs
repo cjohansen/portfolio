@@ -5,17 +5,18 @@
             [portfolio.components.dom]
             [portfolio.components.heading]
             [portfolio.components.helix]
-            [portfolio.components.uix]
             [portfolio.components.html]
             [portfolio.components.link]
             [portfolio.components.reagent]
+            [portfolio.components.replicant]
             [portfolio.components.rum]
+            [portfolio.components.uix]
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
             [portfolio.ui :as ui]
-            [portfolio.ui.search.memsearch-index :as memsearch]
-            [portfolio.ui.search :as search]))
+            [portfolio.ui.search :as search]
+            [portfolio.ui.search.memsearch-index :as memsearch]))
 
 (defonce app
   (ui/start!

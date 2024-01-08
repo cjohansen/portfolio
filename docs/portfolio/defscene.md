@@ -26,6 +26,7 @@ Currently these adapters are supported:
   - Older versions of React - `portfolio.rum`
   - React versions 18+ - `portfolio.react-18`
 - [Dumdom](https://github.com/cjohansen/dumdom) - `portfolio.dumdom`
+- [Replicant](https://github.com/cjohansen/replicant) - `portfolio.replicant`
 - React (including [Helix](https://github.com/lilactown/helix), [UIx<sup>2</sup>](https://github.com/pitch-io/uix))
   - Older versions of React - `portfolio.react`
   - React versions 18+ - `portfolio.react-18`
