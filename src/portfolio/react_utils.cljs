@@ -1,5 +1,6 @@
 (ns portfolio.react-utils
   (:require [goog]
+            [goog.object :as o]
             ["react" :as react]
             [portfolio.ui.actions :as actions]
             [portfolio.adapter :as adapter]))
@@ -12,7 +13,7 @@
       (adapter/prepare-scene impl)))
 
 (defn get-scene [this]
-  (.. this -props -scene))
+  (o/getValueByKeys this "props" "scene"))
 
 (defn create-safe-wrapper []
   (let [ctor (fn [])]
@@ -32,7 +33,7 @@
       (render [this]
         (.createElement
          react "div" #js {}
-         (if (some-> this .-state .-error)
+         (if (o/getValueByKeys this "state" "error")
            ""
            (:component (get-scene this))))))
     ctor))
