@@ -33,9 +33,9 @@
 
 (defscene parameterized
   :title "Parameterized button"
-  :param {:text "Hello, clicky!"}
-  [{:keys [text]}]
-  [:button.button text])
+  :param {:text {:en "Hello, clicky!" :nb "Heisann!"}}
+  [{:keys [text]} opt]
+  [:button.button (get text (:i18n/locale opt))])
 
 (defn render-button [data]
   [:button.button (:text data)])

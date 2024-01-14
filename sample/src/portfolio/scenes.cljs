@@ -14,6 +14,7 @@
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
+            [portfolio.locale-selector :as locale-selector]
             [portfolio.ui :as ui]
             [portfolio.ui.search :as search]
             [portfolio.ui.search.memsearch-index :as memsearch]))
@@ -22,6 +23,8 @@
   (ui/start!
    {:on-render (fn [page-data]
                  (inspector/inspect "Page data" page-data))
+
+    :extra-canvas-tools [(locale-selector/create-locale-tool)]
 
     :index (search/create-index)
     ;;:index (memsearch/create-index)
