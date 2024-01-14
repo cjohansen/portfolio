@@ -32,4 +32,6 @@
      :aquamarine
      :azure-radiance
      :mariner
-     :silver-tree])])
+     :silver-tree
+     :forest-green
+     :tall-poppy])])
