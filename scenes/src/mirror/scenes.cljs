@@ -5,6 +5,7 @@
             [mirror.ui.colors-scenes]
             [mirror.ui.components.document-scenes]
             [mirror.ui.components.hud-scenes]
+            [mirror.ui.components.status-bar-scenes]
             [portfolio.ui :as ui]))
 
 ::mirror.ui.components.browser-scenes/keep
@@ -12,6 +13,7 @@
 ::mirror.ui.components.auto-complete-scenes/keep
 ::mirror.ui.components.document-scenes/keep
 ::mirror.ui.components.hud-scenes/keep
+::mirror.ui.components.status-bar-scenes/keep
 
 (def app
   (ui/start!
