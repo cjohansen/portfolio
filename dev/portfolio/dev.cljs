@@ -1,9 +1,9 @@
 (ns ^:figwheel-hooks portfolio.dev
   (:require [dumdom.component]
             [gadget.inspector :as inspector]
-            [portfolio.ui :as ui]
             [portfolio.data :as data]
-            [portfolio.scenes :as scenes]))
+            [portfolio.scenes :as scenes]
+            [portfolio.ui :as ui]))
 
 ::scenes/keep
 
