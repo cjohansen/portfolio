@@ -1,10 +1,10 @@
 (ns portfolio.components.reagent
-  (:require
-   ;; If you are using an older version of react use the following:
-   #_[portfolio.reagent :refer-macros [defscene]]
-   ;; For react versions 18+ use the following:
-   ;; This is due to the new API https://www.metosin.fi/blog/reagent-towards-react-18/
-   [portfolio.reagent-18 :refer-macros [defscene]]))
+  ;; If you are using an older version of react use the following:
+  ;; (:require [portfolio.reagent :refer-macros [defscene]])
+  ;; For react versions 18+ use the following:
+  ;; This is due to the new API https://www.metosin.fi/blog/reagent-towards-react-18/
+  (:require [portfolio.components.reagent.component :as rc]
+            [portfolio.reagent-18 :refer-macros [defscene]]))
 
 (defn button [text]
   [:button.button text])
@@ -42,3 +42,9 @@
   :params 2
   [params]
   [my-form2-component params])
+
+(defscene component-in-other-file
+  :params {:text "Hello world!!"
+           :border-width 1}
+  [params]
+  [rc/component params])
