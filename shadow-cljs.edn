@@ -1,0 +1,12 @@
+;; shadow-cljs configuration
+{:deps {:aliases [:dev :shadow]}
+
+ :dev-http {8080 ["public" "dev-resources/public" "classpath:public"]}
+
+
+ :builds
+ {:frontend
+  {:target :browser
+   :compiler-options {:infer-externs true}
+   :modules {:main {:init-fn portfolio.scenes/init}}
+   }}}

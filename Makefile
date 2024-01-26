@@ -4,4 +4,7 @@ portfolio.jar: src/portfolio/*
 deploy: portfolio.jar
 	mvn deploy:deploy-file -Dfile=portfolio.jar -DrepositoryId=clojars -Durl=https://clojars.org/repo -DpomFile=pom.xml
 
-.PHONY: deploy
+shadow:
+	npx shadow-cljs watch frontend
+
+.PHONY: deploy shadow
