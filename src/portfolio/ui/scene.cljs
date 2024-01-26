@@ -1,6 +1,6 @@
 (ns portfolio.ui.scene
-  (:require [portfolio.ui.code :as code]
-            [clojure.walk :as walk]))
+  (:require [clojure.walk :as walk]
+            [portfolio.ui.code :as code]))
 
 (defn atom? [x]
   (satisfies? cljs.core/IWatchable x))
@@ -40,6 +40,7 @@
                    :component-params (code/code-str params)
                    :rendered-data {:params (get-param-data params)
                                    :id (:id scene)
+                                   :reloaded-at (or (:portfolio.ui/reloaded-at state) 0)
                                    :updated-at (:updated-at scene)})
       (:component scene)
       (assoc :component-fn #(:component scene))

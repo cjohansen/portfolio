@@ -30,7 +30,7 @@
    {:action/exception e
     :action/cause cause}))
 
-(defn render-scene [el {:keys [scene tools opt]}]
+(defn render-scene [el {:keys [scene tools opt force-rerender?]}]
   (let [iframe (get-iframe el)
         canvas (some-> iframe .-contentDocument (.getElementById "canvas"))
         error (.querySelector el ".error-container")]
@@ -44,7 +44,10 @@
           (-> (str "Failed to prepare canvas with " (:id tool))
               (report-error e scene)))))
     (try
-      (adapter/render-component (assoc scene :component ((:component-fn scene))) canvas)
+      (-> scene
+          (assoc :component ((:component-fn scene)))
+          (assoc :force-rerender? force-rerender?)
+          (adapter/render-component canvas))
       (js/setTimeout
        (fn []
          (doseq [tool tools]
@@ -141,13 +144,25 @@
         (set! (.-renderedData el) (get-rendered-data data))
         (render-scene el data)))))
 
-(defn novel-render? [el data]
-  (not= (.-renderedData el) (get-rendered-data data)))
+(defn novel-render? [prev-data new-data]
+  (not= prev-data new-data))
+
+(defn force-rerender? [prev-data new-data]
+  (and (= (update prev-data :rendered dissoc :reloaded-at)
+          (update new-data :rendered dissoc :reloaded-at))
+       ;; The reload signal is sent after the scene is reloaded. Even when the
+       ;; scene updates, the reload will be seemingly be more recent, but if the
+       ;; difference is small, then the scene also updated, and we don't need to
+       ;; force a render.
+       (< 1000 (- (-> new-data :rendered :reloaded-at)
+                  (-> new-data :rendered :updated-at)))))
 
 (defn enqueue-render-data [el data]
-  (when (novel-render? el data)
-    (set! (.-renderQueue el) data)
-    (process-render-queue el)))
+  (let [rendered-data (get-rendered-data data)
+        prev-data (.-renderedData el)]
+    (when (novel-render? prev-data rendered-data)
+      (set! (.-renderQueue el) (assoc data :force-rerender? (force-rerender? prev-data rendered-data)))
+      (process-render-queue el))))
 
 (d/defcomponent Canvas
   :keyfn (fn [{:keys [css-paths script-paths]}]

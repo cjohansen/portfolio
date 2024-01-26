@@ -1,8 +1,8 @@
 (ns portfolio.reagent-18
-  (:require [reagent.dom.client :as rdc]
-            [reagent.impl.template :as reagent]
-            [portfolio.adapter :as adapter]
-            [portfolio.data :as data])
+  (:require [portfolio.adapter :as adapter]
+            [portfolio.data :as data]
+            [reagent.dom.client :as rdc]
+            [reagent.impl.template :as reagent])
   (:require-macros [portfolio.reagent-18]))
 
 ::data/keep
@@ -14,7 +14,7 @@
 
 (def component-impl
   {`adapter/render-component
-   (fn [{:keys [component]} el]
+   (fn [{:keys [component force-rerender?]} el]
      (assert (some? el) "Asked to render Reagent component without an element")
      (when-let [f (some-> el .-unmount)]
        (when-not (= "react18" (.-unmountLib el))
@@ -26,9 +26,14 @@
                               (set! (.-innerHTML el) "")
                               (set! (.-unmount el) nil)))
        (set! (.-unmountLib el) "react18")
-       (rdc/render root (if (fn? component)
-                          [component]
-                          component))))})
+       (if force-rerender?
+         (rdc/render root [(fn []
+                             (if (fn? component)
+                               [component]
+                               component))])
+         (rdc/render root (if (fn? component)
+                            [component]
+                            component)))))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))

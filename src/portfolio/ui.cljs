@@ -109,3 +109,7 @@
     (index-content app))
 
   (client/start-app app {:on-render on-render}))
+
+(defn reload! [app]
+  (let [reloaded-at (.getTime (js/Date.))]
+    (swap! app assoc ::reloaded-at reloaded-at)))

@@ -72,7 +72,16 @@
      ;; :background/default-option-id :dark-mode
      }}))
 
-(swap! app update ::heartbeat (fnil inc 0))
+(defn ^:dev/after-load reload []
+  (ui/reload! app))
+
+(comment
+  (swap! app update ::heartbeat (fnil inc 0))
+
+)
+
+(defn init []
+  )
 
 (comment
 
