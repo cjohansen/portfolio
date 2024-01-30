@@ -33,6 +33,7 @@
     (addons/create-toolbar-menu-button
      {:id :canvas/background
       :persist? true
+      :persist-key (hash [(:background/options config) (:background/default-option-id config)])
       :title "Background"
       :icon (icons/icon :phosphor.regular/palette)
       :options (or (:background/options config) options)

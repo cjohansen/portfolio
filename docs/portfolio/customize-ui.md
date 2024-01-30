@@ -42,6 +42,23 @@ To change the available options, use `:background/options`:
    :background/default-option-id :bleak-mode}})
 ```
 
+The `:value` takes the following keys:
+
+- `:background/document-class` a class string to add to the html element of your
+  scene.
+- `:background/body-class` a class string to add to the body element of your
+  scene.
+- `:background/background-color` a CSS color to set to Portfolio's UI
+  surrounding your scene - documentation, code examples, etc.
+
+Beware that the background menu persists your chosen theme in the browser's
+local storage. If it appears that setting the `:background/default-option-id`
+has no effect, clear your local storage and try again.
+
+Portfolio keys your preferences with the current config, but if you change back
+and forth you might run into a situation where you already have a persisted
+preference and the default option appears to have no effect.
+
 ## Viewport
 
 The viewport tool sets the dimensions of the viewport your scenes are rendered

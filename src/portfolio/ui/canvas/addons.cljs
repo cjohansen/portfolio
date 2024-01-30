@@ -5,7 +5,7 @@
             [portfolio.ui.layout :as layout]))
 
 (defn get-tool-id [tool]
-  (or (:group-id tool) (:id tool)))
+  (str (or (:group-id tool) (:id tool)) (:persist-key tool)))
 
 (defn get-persisted-value [tool]
   (try
@@ -48,15 +48,6 @@
     (cond-> [[:assoc-in [:panes pane-id id :value] v]]
       global? (conj [:assoc-in [:tools id :value] v])
       (and global? (:persist? tool)) (conj [:save-in-local-storage id v]))))
-
-(defn get-override-actions [state tool v]
-  (let [id (get-tool-id tool)]
-    (concat
-     (for [[pane-id] (filter (fn [[_ m]] (contains? m id)) (:panes state))]
-       [:dissoc-in [:panes pane-id id :value]])
-     [[:assoc-in [:tools id :value] v]]
-     (when (:persist? tool)
-       [[:save-in-local-storage id v]]))))
 
 (defn get-clear-actions [state tool pane-id]
   (let [id (get-tool-id tool)
