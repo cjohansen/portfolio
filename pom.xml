@@ -10,7 +10,7 @@
     <dependency>
       <groupId>cjohansen</groupId>
       <artifactId>dumdom</artifactId>
-      <version>2023.03.27</version>
+      <version>2024.02.19</version>
     </dependency>
     <dependency>
       <groupId>markdown-clj</groupId>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>no.cjohansen</groupId>
       <artifactId>phosphor-clj</artifactId>
-      <version>2023.07.07</version>
+      <version>2024.03.03</version>
     </dependency>
   </dependencies>
   <build>
