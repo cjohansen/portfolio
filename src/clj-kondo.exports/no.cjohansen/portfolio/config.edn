@@ -1,0 +1,10 @@
+{:linters {:portfolio/component-options {:level :warning}}
+ :hooks {:analyze-call {portfolio.dom/defscene portfolio.defscene/defscene
+                        portfolio.dumdom/defscene portfolio.defscene/defscene
+                        portfolio.html/defscene portfolio.defscene/defscene
+                        portfolio.react/defscene portfolio.defscene/defscene
+                        portfolio.react-18/defscene portfolio.defscene/defscene
+                        portfolio.reagent/defscene portfolio.defscene/defscene
+                        portfolio.reagent-18/defscene portfolio.defscene/defscene
+                        portfolio.replicant/defscene portfolio.defscene/defscene
+                        portfolio.rum/defscene portfolio.defscene/defscene}}}
