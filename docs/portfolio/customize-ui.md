@@ -50,6 +50,9 @@ The `:value` takes the following keys:
   scene.
 - `:background/background-color` a CSS color to set to Portfolio's UI
   surrounding your scene - documentation, code examples, etc.
+- `:background/document-data` a map of dataset properties to set on the HTML
+  element. E.g. `:background/document-data {:theme "dracula"}` will set
+  `data-theme="dracula"` on the HTML element.
 
 Beware that the background menu persists your chosen theme in the browser's
 local storage. If it appears that setting the `:background/default-option-id`

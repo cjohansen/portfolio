@@ -26,7 +26,9 @@
       (when-not (empty? (:background/document-class value))
         (if (= document-class (:background/document-class value))
           (.add (.-classList (.-parentNode body)) (:background/document-class value))
-          (.remove (.-classList (.-parentNode body)) (:background/document-class value)))))))
+          (.remove (.-classList (.-parentNode body)) (:background/document-class value))))
+      (doseq [[k v] (:background/document-data value)]
+        (.setAttribute (.-parentNode body) (str "data-" (name k)) (str v))))))
 
 (defn create-background-tool [config]
   (let [options (or (:background/options config) default-options)]

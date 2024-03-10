@@ -67,7 +67,8 @@
      ;;  {:id :dark-mode
      ;;   :title "Bleak mode (.bleak-mode)"
      ;;   :value {:background/background-color "#000000"
-     ;;           :background/body-class "dark-mode"}}]
+     ;;           :background/body-class "dark-mode"
+     ;;           :background/document-data {:theme "dracula"}}}]
 
      ;; :background/default-option-id :dark-mode
      }}))
