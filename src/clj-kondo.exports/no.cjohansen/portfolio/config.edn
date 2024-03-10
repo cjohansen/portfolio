@@ -1,0 +1,2 @@
+{:linters {:portfolio/component-options {:level :warning}}
+ :hooks {:analyze-call {portfolio.dumdom/defscene portfolio.defcomponent/defscene}}}
