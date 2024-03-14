@@ -138,7 +138,7 @@ uses for this are countless, some suggestions include:
 (defscene name
   :params {:title "Hello world!"}
   [params portfolio-opts]
-  [:h1 (:title param)])
+  [:h1 (:title params)])
 ```
 
 Portfolio can subscribe to multiple atoms in `:params`. If you set `:params` to
@@ -155,7 +155,7 @@ result, you can set `:title` to override the UI title:
   :title "'tis the default scenario!"
   :params {:title "Hello world!"}
   [params portfolio-opts]
-  [:h1 (:title param)])
+  [:h1 (:title params)])
 ```
 
 With `:title`, this will list as `'tis the default scenario!` in the sidebar
