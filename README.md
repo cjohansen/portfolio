@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2023.12.07"}
+no.cjohansen/portfolio {:mvn/version "2024.03.15"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2023.12.07"]
+[no.cjohansen/portfolio "2024.03.15"]
 ```
 
 ## Usage
@@ -210,6 +210,16 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2024.03.15
+
+- Add clj-kondo configuration for `defscene`
+- Add support for [`:background/document-data`](./docs/customize-ui.md)
+- Fix a bug where the background tool would not switch background color
+  immediately
+- Fix React render under advanced optimizations
+- Add experimental support for
+  [replicant](https://github.com/cjohansen/replicant)
 
 ### 2023.12.07
 
