@@ -70,42 +70,42 @@
 (defn start! [& [{:keys [on-render config canvas-tools extra-canvas-tools index get-indexable-data] :as opt}]]
   (let [->diffable (partial search/get-diffables (or get-indexable-data search/get-indexable-data))]
     (swap! app merge (create-app config canvas-tools extra-canvas-tools) {:index index})
-
     (when-not (client/started? app)
       (add-watch data/scenes ::app
-        (fn [_ _ old-scenes scenes]
-          (let [collections (get-collections scenes (:collections @app))
-                old-collections (get-collections old-scenes (:collections @app))]
-            (swap! app (fn [state]
-                         (-> state
-                             (assoc :scenes scenes)
-                             (assoc :collections collections))))
-            (when (:reindex? opt true)
-              (index-content
-               app
-               {:ids (concat
-                      (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
-                      (search/get-diff-keys (->diffable collections) (->diffable old-collections)))})))
-          (eventually-execute app [:go-to-current-location])))
+                 (fn [_ _ old-scenes scenes]
+                   (let [collections (get-collections scenes (:collections @app))
+                         old-collections (get-collections old-scenes (:collections @app))]
+                     (swap! app (fn [state]
+                                  (-> state
+                                      (assoc :scenes scenes)
+                                      (assoc :collections collections))))
+                     (when (:reindex? opt true)
+                       (index-content
+                         app
+                         {:ids (concat
+                                 (search/get-diff-keys (->diffable scenes) (->diffable old-scenes))
+                                 (search/get-diff-keys (->diffable collections) (->diffable old-collections)))})))
+                   (eventually-execute app [:go-to-current-location])))
 
       (add-watch data/collections ::app
-        (fn [_ _ _ collections]
-          (let [old-collections (:collections @app)
-                collections (get-collections (:scenes @app) collections)]
-            (swap! app assoc :collections collections)
-            (when (:reindex? opt true)
-              (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))})))))
+                 (fn [_ _ _ collections]
+                   (let [old-collections (:collections @app)
+                         collections (get-collections (:scenes @app) collections)]
+                     (swap! app assoc :collections collections)
+                     (when (:reindex? opt true)
+                       (index-content app {:ids (search/get-diff-keys (->diffable collections) (->diffable old-collections))}))))))
 
-      (add-tap render-scene)
+    (if (.get (new js/URLSearchParams js/window.location.search) "portfolio.embed")
+      (client/start-embed-app app)
+      (do
+        (when-not (client/started? app)
+          (add-tap render-scene)
+          (js/window.addEventListener
+            "message"
+            (fn [e]
+              (when (.. e -data -action)
+                (when-let [action (actions/get-action (.-data e))]
+                  (actions/execute-action! app action)))))
+          (index-content app))
 
-      (js/window.addEventListener
-       "message"
-       (fn [e]
-         (when (.. e -data -action)
-           (when-let [action (actions/get-action (.-data e))]
-             (actions/execute-action! app action)))))))
-
-  (when-not (client/started? app)
-    (index-content app))
-
-  (client/start-app app {:on-render on-render}))
+        (client/start-app app {:on-render on-render})))))
