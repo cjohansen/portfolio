@@ -214,7 +214,7 @@ Some features and fixes that are likely to be explored in the close future:
 ### 2024.03.18
 
 - Add clj-kondo configuration for `defscene`
-- Add support for [`:background/document-data`](./docs/customize-ui.md)
+- Add support for [`:background/document-data`](./docs/portfolio/customize-ui.md)
 - Fix a bug where the background tool would not switch background color
   immediately
 - Fix React render under advanced optimizations
