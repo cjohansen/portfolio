@@ -88,6 +88,9 @@ This will serve files from `public` in your project (where presumably your
 index.html and CSS files are), and resources in `public` on the classpath (e.g.
 Portfolio's resources). Adjust as necessary.
 
+Check out [this repo](https://github.com/cormacc/cljserial) for a sample setup
+with an app target and a portfolio target with shadow-cljs.
+
 ### shadow-cljs + separate dev server
 
 If you are using shadow-cljs to build the front-end and leiningen to run the dev
