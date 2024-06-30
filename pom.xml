@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>no.cjohansen</groupId>
   <artifactId>portfolio</artifactId>
-  <version>2024.03.18</version>
+  <version>2024.06.30</version>
   <name>portfolio</name>
   <dependencies>
     <dependency>
@@ -43,7 +43,7 @@
   <scm>
     <connection>scm:git:git://github.com/cjohansen/portfolio.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/cjohansen/portfolio.git</developerConnection>
-    <tag>v2024.03.18</tag>
+    <tag>v2024.06.30</tag>
     <url>https://github.com/cjohansen/portfolio</url>
   </scm>
 </project>

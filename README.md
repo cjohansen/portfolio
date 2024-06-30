@@ -214,6 +214,10 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
+### 2024.06.30
+
+- Fix a bug where the reagent adapter re-mounted components too eagerly.
+
 ### 2024.03.18
 
 - Add clj-kondo configuration for `defscene`
