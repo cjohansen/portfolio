@@ -11,12 +11,14 @@
   {`adapter/render-component
    (fn [{:keys [component]} el]
      (when-let [f (some-> el .-unmount)]
-       (f))
+       (when-not (= "reagent" (.-unmountLib el))
+         (f)))
      (if el
        (do
          (rd/render (if (fn? component)
                       [component]
                       component) el)
+         (set! (.-unmountLib el) "reagent")
          (set! (.-unmount el)
                (fn []
                  (rd/unmount-component-at-node el)
