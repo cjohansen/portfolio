@@ -39,6 +39,11 @@
     (when-not (find-link-by-href js/document.head path)
       (.appendChild js/document.head (create-css-link path {:media "portfolio"})))))
 
+(defn load-css-files-direct [paths]
+  (doseq [path paths]
+    (when-not (find-link-by-href js/document.head path)
+      (.appendChild js/document.head (create-css-link path)))))
+
 (defn on-head-mutation [mutations paths]
   (let [paths (set paths)]
     (doseq [path (->> mutations
