@@ -4,7 +4,8 @@
   ;; For react versions 18+ use the following:
   ;; This is due to the new API https://www.metosin.fi/blog/reagent-towards-react-18/
   (:require [portfolio.components.reagent.component :as rc]
-            [portfolio.reagent-18 :refer-macros [defscene]]))
+            [portfolio.decorator :refer [use-theme]]
+            [portfolio.reagent :refer-macros [defscene]]))
 
 (defn button [text]
   [:button.button text])
@@ -33,6 +34,14 @@
     (fn [_]
       [:div result])))
 
+(defn function-component []
+  (let [theme (use-theme)]
+    [:button {:style {:background (name theme)}}
+     "current theme is " (name theme)]))
+
+(defn decorator-consumer-component []
+  [:f> function-component])
+
 (defscene first-demo
   :params 1
   [params]
@@ -48,3 +57,6 @@
            :border-width 1}
   [params]
   [rc/component params])
+
+(defscene decorator-consumer-demo
+  [decorator-consumer-component])

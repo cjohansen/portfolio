@@ -1,13 +1,12 @@
 (ns portfolio.components.helix
-  (:require [goog]
-            [helix.core :refer [defnc $]]
+  (:require ["react" :as react]
+            #_[portfolio.react :refer-macros [defscene]] ;; For react versions 18+ use the following:
+            [goog]
+            [helix.core :refer [$ defnc]]
+            [helix.dom :as d] ;; If you are using an older version of react use the following:
             [helix.hooks :as hooks]
-            [helix.dom :as d]
-            ;; If you are using an older version of react use the following:
-            #_[portfolio.react :refer-macros [defscene]]
-            ;; For react versions 18+ use the following:
-            [portfolio.react-18 :refer-macros [defscene]]
-            ["react" :as react]))
+            [portfolio.decorator :refer [use-theme]]
+            [portfolio.react-18 :refer-macros [defscene]]))
 
 (defnc counter []
   (let [[count set-count] (hooks/use-state 0)]
@@ -65,3 +64,13 @@
   (let [^js [date _set-date] (react/useState (js/Date.))]
     (throw "Don't do this")
     (react/createElement "div" nil (str date))))
+
+(defnc DecoratorConsumerComponent []
+  (let [theme (use-theme)]
+    (d/button
+     {:style {:background (name theme)}}
+     (str "current theme is " (name theme)))))
+
+
+(defscene decorator-consumer-demo
+  (react/createElement DecoratorConsumerComponent))

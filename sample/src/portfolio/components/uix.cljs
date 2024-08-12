@@ -1,7 +1,8 @@
 (ns portfolio.components.uix
-  (:require [uix.core :refer [defui $ use-state]]
-            [uix.dom]
-            [portfolio.react-18 :refer-macros [defscene]]))
+  (:require [portfolio.decorator :refer [use-theme]]
+            [portfolio.react-18 :refer-macros [defscene]]
+            [uix.core :refer [$ defui use-state]]
+            [uix.dom]))
 
 (defui counter []
   (let [[count set-count] (use-state 0)]
@@ -12,3 +13,13 @@
 (defscene uix-counter
   :title "Counter with React Hooks"
   ($ counter))
+
+(defn decorator-consumer-component []
+  (let [theme (use-theme)]
+    ($ :button {:style {:background (name theme)}}
+       "current theme is " (name theme))))
+
+
+(defscene decorator-consumer-demo
+  :title "using global decorator context"
+  ($ decorator-consumer-component))
