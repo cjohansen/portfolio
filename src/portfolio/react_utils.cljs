@@ -3,8 +3,12 @@
             [goog]
             [goog.object :as o]
             [portfolio.adapter :as adapter]
-            [portfolio.ui :refer [app]]
             [portfolio.ui.actions :as actions]))
+
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
 
 (defn create-scene [scene impl]
   (-> scene
@@ -18,7 +22,7 @@
 
 (defn create-safe-wrapper []
   (let [ctor (fn [])
-        Decorator (or (:react-18 (:decorators @app))
+        Decorator (or *decorator*
                       (.-Fragment react))]
     (goog.inherits ctor react/Component)
     (set! (.-getDerivedStateFromError ctor)

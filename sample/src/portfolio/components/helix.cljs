@@ -5,7 +5,7 @@
             [helix.core :refer [$ defnc]]
             [helix.dom :as d] ;; If you are using an older version of react use the following:
             [helix.hooks :as hooks]
-            [portfolio.decorator :refer [use-theme]]
+            [portfolio.theme :as theme]
             [portfolio.react-18 :refer-macros [defscene]]))
 
 (defnc counter []
@@ -29,11 +29,11 @@
   (let [ctor (fn [])]
     (goog.inherits ctor react/Component)
     (specify! (.-prototype ctor)
-      Object
-      (render [this]
-        (when (.. this -props -error)
-          (throw (js/Error. "BOOOOOM!")))
-        "Oh, nice!!"))
+              Object
+              (render [this]
+                      (when (.. this -props -error)
+                        (throw (js/Error. "BOOOOOM!")))
+                      "Oh, nice!!"))
     ctor))
 
 (defscene react-error
@@ -66,7 +66,7 @@
     (react/createElement "div" nil (str date))))
 
 (defnc DecoratorConsumerComponent []
-  (let [theme (use-theme)]
+  (let [theme (theme/use-theme)]
     (d/button
      {:style {:background (name theme)}}
      (str "current theme is " (name theme)))))

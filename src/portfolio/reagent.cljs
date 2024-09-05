@@ -1,12 +1,16 @@
 (ns portfolio.reagent
   (:require [portfolio.adapter :as adapter]
             [portfolio.data :as data]
-            [portfolio.ui :refer [app]]
             [reagent.dom :as rd]
             [reagent.impl.template :as reagent])
   (:require-macros [portfolio.reagent]))
 
 ::data/keep
+
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
 
 (def component-impl
   {`adapter/render-component
@@ -14,7 +18,7 @@
      (when-let [f (some-> el .-unmount)]
        (when-not (= "reagent" (.-unmountLib el))
          (f)))
-     (let [decorator (or (:reagent (:decorators @app))
+     (let [decorator (or *decorator*
                          identity)]
        (if el
          (do

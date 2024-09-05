@@ -1,13 +1,16 @@
 (ns portfolio.reagent-18
   (:require [portfolio.adapter :as adapter]
             [portfolio.data :as data]
-            [portfolio.ui :refer [app]]
             [reagent.dom.client :as rdc]
-            [reagent.impl.template :as reagent]
-            [reagent.core :as r])
+            [reagent.impl.template :as reagent])
   (:require-macros [portfolio.reagent-18]))
 
 ::data/keep
+
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
 
 (defn get-root [el]
   (when-not (.-reactRoot el)
@@ -22,8 +25,7 @@
        (when-not (= "react18" (.-unmountLib el))
          (f)))
      (let [root (get-root el)
-           decorator (or (:reagent-18 (:decorators @app))
-                         identity)]
+           decorator (or *decorator* identity)]
        (set! (.-unmount el) (fn []
                               (.unmount root)
                               (set! (.-reactRoot el) nil)
