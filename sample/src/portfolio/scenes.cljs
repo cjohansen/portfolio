@@ -11,13 +11,21 @@
             [portfolio.components.replicant]
             [portfolio.components.rum]
             [portfolio.components.uix]
+            [portfolio.theme :as theme]
             [portfolio.layouts.home-page]
             [portfolio.layouts.responsive-page]
             [portfolio.layouts.tall-page]
             [portfolio.locale-selector :as locale-selector]
+            [portfolio.react-18 :as p-react-18]
+            [portfolio.reagent :as p-reagent]
+            [portfolio.reagent-18 :as p-reagent-18]
             [portfolio.ui :as ui]
-            [portfolio.ui.search :as search]
-            [portfolio.ui.search.memsearch-index :as memsearch]))
+            [portfolio.ui.search :as search]))
+
+(p-react-18/set-decorator! theme/react-18-decorator)
+
+(p-reagent/set-decorator! theme/reagent-decorator)
+(p-reagent-18/set-decorator! theme/reagent-decorator)
 
 (defonce app
   (ui/start!
@@ -40,7 +48,7 @@
 
      :viewport/defaults {:viewport/padding [16]
                          #_#_#_#_:viewport/width 390
-                         :viewport/height 400}
+                             :viewport/height 400}
      #_#_:canvas/layout {:kind :cols
                          :xs [{:viewport/width 390
                                :viewport/height "100%"}
@@ -75,12 +83,12 @@
 
 (swap! app update ::heartbeat (fnil inc 0))
 
-(comment
+(defn init []
+  (prn "portfolio initiated"))
 
+(comment
   (->> [:set-css-files ["/portfolio/demo2.css"]]
        (portfolio.actions/execute-action! app))
 
   (->> [:set-css-files ["/portfolio/demo.css"]]
-       (portfolio.actions/execute-action! app))
-
-)
+       (portfolio.actions/execute-action! app)))

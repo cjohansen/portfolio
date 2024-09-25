@@ -8,15 +8,14 @@
 
 ::data/keep
 
-(def Wrapper (react-util/create-safe-wrapper))
-
 (def component-impl
   {`adapter/render-component
    (fn [scene el]
      (assert (some? el) "Asked to render component into null container.")
      (when-let [f (some-> el .-unmount)]
        (f))
-     (react-dom/render (react/createElement Wrapper #js {:scene scene}) el))})
+     (let [Wrapper (react-util/create-safe-wrapper)]
+       (react-dom/render (react/createElement Wrapper #js {:scene scene}) el)))})
 
 (defn create-scene [scene]
   (react-util/create-scene scene component-impl))

@@ -7,23 +7,31 @@
 
 ::data/keep
 
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
+
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
      (when-let [f (some-> el .-unmount)]
        (when-not (= "reagent" (.-unmountLib el))
          (f)))
-     (if el
-       (do
-         (rd/render (if (fn? component)
-                      [component]
-                      component) el)
-         (set! (.-unmountLib el) "reagent")
-         (set! (.-unmount el)
-               (fn []
-                 (rd/unmount-component-at-node el)
-                 (set! (.-unmount el) nil))))
-       (js/console.error "Asked to render Reagent component without an element")))})
+     (let [decorator (or *decorator*
+                         identity)]
+       (if el
+         (do
+           (rd/render [decorator
+                       (if (fn? component)
+                         [component]
+                         component)] el)
+           (set! (.-unmountLib el) "reagent")
+           (set! (.-unmount el)
+                 (fn []
+                   (rd/unmount-component-at-node el)
+                   (set! (.-unmount el) nil))))
+         (js/console.error "Asked to render Reagent component without an element"))))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))

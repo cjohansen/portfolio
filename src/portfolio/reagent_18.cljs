@@ -1,11 +1,16 @@
 (ns portfolio.reagent-18
-  (:require [reagent.dom.client :as rdc]
-            [reagent.impl.template :as reagent]
-            [portfolio.adapter :as adapter]
-            [portfolio.data :as data])
+  (:require [portfolio.adapter :as adapter]
+            [portfolio.data :as data]
+            [reagent.dom.client :as rdc]
+            [reagent.impl.template :as reagent])
   (:require-macros [portfolio.reagent-18]))
 
 ::data/keep
+
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
 
 (defn get-root [el]
   (when-not (.-reactRoot el)
@@ -19,16 +24,19 @@
      (when-let [f (some-> el .-unmount)]
        (when-not (= "react18" (.-unmountLib el))
          (f)))
-     (let [root (get-root el)]
+     (let [root (get-root el)
+           decorator (or *decorator* identity)]
        (set! (.-unmount el) (fn []
                               (.unmount root)
                               (set! (.-reactRoot el) nil)
                               (set! (.-innerHTML el) "")
                               (set! (.-unmount el) nil)))
        (set! (.-unmountLib el) "react18")
-       (rdc/render root (if (fn? component)
-                          [component]
-                          component))))})
+       (rdc/render root
+                   [decorator
+                    (if (fn? component)
+                      [component]
+                      component)])))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
