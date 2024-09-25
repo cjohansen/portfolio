@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2024.03.18"}
+no.cjohansen/portfolio {:mvn/version "2024.09.25"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2024.03.18"]
+[no.cjohansen/portfolio "2024.09.25"]
 ```
 
 ## Usage
@@ -213,6 +213,16 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2024.09.25
+
+- Properly set/unset :background/document-data when switching themes
+  ([#32](https://github.com/cjohansen/portfolio/issues/32))
+- Don't start the UI before Prism is loaded
+  ([#31](https://github.com/cjohansen/portfolio/issues/31))
+- Use DOMContentReady so Portfolio starts when loaded in `<head>`
+- Render a proper error message when unable to load CSS
+- Skip Prism highlighting when unable to load Prism
 
 ### 2024.06.30
 
