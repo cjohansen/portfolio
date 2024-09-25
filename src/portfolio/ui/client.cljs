@@ -87,29 +87,38 @@
   (::started? @app))
 
 (defn start-app [app & [{:keys [on-render]}]]
-  (css/load-css-files (:css-paths @app))
-  (if (started? app)
-    (render app {:on-render on-render})
-    (do
-      (js/document.body.addEventListener "click" #(relay-body-clicks app %))
-      (keep-size-up-to-date app)
-      (keep-css-files-up-to-date app)
-      (ensure-element!)
-      (ensure-portfolio-css!
-       (fn []
-         (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
-         (add-tap #(swap! app update :taps conj %))
-         (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
-         (actions/execute-action!
-          app
-          (let [location (routes/get-current-location)]
-            (if (nil? (collection/get-selection @app (routes/get-id location)))
-              (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
-                [:go-to-location {:query-params {:id id}}]
-                [:go-to-location
-                 (cond-> location
-                   (nil? (-> location :query-params :doc))
-                   (assoc :query-params {:doc "up-and-running"}))])
-              [:go-to-current-location])))
-         (swap! app assoc ::started? true)))))
+  (let [f (fn []
+            (css/load-css-files (:css-paths @app))
+            (if (started? app)
+              (render app {:on-render on-render})
+              (do
+                (js/document.body.addEventListener "click" #(relay-body-clicks app %))
+                (keep-size-up-to-date app)
+                (keep-css-files-up-to-date app)
+                (ensure-element!
+                 (fn []
+                   (ensure-portfolio-css!
+                    (fn []
+                      (set! js/window.onpopstate (fn [] (actions/execute-action! app [:go-to-current-location])))
+                      (add-tap #(swap! app update :taps conj %))
+                      (add-watch app ::render (fn [_ _ _ _] (render app {:on-render on-render})))
+                      (actions/execute-action!
+                       app
+                       (let [location (routes/get-current-location)]
+                         (if (nil? (collection/get-selection @app (routes/get-id location)))
+                           (if-let [id (:id (first (sort-by :id (vals (:scenes @app)))))]
+                             [:go-to-location {:query-params {:id id}}]
+                             [:go-to-location
+                              (cond-> location
+                                (nil? (-> location :query-params :doc))
+                                (assoc :query-params {:doc "up-and-running"}))])
+                           [:go-to-current-location])))
+                      (swap! app assoc ::started? true))))))))]
+    ;; Portfolio used to just start at will, and would crash when loaded from
+    ;; <head> This little indirection means Portfolio still starts synchronously
+    ;; when loaded from <body>, but now also starts when being loaded in <head>,
+    ;; although asynchronously.
+    (if (and js/document js/document.body)
+      (f)
+      (add-once-listener js/window "DOMContentLoaded" f)))
   app)
