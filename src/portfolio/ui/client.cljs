@@ -43,24 +43,29 @@
           (.pushState js/history false false path)
           (actions/execute-action! app [:go-to-current-location]))))))
 
+(defn add-once-listener [el event f]
+  (.addEventListener el event (fn listener [_e]
+                                (.removeEventListener el event listener)
+                                (f))))
+
 (defn ensure-portfolio-css! [f]
   (if-not (js/document.getElementById "portfolio-css")
     (let [el (css/create-css-link "/portfolio/styles/portfolio.css")]
-      (.addEventListener el "load" (fn listener [e]
-                                     (.removeEventListener el "load" listener)
-                                     (f)))
+      (add-once-listener el "load" f)
       (.appendChild js/document.head el))
     (f)))
 
-(defn ensure-element! []
-  (when-not (js/document.getElementById "portfolio")
-    (let [el (js/document.createElement "div")]
+(defn ensure-element! [f]
+  (if-not (js/document.getElementById "portfolio")
+    (let [el (js/document.createElement "div")
+          script (js/document.createElement "script")]
       (set! (.-id el) "portfolio")
-      (.appendChild js/document.body el))
-    (let [script (js/document.createElement "script")]
+      (.appendChild js/document.body el)
       (set! (.-type script) "text/javascript")
       (set! (.-src script) "/portfolio/prism.js")
-      (.appendChild js/document.body script))))
+      (add-once-listener script "load" f)
+      (.appendChild js/document.body script))
+    (f)))
 
 (defn set-window-size [app]
   (let [dim {:w js/window.innerWidth
