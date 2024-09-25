@@ -41,6 +41,7 @@
                  (let [code (.-firstElementChild pre)]
                    (when (= "CODE" (.-tagName code))
                      (set! (.-className pre) (str "language-" (or (langs (.-className code)) (.-className code))))
-                     (js/Prism.highlightElement pre)))))
+                     (when js/window.Prism
+                       (js/Prism.highlightElement pre))))))
   [{:keys [markdown]}]
   [:div.md {:dangerouslySetInnerHTML {:__html (render-markdown markdown)}}])

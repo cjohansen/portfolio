@@ -90,7 +90,7 @@
       (.appendChild js/document.body el)
       (set! (.-type script) "text/javascript")
       (set! (.-src script) "/portfolio/prism.js")
-      (add-once-listener script "load" f)
+      (add-load-listener script f)
       (.appendChild js/document.body script))
     (f)))
 
