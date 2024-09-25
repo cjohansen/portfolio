@@ -15,7 +15,7 @@
             :background/document-class "dark-mode"
             :background/body-class "dark-mode"}}])
 
-(defn prepare-canvas [data el {:background/keys [background-color body-class document-class]}]
+(defn prepare-canvas [data el {:background/keys [background-color body-class document-class document-data]}]
   (set! (.. (canvas/get-iframe el) -style -backgroundColor) background-color)
   (let [body (canvas/get-iframe-body el)]
     (doseq [{:keys [value]} (:options data)]
@@ -27,8 +27,11 @@
         (if (= document-class (:background/document-class value))
           (.add (.-classList (.-parentNode body)) (:background/document-class value))
           (.remove (.-classList (.-parentNode body)) (:background/document-class value))))
-      (doseq [[k v] (:background/document-data value)]
-        (.setAttribute (.-parentNode body) (str "data-" (name k)) (str v))))))
+      (if (= (:background/document-data value) document-data)
+        (doseq [[k v] (:background/document-data value)]
+          (.setAttribute (.-parentNode body) (str "data-" (name k)) (str v)))
+        (doseq [[k v] (apply dissoc (:background/document-data value) (keys document-data))]
+          (.removeAttribute (.-parentNode body) (str "data-" (name k))))))))
 
 (defn create-background-tool [config]
   (let [options (or (:background/options config) default-options)]
