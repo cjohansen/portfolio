@@ -48,10 +48,37 @@
                                 (.removeEventListener el event listener)
                                 (f))))
 
+(defn add-load-listener [el f & [error]]
+  (.addEventListener
+   el "load"
+   (fn listener [_e]
+     (.removeEventListener el "load" listener)
+     (.removeEventListener el "error" listener)
+     (f)))
+  (.addEventListener
+   el "error"
+   (fn listener [_e]
+     (.removeEventListener el "load" listener)
+     (.removeEventListener el "error" listener)
+     (if error
+       (set! (.-innerHTML js/document.body) error)
+       (f)))))
+
+(def css-file "/portfolio/styles/portfolio.css")
+
+(def css-load-error
+  (str
+   "<h1>Unable to load the Portfolio CSS</h1>"
+   "<p>Portfolio needs to load its CSS file " css-file
+   "in order to render its UI. Make sure Portfolio's resources are served from "
+   "your web server. If you are using shadow-cljs, you'll need something like "
+   "the following:</p>"
+   "<pre><code>:dev-http {8080 [\"public\" \"classpath:public\"]}</code></pre>"))
+
 (defn ensure-portfolio-css! [f]
   (if-not (js/document.getElementById "portfolio-css")
-    (let [el (css/create-css-link "/portfolio/styles/portfolio.css")]
-      (add-once-listener el "load" f)
+    (let [el (css/create-css-link css-file)]
+      (add-load-listener el f css-load-error)
       (.appendChild js/document.head el))
     (f)))
 
