@@ -1,6 +1,7 @@
 (ns portfolio.ui.components.canvas
   (:require [clojure.string :as str]
             [dumdom.core :as d]
+            [goog.object :as o]
             [portfolio.adapter :as adapter]
             [portfolio.ui.actions :as actions]
             [portfolio.ui.canvas.protocols :as canvas]
@@ -33,7 +34,23 @@
 (defn render-scene [el {:keys [scene tools opt]}]
   (let [iframe (get-iframe el)
         canvas (some-> iframe .-contentDocument (.getElementById "canvas"))
-        error (.querySelector el ".error-container")]
+        error (.querySelector el ".error-container")
+        scene-id-str (->> [(namespace (:id scene))
+                           (name (:id scene))]
+                          (remove empty?)
+                          (str/join "/"))
+        finalize-fn (fn []
+                      (doseq [tool tools]
+                        (try
+                          (canvas/finalize-canvas tool el opt)
+                          (catch :default e
+                            (-> (str "Failed to finalize canvas with " (:id tool))
+                                (report-error e scene)))))
+                      (when-let [win (.-contentWindow iframe)]
+                        (.postMessage
+                          win
+                          (clj->js {:event "scene-rendered"
+                                    :scene-id scene-id-str}) "*")))]
     (when error
       (.removeChild (.-parentNode error) error)
       (set! (.. iframe -style -display) "block"))
@@ -44,24 +61,32 @@
           (-> (str "Failed to prepare canvas with " (:id tool))
               (report-error e scene)))))
     (try
-      (adapter/render-component (assoc scene :component ((:component-fn scene))) canvas)
-      (js/setTimeout
-       (fn []
-         (doseq [tool tools]
-           (try
-             (canvas/finalize-canvas tool el opt)
-             (catch :default e
-               (-> (str "Failed to finalize canvas with " (:id tool))
-                   (report-error e scene)))))
-         (when-let [win (.-contentWindow iframe)]
-           (.postMessage
-            win
-            (clj->js {:event "scene-rendered"
-                      :scene-id (->> [(namespace (:id scene))
-                                      (name (:id scene))]
-                                     (remove empty?)
-                                     (str/join "/"))}) "*")))
-       50)
+      (case (:render-mode scene :mount)
+        :mount
+        (do
+          (adapter/render-component (assoc scene :component ((:component-fn scene))) canvas)
+          (js/setTimeout finalize-fn 50))
+
+        :iframe
+        (let [set-scene! #(some-> iframe .-contentWindow
+                                  (.postMessage #js {:set_scene scene-id-str
+                                                     :opt (pr-str opt)}))]
+          (js/window.addEventListener
+            "message"
+            (fn finalize [e]
+              (when (and (identical? (.-contentWindow iframe) (.-source e))
+                         (o/getValueByKeys e "data" "portfolio_render"))
+                (js/window.removeEventListener "message" finalize)
+                (js/setTimeout finalize-fn 50))))
+          (if (-> iframe .-contentWindow (o/get "portfolioReady"))
+            (set-scene!)
+            (js/window.addEventListener
+              "message"
+              (fn set-the-scene [e]
+                (when (and (identical? (.-contentWindow iframe) (.-source e))
+                           (o/getValueByKeys e "data" "portfolio_ready"))
+                  (js/window.removeEventListener "message" set-the-scene)
+                  (set-scene!)))))))
       (catch :default e
         (-> (str "Failed to render " (str "'" (:title scene) "'"))
             (report-error e scene))))))
@@ -79,6 +104,13 @@
              (set! (.-id el) "canvas")
              (.appendChild (.-body doc) el)))
          (f))))))
+
+(defn- pad-canvas [data document]
+  (let [[t r b l] (:viewport/padding (:opt data))]
+    (when t (set! (.. document -body -style -paddingTop) (str t "px")))
+    (when r (set! (.. document -body -style -paddingBottom) (str r "px")))
+    (when b (set! (.. document -documentElement -style -paddingLeft) (str b "px")))
+    (when l (set! (.. document -documentElement -style -paddingRight) (str l "px")))))
 
 (defn init-canvas [el data f]
   (let [iframe (get-iframe el)
@@ -122,11 +154,7 @@
         (.appendChild head link)))
 
     ;; Set padding properties
-    (let [[t r b l] (:viewport/padding (:opt data))]
-      (when t (set! (.. document -body -style -paddingTop) (str t "px")))
-      (when r (set! (.. document -body -style -paddingBottom) (str r "px")))
-      (when b (set! (.. document -documentElement -style -paddingLeft) (str b "px")))
-      (when l (set! (.. document -documentElement -style -paddingRight) (str l "px"))))))
+    (pad-canvas data document)))
 
 (defn get-rendered-data [{:keys [scene opt]}]
   {:rendered (:rendered-data scene)
@@ -172,6 +200,35 @@
                  :transition "width 0.25s, height 0.25s"}}
    [:iframe.canvas
     {:src (or (:canvas-path data) "/portfolio/canvas.html")
+     :title "Component scene"
+     :style {:border "none"
+             :flex-grow "1"
+             :width (or (when (number? (:viewport/width (:opt data)))
+                          (:viewport/width (:opt data)))
+                        "100%")
+             :height (when (number? (:viewport/height (:opt data)))
+                       (:viewport/height (:opt data)))}}]])
+
+(d/defcomponent IframeCanvas
+  :on-mount (fn [el data]
+              (enqueue-render-data el data)
+              (on-mounted
+                (get-iframe el)
+                (fn []
+                  (pad-canvas data (get-iframe-document el))
+                  (set! (.-renderFromQueue el) true)
+                  (process-render-queue el))))
+  :on-update (fn [el data]
+               (enqueue-render-data el data))
+  [data]
+  [:div {:style {:background (or (:background/background-color (:opt data))
+                                 "var(--canvas-bg)")
+                 :display "flex"
+                 :transition "width 0.25s, height 0.25s"}}
+   [:iframe.canvas
+    {:src
+     (str (doto (new js/URL js/window.location)
+            (set! -search (new js/URLSearchParams #js {"portfolio.embed" true}))))
      :title "Component scene"
      :style {:border "none"
              :flex-grow "1"
@@ -242,7 +299,11 @@
            (if (or (not (:component-fn (:scene data)))
                    (:error (:scene data)))
              (Error (:error (:scene data)))
-             (Canvas data)))]
+             (case (:render-mode (:scene data) :mount)
+               :mount
+               (Canvas data)
+               :iframe
+               (IframeCanvas data))))]
         (remove nil?))])
 
 (def direction
