@@ -1,9 +1,9 @@
 (ns portfolio.react-utils
-  (:require ["react" :as react]
-            [goog]
+  (:require [goog]
             [goog.object :as o]
-            [portfolio.adapter :as adapter]
-            [portfolio.ui.actions :as actions]))
+            ["react" :as react]
+            [portfolio.ui.actions :as actions]
+            [portfolio.adapter :as adapter]))
 
 (def ^:dynamic *decorator* nil)
 
@@ -38,12 +38,11 @@
                                                                   :action/cause "React error boundary caught error"})))
 
               (render [this]
-                      (.createElement react
-                                      Decorator
-                                      #js{}
-                                      (.createElement
-                                       react "div" #js {}
-                                       (if (o/getValueByKeys this "state" "error")
-                                         ""
-                                         (:component (get-scene this)))))))
+                      (.createElement
+                       react Decorator #js{}
+                       (.createElement
+                        react "div" #js {}
+                        (if (o/getValueByKeys this "state" "error")
+                          ""
+                          (:component (get-scene this)))))))
     ctor))

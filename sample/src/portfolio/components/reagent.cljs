@@ -5,7 +5,12 @@
   ;; This is due to the new API https://www.metosin.fi/blog/reagent-towards-react-18/
   (:require [portfolio.components.reagent.component :as rc]
             [portfolio.theme :as theme]
-            [portfolio.reagent :refer-macros [defscene]]))
+            [portfolio.reagent-18 :as p-reagent-18 :refer-macros [defscene]]
+            ;; [portfolio.reagent :as p-reagent]
+            ))
+
+;; (p-reagent/set-decorator! theme/reagent-decorator)
+(p-reagent-18/set-decorator! theme/reagent-decorator)
 
 (defn button [text]
   [:button.button text])

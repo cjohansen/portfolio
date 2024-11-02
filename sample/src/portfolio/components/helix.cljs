@@ -1,12 +1,16 @@
 (ns portfolio.components.helix
-  (:require ["react" :as react]
-            #_[portfolio.react :refer-macros [defscene]] ;; For react versions 18+ use the following:
-            [goog]
-            [helix.core :refer [$ defnc]]
-            [helix.dom :as d] ;; If you are using an older version of react use the following:
+  (:require [goog]
+            [helix.core :refer [defnc $]]
             [helix.hooks :as hooks]
+            [helix.dom :as d]
             [portfolio.theme :as theme]
-            [portfolio.react-18 :refer-macros [defscene]]))
+            ;; If you are using an older version of react use the following:
+            #_[portfolio.react :refer-macros [defscene]]
+            ;; For react versions 18+ use the following:
+            [portfolio.react-18 :as p-react-18 :refer-macros [defscene]]
+            ["react" :as react]))
+
+(p-react-18/set-decorator! theme/react-18-decorator)
 
 (defnc counter []
   (let [[count set-count] (hooks/use-state 0)]

@@ -1,9 +1,11 @@
 (ns portfolio.components.uix
-  (:require [portfolio.theme :as theme]
-            [portfolio.react-18 :refer-macros [defscene]]
-            [uix.core :refer [$ defui use-state]]
-            [uix.dom]))
+  (:require [uix.core :refer [defui $ use-state]]
+            [uix.dom]
+            [portfolio.theme :as theme]
+            [portfolio.react-18 :as p-react-18 :refer-macros [defscene]]))
 
+
+(p-react-18/set-decorator! theme/react-18-decorator)
 (defui counter []
   (let [[count set-count] (use-state 0)]
     ($ :div

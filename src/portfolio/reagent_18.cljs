@@ -1,8 +1,8 @@
 (ns portfolio.reagent-18
-  (:require [portfolio.adapter :as adapter]
-            [portfolio.data :as data]
-            [reagent.dom.client :as rdc]
-            [reagent.impl.template :as reagent])
+  (:require [reagent.dom.client :as rdc]
+            [reagent.impl.template :as reagent]
+            [portfolio.adapter :as adapter]
+            [portfolio.data :as data])
   (:require-macros [portfolio.reagent-18]))
 
 ::data/keep

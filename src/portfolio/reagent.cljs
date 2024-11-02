@@ -18,20 +18,19 @@
      (when-let [f (some-> el .-unmount)]
        (when-not (= "reagent" (.-unmountLib el))
          (f)))
-     (let [decorator (or *decorator*
-                         identity)]
-       (if el
-         (do
-           (rd/render [decorator
-                       (if (fn? component)
-                         [component]
-                         component)] el)
-           (set! (.-unmountLib el) "reagent")
-           (set! (.-unmount el)
-                 (fn []
-                   (rd/unmount-component-at-node el)
-                   (set! (.-unmount el) nil))))
-         (js/console.error "Asked to render Reagent component without an element"))))})
+     (if el
+       (do
+         (rd/render [(or *decorator*
+                         identity)
+                     (if (fn? component)
+                       [component]
+                       component)] el)
+         (set! (.-unmountLib el) "reagent")
+         (set! (.-unmount el)
+               (fn []
+                 (rd/unmount-component-at-node el)
+                 (set! (.-unmount el) nil))))
+       (js/console.error "Asked to render Reagent component without an element")))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
