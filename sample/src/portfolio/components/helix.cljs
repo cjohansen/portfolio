@@ -33,11 +33,11 @@
   (let [ctor (fn [])]
     (goog.inherits ctor react/Component)
     (specify! (.-prototype ctor)
-              Object
-              (render [this]
-                      (when (.. this -props -error)
-                        (throw (js/Error. "BOOOOOM!")))
-                      "Oh, nice!!"))
+      Object
+      (render [this]
+        (when (.. this -props -error)
+          (throw (js/Error. "BOOOOOM!")))
+        "Oh, nice!!"))
     ctor))
 
 (defscene react-error

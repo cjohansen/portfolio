@@ -41,7 +41,7 @@
 
      :viewport/defaults {:viewport/padding [16]
                          #_#_#_#_:viewport/width 390
-                             :viewport/height 400}
+                         :viewport/height 400}
      #_#_:canvas/layout {:kind :cols
                          :xs [{:viewport/width 390
                                :viewport/height "100%"}

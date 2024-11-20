@@ -29,20 +29,20 @@
           (fn [error]
             #js {:error error}))
     (specify! (.-prototype ctor)
-              Object
+      Object
 
-              (componentDidCatch [this error info]
-                                 (when-let [actions (:report-render-error (:actions (get-scene this)))]
-                                   (actions/dispatch actions nil {:action/exception error
-                                                                  :action/info (js->clj info)
-                                                                  :action/cause "React error boundary caught error"})))
+      (componentDidCatch [this error info]
+        (when-let [actions (:report-render-error (:actions (get-scene this)))]
+          (actions/dispatch actions nil {:action/exception error
+                                         :action/info (js->clj info)
+                                         :action/cause "React error boundary caught error"})))
 
-              (render [this]
-                      (.createElement
-                       react Decorator #js{}
-                       (.createElement
-                        react "div" #js {}
-                        (if (o/getValueByKeys this "state" "error")
-                          ""
-                          (:component (get-scene this)))))))
+      (render [this]
+        (.createElement
+         react Decorator #js{}
+         (.createElement
+          react "div" #js {}
+          (if (o/getValueByKeys this "state" "error")
+            ""
+            (:component (get-scene this)))))))
     ctor))

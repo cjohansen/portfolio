@@ -9,8 +9,8 @@
 (defui counter []
   (let [[count set-count] (use-state 0)]
     ($ :div
-       ($ :p "Count: " count)
-       ($ :button {:on-click #(set-count inc)} "Increase"))))
+      ($ :p "Count: " count)
+      ($ :button {:on-click #(set-count inc)} "Increase"))))
 
 (defscene uix-counter
   :title "Counter with React Hooks"
