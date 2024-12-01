@@ -5,6 +5,11 @@
             [portfolio.ui.actions :as actions]
             [portfolio.adapter :as adapter]))
 
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
+
 (defn create-scene [scene impl]
   (-> scene
       (update :component-fn (fn [f]
@@ -16,7 +21,9 @@
   (o/getValueByKeys this "props" "scene"))
 
 (defn create-safe-wrapper []
-  (let [ctor (fn [])]
+  (let [ctor (fn [])
+        Decorator (or *decorator*
+                      (.-Fragment react))]
     (goog.inherits ctor react/Component)
     (set! (.-getDerivedStateFromError ctor)
           (fn [error]
@@ -32,8 +39,10 @@
 
       (render [this]
         (.createElement
-         react "div" #js {}
-         (if (o/getValueByKeys this "state" "error")
-           ""
-           (:component (get-scene this))))))
+         react Decorator #js{}
+         (.createElement
+          react "div" #js {}
+          (if (o/getValueByKeys this "state" "error")
+            ""
+            (:component (get-scene this)))))))
     ctor))

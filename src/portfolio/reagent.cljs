@@ -7,6 +7,11 @@
 
 ::data/keep
 
+(def ^:dynamic *decorator* nil)
+
+(defn set-decorator! [decorator]
+  (set! *decorator* decorator))
+
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component]} el]
@@ -15,9 +20,11 @@
          (f)))
      (if el
        (do
-         (rd/render (if (fn? component)
-                      [component]
-                      component) el)
+         (rd/render [(or *decorator*
+                         identity)
+                     (if (fn? component)
+                       [component]
+                       component)] el)
          (set! (.-unmountLib el) "reagent")
          (set! (.-unmount el)
                (fn []

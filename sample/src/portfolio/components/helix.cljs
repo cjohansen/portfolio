@@ -3,11 +3,14 @@
             [helix.core :refer [defnc $]]
             [helix.hooks :as hooks]
             [helix.dom :as d]
+            [portfolio.theme :as theme]
             ;; If you are using an older version of react use the following:
             #_[portfolio.react :refer-macros [defscene]]
             ;; For react versions 18+ use the following:
-            [portfolio.react-18 :refer-macros [defscene]]
+            [portfolio.react-18 :as p-react-18 :refer-macros [defscene]]
             ["react" :as react]))
+
+(p-react-18/set-decorator! theme/react-18-decorator)
 
 (defnc counter []
   (let [[count set-count] (hooks/use-state 0)]
@@ -65,3 +68,13 @@
   (let [^js [date _set-date] (react/useState (js/Date.))]
     (throw "Don't do this")
     (react/createElement "div" nil (str date))))
+
+(defnc DecoratorConsumerComponent []
+  (let [theme (theme/use-theme)]
+    (d/button
+     {:style {:background (name theme)}}
+     (str "current theme is " (name theme)))))
+
+
+(defscene decorator-consumer-demo
+  (react/createElement DecoratorConsumerComponent))

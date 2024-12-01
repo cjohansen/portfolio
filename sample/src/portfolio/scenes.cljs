@@ -19,6 +19,7 @@
             [portfolio.ui.search :as search]
             [portfolio.ui.search.memsearch-index :as memsearch]))
 
+
 (defonce app
   (ui/start!
    {:on-render (fn [page-data]
@@ -76,11 +77,7 @@
 (swap! app update ::heartbeat (fnil inc 0))
 
 (comment
-
   (->> [:set-css-files ["/portfolio/demo2.css"]]
        (portfolio.actions/execute-action! app))
-
   (->> [:set-css-files ["/portfolio/demo.css"]]
-       (portfolio.actions/execute-action! app))
-
-)
+       (portfolio.actions/execute-action! app)))

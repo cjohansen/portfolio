@@ -8,12 +8,13 @@
 
 ::data/keep
 
+(defn set-decorator! [decorator]
+  (react-util/set-decorator! decorator))
+
 (defn get-root [el]
   (when-not (.-reactRoot el)
     (set! (.-reactRoot el) (react-dom/createRoot el)))
   (.-reactRoot el))
-
-(def Wrapper (react-util/create-safe-wrapper))
 
 (def component-impl
   {`adapter/render-component
@@ -22,7 +23,8 @@
      (when-let [f (some-> el .-unmount)]
        (when-not (= "react18" (.-unmountLib el))
          (f)))
-     (let [root (get-root el)]
+     (let [root (get-root el)
+           Wrapper (react-util/create-safe-wrapper)]
        (set! (.-unmount el) (fn []
                               (.unmount root)
                               (set! (.-reactRoot el) nil)
