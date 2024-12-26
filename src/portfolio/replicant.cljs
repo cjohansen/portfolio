@@ -7,6 +7,11 @@
 
 ::data/keep
 
+(def render-options (atom nil))
+
+(defn set-render-options! [opts]
+  (reset! render-options opts))
+
 (def component-impl
   {`adapter/render-component
    (fn [{:keys [component id updated-at]} el]
@@ -16,7 +21,7 @@
        (when-let [f (some-> el .-unmount)]
          (f)))
      (set! (.-unmountLib el) "replicant")
-     (replicant/render el [:div {:replicant/key (str id "-" updated-at)} component]))})
+     (replicant/render el [:div {:replicant/key (str id "-" updated-at)} component] @render-options))})
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
