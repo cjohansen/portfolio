@@ -1,8 +1,8 @@
 (ns portfolio.replicant
   (:require [portfolio.adapter :as adapter]
             [portfolio.data :as data]
-            [replicant.core :as hiccup]
-            [replicant.dom :as replicant])
+            [replicant.dom :as replicant]
+            [replicant.hiccup :as hiccup])
   (:require-macros [portfolio.replicant]))
 
 ::data/keep
