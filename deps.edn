@@ -9,8 +9,7 @@
                      com.bhauman/figwheel-main {:mvn/version "0.2.18"}
                      cider/piggieback {:mvn/version "0.5.3"}
                      cjohansen/gadget-inspector {:mvn/version "0.2020.09.10"}
-                     no.cjohansen/replicant {:git/url "https://github.com/cjohansen/replicant.git"
-                                             :sha "c0142f40afedaaaa7a668ca02a9259bb3e3a1d79"}
+                     cjohansen/replicant {:mvn/version "2025.01.28"}
                      clj-kondo/clj-kondo {:mvn/version "2024.02.12"}
                      reagent/reagent {:mvn/version "1.2.0"}
                      cljsjs/codemirror {:mvn/version "5.44.0-1"}

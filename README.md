@@ -214,6 +214,10 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
+### 2025.01.28
+
+- Use official Replicant version for the Replicant adapter.
+
 ### 2024.09.25
 
 - Properly set/unset :background/document-data when switching themes
@@ -331,7 +335,7 @@ Added [new APIs for organizing scenes](#organizing-scenes) in the sidebar.
 
 ## License
 
-Copyright © 2022-2023 Christian Johansen
+Copyright © 2022-2025 Christian Johansen
 
 Distributed under the Eclipse Public License either version 1.0 or (at your
 option) any later version.
