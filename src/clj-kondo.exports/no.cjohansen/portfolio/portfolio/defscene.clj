@@ -35,7 +35,7 @@
     [(first forms) (next forms)]
     [nil forms]))
 
-(defn ^:export defscene [{:keys [node]} defined-by]
+(defn defscene [{:keys [node]} defined-by]
   (let [[name & forms] (rest (:children node))
         [docstr forms] (extract-docstr forms)
         [opts forms] (extract-opts forms)
