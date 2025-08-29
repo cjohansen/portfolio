@@ -35,12 +35,13 @@
     [(first forms) (next forms)]
     [nil forms]))
 
-(defn ^:export defscene [{:keys [node]}]
+(defn defscene [{:keys [node]} defined-by]
   (let [[name & forms] (rest (:children node))
         [docstr forms] (extract-docstr forms)
         [opts forms] (extract-opts forms)
         [arg-list forms] (extract-arg-list forms)]
-    {:node
+    {:defined-by defined-by
+     :node
      (if arg-list
        (api/list-node
         (list*
@@ -55,6 +56,16 @@
          (api/token-node 'do)
          opts
          forms)))}))
+
+(defn ^:export dom [arg] (defscene arg 'portfolio.dom/defscene))
+(defn ^:export dumdom [arg] (defscene arg 'portfolio.dumdom/defscene))
+(defn ^:export html [arg] (defscene arg 'portfolio.html/defscene))
+(defn ^:export react [arg] (defscene arg 'portfolio.react/defscene))
+(defn ^:export react-18 [arg] (defscene arg 'portfolio.react-18/defscene))
+(defn ^:export reagent [arg] (defscene arg 'portfolio.reagent/defscene))
+(defn ^:export reagent-18 [arg] (defscene arg 'portfolio.reagent-18/defscene))
+(defn ^:export replicant [arg] (defscene arg 'portfolio.replicant/defscene))
+(defn ^:export run [arg] (defscene arg 'portfolio.rum/defscene))
 
 (comment
   (require '[clj-kondo.core :as clj-kondo])
