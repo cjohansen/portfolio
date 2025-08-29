@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2025.01.28"}
+no.cjohansen/portfolio {:mvn/version "2025.08.29"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2025.01.28"]
+[no.cjohansen/portfolio "2025.08.29"]
 ```
 
 ## Usage
@@ -213,6 +213,11 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2025.08.29
+
+- Improve clj-kondo's understanding of `defscene` ([Mikko
+  Koski](https://github.com/rap1ds)).
 
 ### 2025.01.28
 
