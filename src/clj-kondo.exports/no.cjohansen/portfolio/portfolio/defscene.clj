@@ -53,7 +53,10 @@
          forms))
        (api/list-node
         (list*
-         (api/token-node 'do)
+         (api/token-node 'defn)
+         name
+         docstr
+         []
          opts
          forms)))}))
 
