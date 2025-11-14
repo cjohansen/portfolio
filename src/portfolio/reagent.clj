@@ -1,5 +1,6 @@
 (ns portfolio.reagent
-  (:require [portfolio.core :as portfolio]))
+  (:require [portfolio.core :as portfolio]
+            [portfolio.data :as data]))
 
 (defmacro defscene [id & opts]
   (when (portfolio/portfolio-active?)
