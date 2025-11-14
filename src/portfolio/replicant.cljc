@@ -1,21 +1,23 @@
 (ns portfolio.replicant
   (:require [portfolio.adapter :as adapter]
-            [portfolio.core :as portfolio]
+            #?(:clj [portfolio.core :as portfolio])
             [portfolio.data :as data]
             [replicant.dom :as replicant]
             [replicant.hiccup :as hiccup])
   #?(:cljs (:require-macros [portfolio.replicant])))
 
-(defmacro defscene [id & opts]
-  (when (portfolio/portfolio-active?)
-    `(portfolio.data/register-scene!
-      (portfolio.replicant/create-scene
-       ~(portfolio/get-options-map id (:line &env) opts)))))
+#?(:clj
+   (defmacro defscene [id & opts]
+     (when (portfolio.core/portfolio-active?)
+       `(portfolio.data/register-scene!
+         (portfolio.replicant/create-scene
+          ~(portfolio.core/get-options-map id (:line &env) opts))))))
 
-(defmacro configure-scenes [& opts]
-  (when (portfolio/portfolio-active?)
-    `(portfolio.data/register-collection!
-      ~@(portfolio/get-collection-options opts))))
+#?(:clj
+   (defmacro configure-scenes [& opts]
+     (when (portfolio.core/portfolio-active?)
+       `(portfolio.data/register-collection!
+         ~@(portfolio.core/get-collection-options opts)))))
 
 (def render-options (atom nil))
 

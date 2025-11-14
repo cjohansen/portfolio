@@ -21,7 +21,7 @@
                (sort-by :idx)
                reverse
                (partition-all 2 1)
-               (drop-while (fn [[a b]] (= (- (:idx a) (:idx b)) 1)))
+               (drop-while (fn [[a b]] (= (- (:idx a 0) (:idx b 0)) 1)))
                (keep second))))))
 
 (defn purge-removed-scenes []
