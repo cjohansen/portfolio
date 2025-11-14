@@ -22,8 +22,8 @@ If you're using Storybook extensions not covered by Portfolio, open an issue.
 
 ## Show me, don't tell me
 
-I recently presented Portfolio at London Clojurians, you can [watch it on
-YouTube](https://www.youtube.com/watch?v=25JDQRFoQ_U).
+[Watch my Portfolio presentation](https://www.youtube.com/watch?v=25JDQRFoQ_U)
+at London Clojurians.
 
 ## Sample
 
@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2025.10.1"}
+no.cjohansen/portfolio {:mvn/version "2025.11.1"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2025.10.1"]
+[no.cjohansen/portfolio "2025.11.1"]
 ```
 
 ## Usage
@@ -213,6 +213,11 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2025.11.1
+
+Add missing require so `portfolio.<rendering-library>` can be safely used from
+CLJC files.
 
 ### 2025.10.1
 
