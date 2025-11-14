@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2025.11.1"}
+no.cjohansen/portfolio {:mvn/version "2025.11.2"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2025.11.1"]
+[no.cjohansen/portfolio "2025.11.2"]
 ```
 
 ## Usage
@@ -214,10 +214,9 @@ Some features and fixes that are likely to be explored in the close future:
 
 ## Changelog
 
-### 2025.11.1
+### 2025.11.2
 
-Add missing require so `portfolio.<rendering-library>` can be safely used from
-CLJC files.
+Make `portfolio.replicant` usable from CLJC files.
 
 ### 2025.10.1
 
