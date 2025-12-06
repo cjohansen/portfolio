@@ -10,7 +10,7 @@
                      cider/piggieback {:mvn/version "0.5.3"}
                      cjohansen/gadget-inspector {:mvn/version "0.2020.09.10"}
                      no.cjohansen/replicant {:mvn/version "2025.01.29"}
-                     clj-kondo/clj-kondo {:mvn/version "2024.02.12"}
+                     clj-kondo/clj-kondo {:mvn/version "2025.10.23"}
                      reagent/reagent {:mvn/version "1.2.0"}
                      cljsjs/codemirror {:mvn/version "5.44.0-1"}
                      cljsjs/react {:mvn/version "18.2.0-1"}

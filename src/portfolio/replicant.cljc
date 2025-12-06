@@ -7,21 +7,14 @@
   #?(:cljs (:require-macros [portfolio.replicant])))
 
 #?(:clj
-   (defmacro defscene [id & opts]
-     (when (portfolio.core/portfolio-active?)
-       `(portfolio.data/register-scene!
-         (portfolio.replicant/create-scene
-          ~(portfolio.core/get-options-map id (:line &env) opts))))))
-
-#?(:clj
-   (defmacro configure-scenes [& opts]
+   (defmacro ^:export configure-scenes [& opts]
      (when (portfolio.core/portfolio-active?)
        `(portfolio.data/register-collection!
          ~@(portfolio.core/get-collection-options opts)))))
 
 (def render-options (atom nil))
 
-(defn set-render-options! [opts]
+(defn ^:export set-render-options! [opts]
   (reset! render-options opts))
 
 (def component-impl
@@ -37,6 +30,10 @@
 
 (defn create-scene [scene]
   (adapter/prepare-scene scene component-impl))
+
+#?(:clj
+   (defmacro ^:export defscene [id & opts]
+     `(portfolio/defscene* portfolio.replicant/create-scene ~id ~@opts)))
 
 (data/register-scene-renderer!
  (fn [x]

@@ -60,3 +60,12 @@
                (assoc (second syms) :docs docs)
                (first syms))]
     [(keyword (str *ns*)) opts]))
+
+(defmacro defscene* [create-scene-fn id & opts]
+  (when (portfolio.core/portfolio-active?)
+    (let [opts (portfolio.core/get-options-map id (:line &env) opts)
+          var-name (symbol (name (:id opts)))]
+      `(let [scene# (~create-scene-fn ~opts)]
+         (def ~var-name scene#)
+         (portfolio.data/register-scene! ~var-name)
+         (var ~var-name)))))

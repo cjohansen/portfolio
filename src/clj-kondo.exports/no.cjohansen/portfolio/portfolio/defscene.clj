@@ -56,7 +56,7 @@
          (api/token-node 'defn)
          name
          docstr
-         []
+         (api/vector-node [])
          opts
          forms)))}))
 
@@ -77,7 +77,7 @@
     (:findings
      (with-in-str
        (str
-        '(require '[portfolio.dumdom :refer [defscene]])
+        '(require '[portfolio.replicant :refer [defscene]])
 
         code)
        (clj-kondo.core/run! {:lint ["-"]}))))
@@ -92,14 +92,21 @@
                      :color :white}}
         (pr-str (:text data))]))
 
-  (defscene {:node (api/parse-string (str code))})
+  (defscene {:node (api/parse-string (str code))} nil)
   (get-findings code)
+
+  (def code2
+    '(defscene doit
+       [:h1 "Hello"]))
+
+  (defscene {:node (api/parse-string (str code2))} nil)
+  (get-findings code2)
 
   (def less-code
     '(defscene heading [data]
        (pr-str (:text data))))
 
-  (defscene {:node (api/parse-string (str less-code))})
+  (defscene {:node (api/parse-string (str less-code))} nil)
   (get-findings less-code)
 
   )
