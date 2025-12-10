@@ -66,6 +66,6 @@
     (let [opts (portfolio.core/get-options-map id (:line &env) opts)
           var-name (symbol (name (:id opts)))]
       `(let [scene# (~create-scene-fn ~opts)]
-         (def ~var-name scene#)
+         (def ~(with-meta var-name {:export true}) scene#)
          (portfolio.data/register-scene! ~var-name)
          (var ~var-name)))))
