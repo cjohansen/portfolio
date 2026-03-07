@@ -20,10 +20,9 @@
                      lilactown/helix {:mvn/version "0.1.9"}
                      com.pitch/uix.core {:mvn/version "0.8.1"}
                      com.pitch/uix.dom {:mvn/version "0.8.1"}
-                     coderafting/memsearch {:mvn/version "0.1.1"}}
+                     coderafting/memsearch {:mvn/version "0.1.1"}
+                     thheller/shadow-cljs {:mvn/version "3.3.6"}}
         :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
   :jar {:extra-deps {pack/pack.alpha {:git/url "https://github.com/juxt/pack.alpha.git"
                                       :sha "e518d9b2b70f4292c9988d2792b8667d88a6f4df"}}
-        :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs" "--project-path" "portfolio.jar"]}
-  :shadow {:extra-paths ["src/dev" "src/test"]
-           :extra-deps {thheller/shadow-cljs {:mvn/version "2.23.2"}}}}}
+        :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs" "--project-path" "portfolio.jar"]}}}
