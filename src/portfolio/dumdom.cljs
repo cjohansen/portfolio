@@ -10,7 +10,7 @@
 
 (def component-impl
   {`adapter/render-component
-   (fn [{:keys [component id updated-at]} el]
+   (fn [{:keys [component id updated-at]} ^js el]
      (assert (some? el) "Asked to render Dumdom component without an element.")
      (when-let [f (some-> el .-unmount)]
        (when-not (= "dumdom" (.-unmountLib el))

@@ -20,7 +20,7 @@
 (defn get-iframe-document [canvas-el]
   (some-> canvas-el get-iframe .-contentWindow .-document))
 
-(defn get-iframe-body [canvas-el]
+(defn ^js get-iframe-body [^js canvas-el]
   (some-> canvas-el get-iframe-document .-body))
 
 (defn report-error [cause e scene]
@@ -132,7 +132,7 @@
   {:rendered (:rendered-data scene)
    :portfolio-options opt})
 
-(defn process-render-queue [el]
+(defn process-render-queue [^js el]
   (when (.-renderFromQueue el)
     (on-mounted
      (get-iframe el)
@@ -141,10 +141,10 @@
         (set! (.-renderedData el) (get-rendered-data data))
         (render-scene el data)))))
 
-(defn novel-render? [el data]
+(defn novel-render? [^js el data]
   (not= (.-renderedData el) (get-rendered-data data)))
 
-(defn enqueue-render-data [el data]
+(defn enqueue-render-data [^js el data]
   (when (novel-render? el data)
     (set! (.-renderQueue el) data)
     (process-render-queue el)))
@@ -153,7 +153,7 @@
   :keyfn (fn [{:keys [css-paths script-paths]}]
            ;; If either of these change, we need to remount the canvas
            (str/join (sort (concat css-paths script-paths))))
-  :on-mount (fn [el data]
+  :on-mount (fn [^js el data]
               (set! (.-renderQueue el) data)
               (on-mounted
                (get-iframe el)

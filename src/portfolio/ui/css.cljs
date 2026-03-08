@@ -66,7 +66,7 @@
     (let [head (some-> iframe .-contentWindow .-document .-head)]
       (doseq [link (->> (.querySelectorAll head "link")
                         array-seq
-                        (filter #(.-portfolio %)))]
+                        (filter #(.-portfolio ^js %)))]
         (-> link .-parentNode (.removeChild link)))
       (doseq [path paths]
         (.appendChild head (create-css-link path))))))
