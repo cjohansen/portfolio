@@ -1,6 +1,6 @@
 (ns ^:figwheel-hooks portfolio.dev
-  (:require [dumdom.component]
-            [gadget.inspector :as inspector]
+  (:require [dataspex.core :as dataspex]
+            [dumdom.component]
             [portfolio.data :as data]
             [portfolio.scenes :as scenes]
             [portfolio.ui :as ui]))
@@ -63,7 +63,7 @@
 
   )
 
-(inspector/inspect "Application data" ui/app)
+(dataspex/inspect "Application data" ui/app)
 
 (comment
 
@@ -71,7 +71,7 @@
    {:id :elements
     :title "Elements"})
 
-  (inspector/inspect "Application data" ui/app)
+  (dataspex/inspect "Application data" ui/app)
 
   (ui/start!)
 

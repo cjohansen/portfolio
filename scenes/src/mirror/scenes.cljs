@@ -1,8 +1,8 @@
 (ns mirror.scenes
-  (:require [gadget.inspector :as inspector]
+  (:require [dataspex.core :as dataspex]
+            [mirror.ui.colors-scenes]
             [mirror.ui.components.auto-complete-scenes]
             [mirror.ui.components.browser-scenes]
-            [mirror.ui.colors-scenes]
             [mirror.ui.components.document-scenes]
             [mirror.ui.components.hud-scenes]
             [portfolio.ui :as ui]))
@@ -16,9 +16,9 @@
 (def app
   (ui/start!
    {:on-render (fn [page-data]
-                 (inspector/inspect "Page data" page-data))
+                 (dataspex/inspect "Page data" page-data))
     :config
     {:css-paths ["/portfolio/styles/portfolio.css"]
      :viewport/defaults {:viewport/padding [16]}}}))
 
-(inspector/inspect "Application data" app)
+(dataspex/inspect "Application data" app)

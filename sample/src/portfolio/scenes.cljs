@@ -1,5 +1,5 @@
 (ns portfolio.scenes
-  (:require [gadget.inspector :as inspector]
+  (:require [dataspex.core :as dataspex]
             [portfolio.components.box]
             [portfolio.components.button]
             [portfolio.components.dom]
@@ -19,11 +19,10 @@
             [portfolio.ui.search :as search]
             [portfolio.ui.search.memsearch-index :as memsearch]))
 
-
 (defonce app
   (ui/start!
    {:on-render (fn [page-data]
-                 (inspector/inspect "Page data" page-data))
+                 (dataspex/inspect "Page data" page-data))
 
     :extra-canvas-tools [(locale-selector/create-locale-tool)]
 
