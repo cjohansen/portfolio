@@ -12,6 +12,19 @@ You might want to add some CSS files to the canvas, which can be done with
   {:config {:css-paths ["/myapp/custom.css"]}})
 ```
 
+If you're using the `:portfolio` build target with shadow-cljs, you can add the
+UI configuration to `shadow-cljs.edn`:
+
+```clj
+{,,,
+
+ :builds
+ {:frontend
+  {:target :portfolio
+   ,,,
+   :portfolio.ui/config {:css-paths ["/myapp/custom.css"]}}}}
+```
+
 Add as many CSS files as you like. CSS files will automatically reload when
 changed by your build process (tested and verified with shadow-cljs and
 figwheel-main).

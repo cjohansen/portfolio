@@ -12,6 +12,19 @@ global JavaScripts etc, you can provide your own canvas:
   {:config {:canvas-path "/my/custom/portfolio.html"}})
 ```
 
+If you're using the `:portfolio` build target with shadow-cljs, you can add the
+UI configuration to `shadow-cljs.edn`:
+
+```clj
+{,,,
+
+ :builds
+ {:frontend
+  {:target :portfolio
+   ,,,
+   :portfolio.ui/config {:canvas-path "/my/custom/portfolio.html"}}}}
+```
+
 There are no requirements for how you format this file. Portfolio will add a div
 with id `"canvas"` to it, in which it will render the scene. If there already is
 an element with that id, it will be used instead.

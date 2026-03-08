@@ -37,13 +37,13 @@ code for the sample is [also available](https://github.com/cjohansen/sasha).
 With tools.deps:
 
 ```clj
-no.cjohansen/portfolio {:mvn/version "2025.11.2"}
+no.cjohansen/portfolio {:mvn/version "2026.03.1"}
 ```
 
 With Leiningen:
 
 ```clj
-[no.cjohansen/portfolio "2025.11.2"]
+[no.cjohansen/portfolio "2026.03.1"]
 ```
 
 ## Usage
@@ -87,6 +87,25 @@ are served by the development HTTP server. Include `"classpath:public"` in your
 This will serve files from `public` in your project (where presumably your
 index.html and CSS files are), and resources in `public` on the classpath (e.g.
 Portfolio's resources). Adjust as necessary.
+
+Portfolio also ships with a `:portfolio` build target for shadow-cljs, which
+loads any namespace whose name ends in `-scenes`, and optionally starts the
+Portfolio UI (though without any configuration):
+
+```clj
+{:deps {:aliases [:dev]}
+
+ :dev-http {8080 ["dev-resources/public" "classpath:public"]}
+
+ :builds
+ {:frontend
+  {:target :portfolio
+   :runner-ns portfolio.scenes
+   :dev {:output-dir "dev-resources/public/js"}}}}
+```
+
+The `:runner-ns` is where you call `portfolio.ui/start!`. If you leave it out,
+Portfolio will start without any configuration.
 
 Check out [this repo](https://github.com/cormacc/cljserial) for a sample setup
 with an app target and a portfolio target with shadow-cljs.
@@ -213,6 +232,12 @@ Some features and fixes that are likely to be explored in the close future:
 - Generate scenes from a component and specs
 
 ## Changelog
+
+### 2026.03.1
+
+Improve the clj-kondo macros.
+
+Introduce the `:portfolio` build target for shadow-cljs.
 
 ### 2025.11.2
 
