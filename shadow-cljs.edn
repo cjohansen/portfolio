@@ -5,6 +5,5 @@
  :builds
  {:frontend
   {:target :portfolio
-   :runner-ns portfolio.scenes
-   :compiler-options {:infer-externs true}
-   :dev {:output-dir "dev-resources/public/js"}}}}
+   :portfolio.ui/config {:css-paths ["/portfolio/demo.css"]}
+   :output-dir "dev-resources/public/js"}}}

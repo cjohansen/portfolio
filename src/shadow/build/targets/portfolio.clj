@@ -33,6 +33,7 @@
                                "/portfolio.js")}]])))
 
     (-> state
+        (assoc-in [:compiler-options :portfolio.ui/config] (-> state ::build/config :portfolio.ui/config))
         (assoc-in [::build/config :modules :portfolio] {:entries []})
         (assoc-in [::build/config :compiler-options :source-map] true)
         (update :build-options merge {:greedy true
