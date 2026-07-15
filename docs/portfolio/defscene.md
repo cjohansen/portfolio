@@ -102,7 +102,7 @@ params:
 
 ```clj
 (defn shuffle-titles [store titles]
-  (swap! store :idx 0)
+  (swap! store assoc :idx 0)
   (js/setInterval
    (fn []
      (swap! store
@@ -118,7 +118,7 @@ params:
   :on-mount (fn [store]
               (let [titles ["I am the first title"
                             "It is time for the second title"]]
-                (swap! store :timer (shuffle-titles store titles))))
+                (swap! store assoc :timer (shuffle-titles store titles))))
   :on-unmount (fn [store]
                 (js/clearInterval (:timer @store)))
   [store]
